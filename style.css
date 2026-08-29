@@ -1,77 +1,42 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7f6;
-    margin: 0;
-    padding: 0;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-.navbar {
-    background-color: #1a202c;
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+body { background-color: #0f1115; color: #e2e8f0; }
 
-.navbar h1 { margin: 0; font-size: 24px; }
+/* Navbar */
+.navbar { display: flex; justify-content: space-between; padding: 20px 40px; background-color: #1a1d24; border-bottom: 1px solid #2d3748; }
+.logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; color: #fff; }
 
-.pro-btn {
-    background-color: #fbbf24;
-    color: black;
-    border: none;
-    padding: 10px 15px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-}
+/* Buttons */
+button { cursor: pointer; border-radius: 6px; font-size: 16px; font-weight: bold; transition: 0.3s; }
+.primary-btn { background-color: #e11d48; color: white; border: none; padding: 14px 28px; }
+.primary-btn:hover { background-color: #be123c; }
+.secondary-btn { background-color: transparent; color: #fbbf24; border: 2px solid #fbbf24; padding: 12px 26px; }
+.secondary-btn:hover { background-color: #fbbf24; color: black; }
+.outline-btn { background: transparent; border: 1px solid #cbd5e1; color: #cbd5e1; padding: 8px 16px; }
+.full-width { width: 100%; margin-top: 20px; }
 
-.quiz-container {
-    background-color: white;
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    text-align: center;
-}
+/* Hero Section */
+.hero { text-align: center; max-width: 800px; margin: 80px auto; padding: 20px; }
+.hero h1 { font-size: 48px; margin-bottom: 10px; }
+.highlight { color: #e11d48; }
+.subtitle { font-size: 20px; color: #94a3b8; margin-bottom: 40px; }
 
-.exam-btn {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    margin: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 200px;
-}
+.message-box { background-color: #1e293b; border-left: 4px solid #e11d48; padding: 25px; text-align: left; margin-bottom: 40px; font-size: 18px; line-height: 1.6; border-radius: 0 8px 8px 0; }
+.action-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
 
-.option-btn {
-    display: block;
-    width: 100%;
-    background-color: #f3f4f6;
-    border: 2px solid #e5e7eb;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: left;
-    font-size: 16px;
-}
+/* Dashboard */
+.dashboard { max-width: 800px; margin: 60px auto; padding: 20px; text-align: center; }
+.stats-box { background-color: #1e293b; padding: 30px; border-radius: 10px; margin: 30px 0; font-size: 20px; }
 
-.option-btn:hover { background-color: #e5e7eb; }
-.correct { background-color: #10b981 !important; color: white; }
-.wrong { background-color: #ef4444 !important; color: white; }
-.hidden { display: none; }
+/* Popup Modal */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.hidden { display: none !important; }
+.modal-content { background-color: #1a1d24; padding: 40px; border-radius: 12px; width: 90%; max-width: 450px; position: relative; border: 1px solid #2d3748; }
+.close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #94a3b8; }
 
-#next-btn {
-    background-color: #1a202c;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
+input[type="text"] { width: 100%; padding: 15px; margin: 20px 0; background: #0f1115; border: 1px solid #2d3748; color: white; border-radius: 6px; font-size: 16px; }
+
+.exam-selection { display: flex; gap: 15px; margin-bottom: 10px; }
+.exam-select-btn { flex: 1; padding: 15px; background: #2d3748; border: 2px solid transparent; color: white; }
+.exam-select-btn.selected { border-color: #e11d48; background: #4c1d28; }
+.error-text { color: #e11d48; font-size: 14px; }
