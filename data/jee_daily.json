@@ -1,67 +1,32 @@
 {
   "day_1": [
     {
-      "question": "Q1. A particle of mass m is projected with velocity v at an angle θ. If the coefficient of restitution is e, what is the total distance covered along the horizontal before it stops bouncing?",
-      "options": ["(v²sin2θ)/g * (1/(1-e))", "(v²sin2θ)/g * (1/(1-e²))", "(v²sin2θ)/g * (e/(1-e))", "Infinite"],
-      "answer": 1,
-      "hint": "Sum of an infinite geometric progression use hoga. Range is proportional to horizontal velocity (constant) and time of flight (decreases by factor 'e' each bounce)."
-    },
-    {
-      "question": "Q2. In a photoelectric experiment, if both the intensity and frequency of the incident light are doubled, then the saturation photocurrent will:",
-      "options": ["Remain same", "Double", "Halve", "Quadruple"],
-      "answer": 1,
-      "hint": "Saturation current depends ONLY on the number of photons striking per second (intensity), not on their individual energy (frequency)."
-    },
-    {
-      "question": "Q3. Two identical capacitors are joined in parallel, charged to potential V, and then separated. They are then connected in series with the positive plate of one connected to the negative of the other. The free plates are connected to a voltmeter. The reading will be:",
-      "options": ["Zero", "V", "2V", "V/2"],
-      "answer": 2,
-      "hint": "In series, the potentials of the individual capacitors add up if connected with correct polarity (+ to -)."
-    },
-    {
-      "question": "Q4. Which of the following is an intensive property?",
-      "options": ["Heat capacity", "Entropy", "Electromotive force (EMF)", "Enthalpy"],
-      "answer": 2,
-      "hint": "Think about whether the property changes if you cut the system in half. EMF of a cell is independent of the size of the cell."
-    },
-    {
-      "question": "Q5. An SN2 reaction at an asymmetric carbon of a compound always gives:",
-      "options": ["Complete racemization", "Retention of configuration", "Inversion of configuration", "Partial racemization"],
-      "answer": 2,
-      "hint": "Walden inversion happens because the nucleophile attacks from the side exactly opposite to the leaving group."
-    },
-    {
-      "question": "Q6. Which of the following has the maximum number of unpaired electrons?",
-      "options": ["Fe2+", "Fe3+", "Co3+", "Ni2+"],
-      "answer": 1,
-      "hint": "Write the electronic configuration. Fe3+ is a d5 system. According to Hund's rule, how many will be unpaired?"
-    },
-    {
-      "question": "Q7. Value of integral from -π/2 to π/2 of (sin²x)/(1 + 2^x) dx is:",
-      "options": ["π/2", "π/4", "0", "π"],
-      "answer": 1,
-      "hint": "Use the King's Rule: Integral of f(x) from a to b = Integral of f(a+b-x). Then add the two equations."
-    },
-    {
-      "question": "Q8. If |z - i| = |z + i|, then the locus of the complex number z is:",
-      "options": ["A circle", "The real axis", "The imaginary axis", "A parabola"],
-      "answer": 1,
-      "hint": "The distance of z from (0,1) is equal to its distance from (0,-1). What is the perpendicular bisector of the line joining these two points?"
-    },
-    {
-      "question": "Q9. The number of real tangents that can be drawn to the ellipse x²/16 + y²/9 = 1 passing through the point (5, 0) is:",
-      "options": ["0", "1", "2", "Infinite"],
-      "answer": 2,
-      "hint": "First, check the position of the point (5,0) with respect to the ellipse by substituting it into the equation. Is it outside, inside, or on the ellipse?"
-    },
-    {
-      "question": "Q10. Let A and B be two 3x3 matrices such that AB = I. Which of the following is ALWAYS true?",
-      "options": ["BA = I", "A = B", "Both are symmetric", "None of these"],
+      "question": "Q1 (Physics). A solid sphere is rolling without slipping on a rough horizontal surface. It collides elastically with a smooth vertical wall. After the collision, the friction force on the sphere will act in:",
+      "options": ["Forward direction", "Backward direction", "Zero", "Depends on the mass"],
       "answer": 0,
-      "hint": "For square matrices, if a right inverse exists, it is also the left inverse."
+      "hint": "Collision is smooth, so only linear velocity reverses. Angular velocity remains the same. To establish pure rolling again, v = ωR must be achieved. Friction will act to decrease ω and increase v in the new direction."
+    },
+    {
+      "question": "Q2 (Math). If the roots of the equation x³ - 12x² + 39x - 28 = 0 are in A.P., then their common difference is:",
+      "options": ["±1", "±2", "±3", "±4"],
+      "answer": 2,
+      "hint": "Let roots be a-d, a, a+d. Sum of roots = 3a = 12 => a = 4. Product of roots = a(a² - d²) = 28."
+    },
+    {
+      "question": "Q3 (Chem). Which of the following resonating structures of 1-methoxy-1,3-butadiene is least stable?",
+      "options": ["CH2=CH-CH=CH-O-CH3", "CH2(-)-CH=CH-CH(+)-O-CH3", "CH2(+)-CH=CH-CH(-)-O-CH3", "CH2(-)-CH=CH-CH=O(+)-CH3"],
+      "answer": 2,
+      "hint": "Look for charge separation and incomplete octets. A positive charge on carbon adjacent to an electron-withdrawing or less stable position increases instability."
     }
   ],
-  "day_2": [],
+  "day_2": [
+    {
+      "question": "Q1 (Physics). In a YDSE setup, if the source is shifted upwards by a distance 'y', the central maxima will:",
+      "options": ["Shift upwards", "Shift downwards", "Remain unchanged", "Disappear"],
+      "answer": 1,
+      "hint": "Path difference must be zero at the central maxima. If the source moves up, the lower slit path becomes shorter before the slits, so it must travel further after the slits to compensate."
+    }
+  ],
   "day_3": [],
-  "day_120": []
+  "day_30": []
 }
