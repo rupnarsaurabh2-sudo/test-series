@@ -1,100 +1,99 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
-/* Base Dark Theme (Home & Dashboard) */
+/* 1. Base Expensive Theme (Matte Black) */
 body { 
-    background-color: #0f1115; 
+    background-color: #050505; 
     color: #e2e8f0; 
     min-height: 100vh;
-    transition: background 0.8s ease-in-out; 
+    transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1); /* Super smooth background change */
 }
 
-/* 🌿 Fresh Nature Vibe (Activated during Quiz) */
+/* 2. Dark Blue Warm Light Nature Vibe (Activated in Quiz) */
 body.quiz-active {
-    background-color: #0a1712;
+    background-color: #020914; /* Deep dark blue */
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(46, 204, 113, 0.20) 0%, transparent 60%),
-        radial-gradient(circle at 90% 80%, rgba(26, 188, 156, 0.25) 0%, transparent 60%);
+        radial-gradient(circle at 15% 20%, rgba(255, 140, 66, 0.12) 0%, transparent 55%), /* Warm peach/gold light */
+        radial-gradient(circle at 85% 80%, rgba(100, 255, 218, 0.15) 0%, transparent 60%); /* Fresh teal nature vibe */
 }
+
+/* 3. Paani Ki Tarah Smooth Transitions */
+.transition-element {
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: translateY(0);
+}
+.fade-out {
+    opacity: 0 !important;
+    transform: translateY(15px) !important;
+    pointer-events: none;
+}
+.hidden { display: none !important; }
 
 /* Navbar */
-.navbar { display: flex; justify-content: space-between; padding: 15px 5%; background-color: rgba(26, 29, 36, 0.9); border-bottom: 1px solid #2d3748; }
+.navbar { display: flex; justify-content: space-between; padding: 15px 5%; background-color: rgba(5, 5, 5, 0.8); border-bottom: 1px solid rgba(212, 175, 55, 0.2); backdrop-filter: blur(10px); }
 .logo { font-size: 22px; font-weight: 900; letter-spacing: 2px; color: #fff; }
 
-/* FIX: Centering Everything Perfectly on PC & Mobile */
-.main-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto; /* Yeh screen ke beech me laayega */
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 70px); /* Navbar ke baad bachi hui puri height */
-}
+.main-container { width: 100%; max-width: 800px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 70px); }
 
-/* General Buttons */
-button { cursor: pointer; border-radius: 6px; font-size: 16px; font-weight: bold; transition: 0.3s; }
-.primary-btn { background-color: #e11d48; color: white; border: none; padding: 14px 28px; width: 100%; max-width: 300px; }
-.primary-btn:hover { background-color: #be123c; }
-.secondary-btn { background-color: transparent; color: #fbbf24; border: 2px solid #fbbf24; padding: 12px 26px; width: 100%; max-width: 300px; }
-.outline-btn { background: transparent; border: 1px solid #cbd5e1; color: #cbd5e1; padding: 8px 16px; }
-.full-width { width: 100%; }
+/* Premium Aesthetic Buttons (Gold & Black) */
+.premium-btn {
+    background: linear-gradient(135deg, #d4af37, #aa7c11);
+    color: #000; border: none; padding: 14px 28px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); transition: all 0.3s ease; width: 100%; max-width: 300px;
+}
+.premium-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
+
+.secondary-btn { background: transparent; color: #d4af37; border: 1px solid #d4af37; padding: 12px 26px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; max-width: 300px; }
+.secondary-btn:hover { background: rgba(212, 175, 55, 0.1); }
+.outline-btn { background: transparent; border: 1px solid #cbd5e1; color: #cbd5e1; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+.full-width { width: 100%; max-width: 100%; margin-top: 15px; }
 
 /* Hero Section */
 .hero { text-align: center; width: 100%; }
 .hero h1 { font-size: clamp(32px, 5vw, 48px); margin-bottom: 10px; line-height: 1.2; }
-.highlight { color: #e11d48; }
+.highlight { color: #d4af37; } /* Gold Highlight */
 .subtitle { font-size: 18px; color: #94a3b8; margin-bottom: 30px; }
-.message-box { background-color: #1e293b; border-left: 4px solid #e11d48; padding: 20px; text-align: left; margin-bottom: 30px; font-size: 16px; line-height: 1.6; border-radius: 0 8px 8px 0; }
+.message-box { background-color: rgba(255,255,255,0.02); border-left: 2px solid #d4af37; padding: 20px; text-align: left; margin-bottom: 30px; font-size: 16px; line-height: 1.6; border-radius: 0 8px 8px 0; border-top: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);}
 .action-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
 
-/* Dashboard & Stats */
+/* Dashboard & Glassmorphism Panels */
 .dashboard { text-align: center; width: 100%; }
-.stats-box { background-color: #1e293b; padding: 20px; border-radius: 10px; font-size: 18px; }
+.stats-box { background-color: rgba(255,255,255,0.03); padding: 20px; border-radius: 10px; font-size: 18px; border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;}
 
-/* Glassmorphism Panel (Quiz & Result) */
 .glass-panel {
-    background: rgba(20, 26, 40, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    border-radius: 16px;
-    padding: 30px;
-    width: 100%;
-    max-width: 650px;
-    margin: 0 auto;
+    background: rgba(10, 14, 23, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6);
+    border-radius: 12px; padding: 30px; width: 100%; max-width: 650px; margin: 0 auto;
 }
 .glass-panel h3 { margin-bottom: 25px; font-size: 18px; line-height: 1.5; text-align: left; }
 
-/* Glowing Fresh Buttons (Quiz) */
+/* Glowing Start/Next Buttons (Quiz Mode) */
 .glow-btn {
-    background: linear-gradient(135deg, #10b981, #059669); /* Fresh Green Gradient */
-    color: white; border: none; padding: 14px 28px; border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); margin-top: 15px;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb); /* Fresh Blue Gradient */
+    color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); transition: all 0.3s ease;
 }
-.glow-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+.glow-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5); }
 
 /* Option Buttons & Hints */
 .option-btn {
-    display: block; width: 100%; background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1); color: #e2e8f0; padding: 15px;
-    margin: 10px 0; border-radius: 8px; text-align: left; transition: 0.2s; font-size: 16px;
+    display: block; width: 100%; background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 16px;
+    margin: 12px 0; border-radius: 8px; text-align: left; transition: all 0.2s ease; font-size: 16px; cursor: pointer;
 }
-.correct { background: rgba(16, 185, 129, 0.3) !important; border-color: #10b981 !important; color: white; }
-.wrong { background: rgba(239, 68, 68, 0.3) !important; border-color: #ef4444 !important; color: white; }
-.hint-glass {
-    background: rgba(46, 204, 113, 0.1); border-left: 4px solid #2ecc71;
-    padding: 15px; margin-top: 20px; border-radius: 0 8px 8px 0; color: #a7f3d0; text-align: left;
-}
+.option-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); transform: translateX(5px); }
+.correct { background: rgba(16, 185, 129, 0.2) !important; border-color: #10b981 !important; color: white; }
+.wrong { background: rgba(239, 68, 68, 0.2) !important; border-color: #ef4444 !important; color: white; }
+.hint-glass { background: rgba(100, 255, 218, 0.05); border-left: 3px solid #64ffda; padding: 15px; margin-top: 20px; border-radius: 0 8px 8px 0; color: #e2e8f0; text-align: left; }
 
 /* Modals */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-.hidden { display: none !important; }
-.modal-content { background-color: #1a1d24; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; position: relative; border: 1px solid #2d3748; text-align: center;}
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; transition: opacity 0.4s ease; }
+.modal-content { background-color: #0a0a0a; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; position: relative; border: 1px solid #333; text-align: center;}
 .close-btn { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; color: #94a3b8; }
-input[type="text"] { width: 100%; padding: 15px; margin: 20px 0; background: #0f1115; border: 1px solid #2d3748; color: white; border-radius: 6px; font-size: 16px; }
-.exam-selection { display: flex; gap: 10px; margin-bottom: 10px; }
-.exam-select-btn { flex: 1; padding: 12px; background: #2d3748; border: 2px solid transparent; color: white; }
-.exam-select-btn.selected { border-color: #e11d48; background: #4c1d28; }
+input[type="text"] { width: 100%; padding: 15px; margin: 20px 0; background: #111; border: 1px solid #333; color: white; border-radius: 6px; font-size: 16px; }
+.exam-selection { display: flex; gap: 10px; margin-bottom: 15px; }
+.exam-select-btn { flex: 1; padding: 12px; background: #111; border: 1px solid #333; color: #94a3b8; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;}
+.exam-select-btn.selected { border-color: #d4af37; color: #d4af37; background: rgba(212, 175, 55, 0.1); }
