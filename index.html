@@ -3,28 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PYQ Hub | The Reality</title>
+    <title>RANKER'S VAULT | PYQ Reality</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar glass">
+    <!-- Navbar -->
+    <nav class="navbar glass-nav">
         <div class="logo">RANKER'S VAULT</div>
-        <div class="score-display">Score: <span id="live-score">0</span></div>
+        <div id="nav-right">
+            <!-- Quiz ke time score dikhega -->
+            <div id="score-display" class="hidden">Live Score: <span id="live-score">0</span></div>
+            <!-- Dashboard par logout dikhega -->
+            <button id="logout-btn" onclick="logout()" class="outline-btn hidden">Logout</button>
+        </div>
     </nav>
 
     <div class="main-container">
-        <!-- Hero & Login (Dashboard) -->
-        <div id="dashboard-section" class="glass-panel">
-            <h2>Welcome to your Daily Grind</h2>
-            <p>10 Tricky PYQs. <span style="color:#10b981;">+4 for Correct</span> | <span style="color:#ef4444;">-1 for Incorrect</span>.</p>
-            <p>No answers will be revealed if you are wrong. Only hints.</p>
-            <button class="glow-btn" onclick="startDailyQuiz()">Start Day 1</button>
-        </div>
+        
+        <!-- 1. HERO SECTION (Suspensive Vibe) -->
+        <section class="hero" id="hero-section">
+            <h1>99% Aspirants Make This <span class="highlight">One Mistake.</span></h1>
+            <p class="subtitle">They run after new books and ignore the actual exam pattern.</p>
+            
+            <div class="message-box">
+                <p><strong>Listen to me carefully:</strong> Just solve 10 real Previous Year Questions (PYQs) daily. That’s it. That is the secret to staying ahead of 15 lakh students.</p>
+                <p>You can unlock our full premium test series later for just ₹9, but please, do not skip these daily 10 free questions. Your future college depends on it.</p>
+            </div>
 
-        <!-- Quiz Screen -->
+            <div class="action-buttons">
+                <button class="primary-btn" onclick="openLoginModal()">Start Daily 10 PYQs (Free)</button>
+                <button class="secondary-btn" onclick="alert('Full Test Series @ ₹9 unlocking soon!')">Unlock Full Test Series @ ₹9</button>
+            </div>
+        </section>
+
+        <!-- 2. DASHBOARD SECTION (After Login) -->
+        <section id="dashboard-section" class="hidden dashboard">
+            <h2>Welcome back, <span id="user-name-display" class="highlight"></span>!</h2>
+            <p>Target: <strong><span id="target-exam-display"></span></strong></p>
+            <div class="stats-box">
+                <p>Your Past Score: <strong id="saved-score">0</strong></p>
+                <p>Status: <span style="color: #10b981;">Ready for today's challenge.</span></p>
+            </div>
+            <!-- Ye button dabane par Theme badlega aur quiz aayega -->
+            <button class="glow-btn" onclick="startDailyQuiz()">Start Today's 10 PYQs</button>
+        </section>
+
+        <!-- 3. QUIZ SCREEN (Glassmorphism + Warm Light) -->
         <div id="quiz-screen" class="glass-panel hidden">
             <div class="quiz-header">
-                <span id="q-counter">Q: 1/10</span>
+                <span id="q-counter" style="color: #fbbf24; font-weight:bold;">Q: 1/10</span>
             </div>
             <h3 id="question-text">Question loading...</h3>
             
@@ -32,19 +59,35 @@
                 <!-- Options added by JS -->
             </div>
 
-            <!-- HINT BOX (Hidden by default) -->
+            <!-- Hint Box -->
             <div id="hint-box" class="hint-glass hidden">
                 <p>💡 <strong>Hint:</strong> <span id="hint-text"></span></p>
             </div>
 
-            <button id="next-btn" class="glow-btn hidden" onclick="nextQuestion()">Next Question ➡️</button>
+            <button id="next-btn" class="glow-btn hidden full-width" onclick="nextQuestion()">Next Question ➡️</button>
         </div>
 
-        <!-- Result Screen -->
+        <!-- 4. RESULT SCREEN -->
         <div id="result-screen" class="glass-panel hidden">
             <h2>Test Completed!</h2>
-            <p class="final-score">Total Score: <span id="score-text"></span></p>
+            <p class="final-score">Total Score: <span id="score-text" class="highlight"></span></p>
             <button class="glow-btn" onclick="location.reload()">Return to Dashboard</button>
+        </div>
+
+    </div>
+
+    <!-- Login Modal Popup -->
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+            <h2>Set Up Your Profile</h2>
+            <input type="text" id="username-input" placeholder="Enter your Name" required>
+            <div class="exam-selection">
+                <button class="exam-select-btn" onclick="selectExam('JEE')">Target JEE</button>
+                <button class="exam-select-btn" onclick="selectExam('NEET')">Target NEET</button>
+            </div>
+            <p id="exam-warning" class="error-text hidden">Please select an exam first!</p>
+            <button class="primary-btn full-width" onclick="saveProfile()">Create Free Account</button>
         </div>
     </div>
 
