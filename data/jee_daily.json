@@ -1,23 +1,67 @@
 {
   "day_1": [
     {
-      "question": "Q1. The dimension of Planck's constant is same as that of:",
-      "options": ["Angular momentum", "Work", "Energy", "Power"],
-      "answer": 0
+      "question": "Q1. A particle of mass m is projected with velocity v at an angle θ. If the coefficient of restitution is e, what is the total distance covered along the horizontal before it stops bouncing?",
+      "options": ["(v²sin2θ)/g * (1/(1-e))", "(v²sin2θ)/g * (1/(1-e²))", "(v²sin2θ)/g * (e/(1-e))", "Infinite"],
+      "answer": 1,
+      "hint": "Sum of an infinite geometric progression use hoga. Range is proportional to horizontal velocity (constant) and time of flight (decreases by factor 'e' each bounce)."
     },
     {
-      "question": "Q2. Force is product of...",
-      "options": ["Mass and Velocity", "Mass and Acceleration", "Work and Time", "None"],
-      "answer": 1
-    }
-    // Aise hi 8 aur questions add kar dena Day 1 ke liye
-  ],
-  "day_2": [
+      "question": "Q2. In a photoelectric experiment, if both the intensity and frequency of the incident light are doubled, then the saturation photocurrent will:",
+      "options": ["Remain same", "Double", "Halve", "Quadruple"],
+      "answer": 1,
+      "hint": "Saturation current depends ONLY on the number of photons striking per second (intensity), not on their individual energy (frequency)."
+    },
     {
-      "question": "Q1. (Day 2 ka pehla question)...",
-      "options": ["Opt A", "Opt B", "Opt C", "Opt D"],
-      "answer": 2
+      "question": "Q3. Two identical capacitors are joined in parallel, charged to potential V, and then separated. They are then connected in series with the positive plate of one connected to the negative of the other. The free plates are connected to a voltmeter. The reading will be:",
+      "options": ["Zero", "V", "2V", "V/2"],
+      "answer": 2,
+      "hint": "In series, the potentials of the individual capacitors add up if connected with correct polarity (+ to -)."
+    },
+    {
+      "question": "Q4. Which of the following is an intensive property?",
+      "options": ["Heat capacity", "Entropy", "Electromotive force (EMF)", "Enthalpy"],
+      "answer": 2,
+      "hint": "Think about whether the property changes if you cut the system in half. EMF of a cell is independent of the size of the cell."
+    },
+    {
+      "question": "Q5. An SN2 reaction at an asymmetric carbon of a compound always gives:",
+      "options": ["Complete racemization", "Retention of configuration", "Inversion of configuration", "Partial racemization"],
+      "answer": 2,
+      "hint": "Walden inversion happens because the nucleophile attacks from the side exactly opposite to the leaving group."
+    },
+    {
+      "question": "Q6. Which of the following has the maximum number of unpaired electrons?",
+      "options": ["Fe2+", "Fe3+", "Co3+", "Ni2+"],
+      "answer": 1,
+      "hint": "Write the electronic configuration. Fe3+ is a d5 system. According to Hund's rule, how many will be unpaired?"
+    },
+    {
+      "question": "Q7. Value of integral from -π/2 to π/2 of (sin²x)/(1 + 2^x) dx is:",
+      "options": ["π/2", "π/4", "0", "π"],
+      "answer": 1,
+      "hint": "Use the King's Rule: Integral of f(x) from a to b = Integral of f(a+b-x). Then add the two equations."
+    },
+    {
+      "question": "Q8. If |z - i| = |z + i|, then the locus of the complex number z is:",
+      "options": ["A circle", "The real axis", "The imaginary axis", "A parabola"],
+      "answer": 1,
+      "hint": "The distance of z from (0,1) is equal to its distance from (0,-1). What is the perpendicular bisector of the line joining these two points?"
+    },
+    {
+      "question": "Q9. The number of real tangents that can be drawn to the ellipse x²/16 + y²/9 = 1 passing through the point (5, 0) is:",
+      "options": ["0", "1", "2", "Infinite"],
+      "answer": 2,
+      "hint": "First, check the position of the point (5,0) with respect to the ellipse by substituting it into the equation. Is it outside, inside, or on the ellipse?"
+    },
+    {
+      "question": "Q10. Let A and B be two 3x3 matrices such that AB = I. Which of the following is ALWAYS true?",
+      "options": ["BA = I", "A = B", "Both are symmetric", "None of these"],
+      "answer": 0,
+      "hint": "For square matrices, if a right inverse exists, it is also the left inverse."
     }
-  ]
-  // Aise hi day_60 tak banate jaa
+  ],
+  "day_2": [],
+  "day_3": [],
+  "day_120": []
 }
