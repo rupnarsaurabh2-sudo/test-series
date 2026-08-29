@@ -3,35 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEE/NEET PYQ Hub</title>
+    <title>The PYQ Reality | JEE & NEET</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="navbar">
-        <h1>🎯 PYQ Hub</h1>
-        <button class="pro-btn">Unlock Pro Test Series @ ₹9</button>
-    </div>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">RANKER'S VAULT</div>
+        <div id="user-info" class="hidden">
+            <span id="user-name-display"></span>
+            <button onclick="logout()" class="outline-btn">Logout</button>
+        </div>
+    </nav>
 
-    <div class="quiz-container">
-        <div id="setup-screen">
-            <h2>Daily Free 10 PYQ Quiz</h2>
-            <p>Target Exam Select Karo:</p>
-            <button class="exam-btn" onclick="startQuiz('JEE')">JEE Mains</button>
-            <button class="exam-btn" onclick="startQuiz('NEET')">NEET</button>
+    <!-- Hero Section (Suspenseful & Professional) -->
+    <section class="hero" id="hero-section">
+        <h1>99% Aspirants Make This <span class="highlight">One Mistake.</span></h1>
+        <p class="subtitle">They run after new books and ignore the actual exam pattern.</p>
+        
+        <div class="message-box">
+            <p><strong>Listen to me carefully:</strong> Just solve 10 real Previous Year Questions (PYQs) daily. That’s it. That is the secret to staying ahead of 15 lakh students.</p>
+            <p>You can unlock our full premium test series later for just ₹9, but please, do not skip these daily 10 free questions. Your future college depends on it.</p>
         </div>
 
-        <div id="quiz-screen" class="hidden">
-            <h3 id="question-text">Question aayega yaha...</h3>
-            <div id="options-container">
-                <!-- Options JS se aayenge -->
+        <div class="action-buttons">
+            <button class="primary-btn" onclick="openLoginModal()">Start Daily 10 PYQs (Free)</button>
+            <button class="secondary-btn" onclick="alert('Full Test Series @ ₹9 unlocking soon!')">Unlock Full Test Series @ ₹9</button>
+        </div>
+    </section>
+
+    <!-- Dashboard Section (Hidden until Login) -->
+    <section id="dashboard-section" class="hidden dashboard">
+        <h2>Welcome back! Here is your <span id="target-exam-display"></span> Dashboard</h2>
+        <div class="stats-box">
+            <p>Past Score: <strong id="saved-score">0</strong> / 10</p>
+            <p>Status: <span style="color: #10b981;">Ready for today's challenge.</span></p>
+        </div>
+        <button class="primary-btn" onclick="alert('Quiz system loading...')">Start Today's Test</button>
+    </section>
+
+    <!-- Login/Target Selection Popup Modal -->
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+            <h2>Set Up Your Profile</h2>
+            <p>Save your progress and past scores.</p>
+            
+            <input type="text" id="username-input" placeholder="Enter your Name" required>
+            
+            <div class="exam-selection">
+                <button class="exam-select-btn" onclick="selectExam('JEE')">Target JEE</button>
+                <button class="exam-select-btn" onclick="selectExam('NEET')">Target NEET</button>
             </div>
-            <button id="next-btn" class="hidden" onclick="nextQuestion()">Next Question ➡️</button>
-        </div>
-
-        <div id="result-screen" class="hidden">
-            <h2>Test Completed! 🏆</h2>
-            <p id="score-text"></p>
-            <button class="exam-btn" onclick="location.reload()">Try Again</button>
+            <p id="exam-warning" class="error-text hidden">Please select an exam first!</p>
+            
+            <button class="primary-btn full-width" onclick="saveProfile()">Create Free Account</button>
         </div>
     </div>
 
