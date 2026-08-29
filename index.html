@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEE/NEET PYQ Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎯 PYQ Hub</h1>
+        <button class="pro-btn">Unlock Pro Test Series @ ₹9</button>
+    </div>
+
+    <div class="quiz-container">
+        <div id="setup-screen">
+            <h2>Daily Free 10 PYQ Quiz</h2>
+            <p>Target Exam Select Karo:</p>
+            <button class="exam-btn" onclick="startQuiz('JEE')">JEE Mains</button>
+            <button class="exam-btn" onclick="startQuiz('NEET')">NEET</button>
+        </div>
+
+        <div id="quiz-screen" class="hidden">
+            <h3 id="question-text">Question aayega yaha...</h3>
+            <div id="options-container">
+                <!-- Options JS se aayenge -->
+            </div>
+            <button id="next-btn" class="hidden" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+
+        <div id="result-screen" class="hidden">
+            <h2>Test Completed! 🏆</h2>
+            <p id="score-text"></p>
+            <button class="exam-btn" onclick="location.reload()">Try Again</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
