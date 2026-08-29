@@ -1,1 +1,23 @@
-
+{
+  "day_1": [
+    {
+      "question": "Q1. The dimension of Planck's constant is same as that of:",
+      "options": ["Angular momentum", "Work", "Energy", "Power"],
+      "answer": 0
+    },
+    {
+      "question": "Q2. Force is product of...",
+      "options": ["Mass and Velocity", "Mass and Acceleration", "Work and Time", "None"],
+      "answer": 1
+    }
+    // Aise hi 8 aur questions add kar dena Day 1 ke liye
+  ],
+  "day_2": [
+    {
+      "question": "Q1. (Day 2 ka pehla question)...",
+      "options": ["Opt A", "Opt B", "Opt C", "Opt D"],
+      "answer": 2
+    }
+  ]
+  // Aise hi day_60 tak banate jaa
+}
