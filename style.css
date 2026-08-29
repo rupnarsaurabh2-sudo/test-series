@@ -1,0 +1,77 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #1a202c;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h1 { margin: 0; font-size: 24px; }
+
+.pro-btn {
+    background-color: #fbbf24;
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.quiz-container {
+    background-color: white;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.exam-btn {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+}
+
+.option-btn {
+    display: block;
+    width: 100%;
+    background-color: #f3f4f6;
+    border: 2px solid #e5e7eb;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 16px;
+}
+
+.option-btn:hover { background-color: #e5e7eb; }
+.correct { background-color: #10b981 !important; color: white; }
+.wrong { background-color: #ef4444 !important; color: white; }
+.hidden { display: none; }
+
+#next-btn {
+    background-color: #1a202c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
