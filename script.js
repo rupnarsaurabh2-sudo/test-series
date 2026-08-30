@@ -1,48 +1,59 @@
 let currentTestType = "";
 let questions = [];
 let currentSubject = "Physics";
-let currentQIndex = 0; // Relative to subject
+let currentQIndex = 0; 
 let timerInterval;
-let totalTime; // in seconds
+let totalTime; 
 let timeSpent = 0;
-
-// State array to track answers: { id, status: 'visited'|'answered'|'marked', selectedOpt: null }
 let testState = {}; 
 
-// Mock Data Fetch (JSON se aayega)
+// Naya Fetch Function (Jo check karega ki daily file kholni hai ya test series wali)
 async function fetchQuestions(testId) {
-    // Real implementation me fetch('data.json') use karna
-    const dummyData = {
-        "Physics": [
-            { id: "p1", q: "A solid sphere rolls on rough surface...", options: ["Option A", "Option B", "Option C", "Option D"], ans: 0 },
-            { id: "p2", q: "In YDSE, if source is shifted...", options: ["Up", "Down", "Same", "None"], ans: 1 }
-        ],
-        "Chemistry": [
-            { id: "c1", q: "Resonating structure stability...", options: ["A", "B", "C", "D"], ans: 2 }
-        ],
-        "Mathematics": [
-            { id: "m1", q: "Roots of equation x3 - 12x2...", options: ["1", "2", "3", "4"], ans: 2 }
-        ]
-    };
-    return dummyData; // Assuming testId fetches appropriate length data
+    let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
+    
+    try {
+        const response = await fetch(fileName);
+        const database = await response.json();
+        
+        if(!database[testId]) {
+            alert(`Oops! ${testId} ka data abhi upload nahi hua hai.`);
+            return null;
+        }
+        
+        return database[testId];
+    } catch (error) {
+        alert("JSON load error! Make sure you are running via a server (Vercel) and 'data' folder exists.");
+        return null;
+    }
 }
 
-// UI Navigation
-function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
-function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
-function openLogin() { alert("Login System Integration Pending. Using Guest Mode."); guestLogin(); }
+// UI Navigation Modals
+function openInfoModal() { 
+    document.getElementById('info-modal').classList.remove('hidden'); 
+}
+function closeInfoModal() { 
+    document.getElementById('info-modal').classList.add('hidden'); 
+}
+function openLogin() { 
+    alert("Login System Integration Pending. Using Guest Mode for now."); 
+    guestLogin(); 
+}
 
 function guestLogin() {
+    // Hide Landing, Show Dashboard, Remove Clouds
     document.getElementById('landing-screen').classList.add('hidden');
+    document.getElementById('clouds').classList.add('hidden');
+    
     document.getElementById('dashboard-screen').classList.remove('hidden');
-    document.body.className = 'theme-sky'; // Reset
+    document.body.className = 'theme-sky'; // Reset theme class
 }
 
-// --- TEST ENGINE ---
+// --- TEST ENGINE LOGIC ---
 async function startTest(testId, timeInMins) {
     questions = await fetchQuestions(testId);
+    if(!questions) return; // If fetch failed, stop here.
     
-    // Initialize State
+    // Initialize State for each question
     testState = {};
     Object.keys(questions).forEach(sub => {
         questions[sub].forEach((q, idx) => {
@@ -50,7 +61,7 @@ async function startTest(testId, timeInMins) {
         });
     });
 
-    // Theme & UI Switch
+    // Theme & UI Switch to NTA Clone
     document.getElementById('dashboard-screen').classList.add('hidden');
     document.getElementById('nta-screen').classList.remove('hidden');
     document.body.className = 'theme-nta';
@@ -59,7 +70,7 @@ async function startTest(testId, timeInMins) {
     timeSpent = 0;
     startTimer();
     
-    switchSubject('Physics'); // Default
+    switchSubject('Physics'); // Default subject tab
 }
 
 function startTimer() {
@@ -85,10 +96,12 @@ function startTimer() {
 }
 
 function switchSubject(subName) {
+    if(!questions[subName]) return; // Failsafe
+    
     currentSubject = subName;
     currentQIndex = 0;
     
-    // Update Tabs
+    // Update active visual tab
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.innerText === subName);
     });
@@ -133,7 +146,7 @@ function loadQuestion(idx) {
     currentQIndex = idx;
     let q = questions[currentSubject][idx];
     
-    // Mark as not-answered if it was not-visited
+    // Mark as not-answered if it was completely fresh
     if(testState[q.id].status === 'not-visited') {
         testState[q.id].status = 'not-answered';
     }
@@ -154,7 +167,7 @@ function loadQuestion(idx) {
         `;
     });
     
-    buildPalette(); // Refresh palette colors
+    buildPalette(); // Refresh palette colors immediately
 }
 
 function selectOption(oIdx) {
@@ -162,7 +175,7 @@ function selectOption(oIdx) {
     testState[qId].selectedOpt = oIdx;
 }
 
-// Action Buttons
+// NTA Bottom Action Buttons
 function saveAndNext() {
     let qId = questions[currentSubject][currentQIndex].id;
     if(testState[qId].selectedOpt !== null) {
@@ -181,33 +194,35 @@ function clearResponse() {
     let qId = questions[currentSubject][currentQIndex].id;
     testState[qId].selectedOpt = null;
     testState[qId].status = 'not-answered';
-    loadQuestion(currentQIndex); // Reload to uncheck radio
+    loadQuestion(currentQIndex); // Reload current to uncheck radio visual
 }
 
 function moveToNext() {
     if(currentQIndex < questions[currentSubject].length - 1) {
         loadQuestion(currentQIndex + 1);
     } else {
-        alert("Section End. Switch tab to continue.");
+        alert("Section End. Please select a different subject tab from above.");
         buildPalette();
     }
 }
 
 function submitTestEarly() {
-    if(confirm("Are you sure you want to submit the test early?")) {
+    if(confirm("Are you sure you want to submit the test right now?")) {
         clearInterval(timerInterval);
         calculateAndShowResult();
     }
 }
 
-// --- ANALYSIS LOGIC ---
+// --- ANALYSIS ENGINE ---
 function calculateAndShowResult() {
     let finalScore = 0;
     let correct = 0;
     let totalAttempted = 0;
+    let totalQuestions = 0;
     
     Object.keys(questions).forEach(sub => {
         questions[sub].forEach(q => {
+            totalQuestions++;
             let state = testState[q.id];
             if(state.selectedOpt !== null) {
                 totalAttempted++;
@@ -222,12 +237,14 @@ function calculateAndShowResult() {
     });
 
     let accuracy = totalAttempted > 0 ? Math.round((correct/totalAttempted)*100) : 0;
+    let maxPossibleScore = totalQuestions * 4;
     
+    // Switch to Forest Theme Analysis
     document.getElementById('nta-screen').classList.add('hidden');
     document.getElementById('analysis-screen').classList.remove('hidden');
     document.body.className = 'theme-forest';
     
-    document.getElementById('final-score').innerText = finalScore;
+    document.getElementById('final-score').innerHTML = `${finalScore} <span style="font-size:20px; color:#718096;">/${maxPossibleScore}</span>`;
     document.getElementById('final-accuracy').innerText = `${accuracy}%`;
     document.getElementById('final-time').innerText = `${Math.floor(timeSpent/60)}m ${timeSpent%60}s`;
 }
