@@ -8,25 +8,25 @@ let testState = {};
 
 let pendingTestId = "";
 let pendingTestTime = 0;
-let screenHistory = ['landing-screen']; // Tracks navigation for Back Button
+let screenHistory = ['landing-screen']; 
 
 window.onload = function() {
     generateGrids();
-    createLeaves();
+    createLeaves(); // Controlled number of leaves so it doesn't look messy
 }
 
-// DYNAMIC GOLDEN LEAVES GENERATOR
 function createLeaves() {
     const container = document.getElementById('leaf-container');
-    const leafShapes = ['🍁', '🍂', '🍃'];
-    for(let i=0; i<25; i++) {
+    const leafShapes = ['🍁', '🍂'];
+    // Reduced to 15 leaves for a cleaner look
+    for(let i=0; i<15; i++) {
         let leaf = document.createElement('div');
         leaf.className = 'leaf';
         leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
         leaf.style.left = Math.random() * 100 + 'vw';
-        leaf.style.animationDuration = (Math.random() * 5 + 6) + 's, ' + (Math.random() * 3 + 2) + 's';
+        leaf.style.animationDuration = (Math.random() * 5 + 8) + 's, ' + (Math.random() * 3 + 2) + 's';
         leaf.style.animationDelay = (Math.random() * 5) + 's, ' + (Math.random() * 2) + 's';
-        leaf.style.fontSize = (Math.random() * 10 + 15) + 'px';
+        leaf.style.fontSize = (Math.random() * 10 + 12) + 'px';
         container.appendChild(leaf);
     }
 }
@@ -56,7 +56,6 @@ function generateGrids() {
     }
 }
 
-// SMART NAVIGATION SYSTEM
 function switchScreen(hideId, showId) {
     document.getElementById(hideId).classList.add('hidden');
     document.getElementById(hideId).classList.remove('active-screen');
@@ -64,7 +63,6 @@ function switchScreen(hideId, showId) {
     document.getElementById(showId).classList.remove('hidden');
     document.getElementById(showId).classList.add('active-screen');
 
-    // Manage Back Button Visibility & History
     if(showId !== screenHistory[screenHistory.length - 1]) {
         screenHistory.push(showId);
     }
@@ -119,7 +117,7 @@ async function fetchQuestions(testId) {
         const database = await response.json();
         return database[testId] || null;
     } catch (e) {
-        console.warn("Using local fallback data");
+        console.warn("Using local fallback data because fetch failed.");
         return {
             "Physics": [
                 { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3 },
@@ -148,9 +146,14 @@ async function startTest(testId, timeInMins) {
         });
     });
 
-    document.querySelector('.floating-dock').classList.add('hidden'); // Hide dock during test
+    // Hide UI Elements for Test Mode
+    document.getElementById('floating-dock').classList.add('hidden'); 
+    document.getElementById('universal-back').classList.add('hidden'); 
+    document.getElementById('leaf-container').classList.add('hidden');
+    document.getElementById('science-bg').classList.add('hidden');
+    
     switchScreen(document.querySelector('.active-screen').id, 'nta-screen');
-    document.getElementById('universal-back').classList.add('hidden'); // Hide back button during test
+    document.body.className = 'theme-nta';
     
     totalTime = timeInMins * 60;
     timeSpent = 0;
@@ -269,8 +272,12 @@ function calculateAndShowResult() {
     let maxScore = totalQs * 4;
     
     switchScreen('nta-screen', 'analysis-screen');
-    document.querySelector('.floating-dock').classList.remove('hidden'); // Bring back dock
-    document.getElementById('universal-back').classList.add('hidden'); // Hide back button on result
+    document.body.className = 'theme-premium';
+    
+    // Bring back decorative elements
+    document.getElementById('floating-dock').classList.remove('hidden'); 
+    document.getElementById('leaf-container').classList.remove('hidden');
+    document.getElementById('science-bg').classList.remove('hidden');
     
     document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
     document.getElementById('positive-score').innerText = `+${totalPositive}`;
