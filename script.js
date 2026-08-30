@@ -8,9 +8,27 @@ let testState = {};
 
 let pendingTestId = "";
 let pendingTestTime = 0;
+let screenHistory = ['landing-screen']; // Tracks navigation for Back Button
 
 window.onload = function() {
     generateGrids();
+    createLeaves();
+}
+
+// DYNAMIC GOLDEN LEAVES GENERATOR
+function createLeaves() {
+    const container = document.getElementById('leaf-container');
+    const leafShapes = ['🍁', '🍂', '🍃'];
+    for(let i=0; i<25; i++) {
+        let leaf = document.createElement('div');
+        leaf.className = 'leaf';
+        leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
+        leaf.style.left = Math.random() * 100 + 'vw';
+        leaf.style.animationDuration = (Math.random() * 5 + 6) + 's, ' + (Math.random() * 3 + 2) + 's';
+        leaf.style.animationDelay = (Math.random() * 5) + 's, ' + (Math.random() * 2) + 's';
+        leaf.style.fontSize = (Math.random() * 10 + 15) + 'px';
+        container.appendChild(leaf);
+    }
 }
 
 function generateGrids() {
@@ -25,7 +43,6 @@ function generateGrids() {
             dayGrid.appendChild(btn);
         }
     }
-
     const testGrid = document.getElementById('tests-grid');
     if(testGrid) {
         testGrid.innerHTML = '';
@@ -39,28 +56,48 @@ function generateGrids() {
     }
 }
 
+// SMART NAVIGATION SYSTEM
 function switchScreen(hideId, showId) {
-    const hideEl = document.getElementById(hideId);
-    const showEl = document.getElementById(showId);
-    hideEl.classList.add('fade-out');
-    setTimeout(() => {
-        hideEl.classList.add('hidden');
-        hideEl.classList.remove('fade-out');
-        showEl.classList.remove('hidden');
-        void showEl.offsetWidth;
-        showEl.classList.remove('fade-out');
-    }, 400); 
+    document.getElementById(hideId).classList.add('hidden');
+    document.getElementById(hideId).classList.remove('active-screen');
+    
+    document.getElementById(showId).classList.remove('hidden');
+    document.getElementById(showId).classList.add('active-screen');
+
+    // Manage Back Button Visibility & History
+    if(showId !== screenHistory[screenHistory.length - 1]) {
+        screenHistory.push(showId);
+    }
+    
+    if(showId === 'landing-screen') {
+        document.getElementById('universal-back').classList.add('hidden');
+    } else {
+        document.getElementById('universal-back').classList.remove('hidden');
+    }
+}
+
+function goBack() {
+    if(screenHistory.length > 1) {
+        let currentScreen = screenHistory.pop();
+        let prevScreen = screenHistory[screenHistory.length - 1];
+        
+        document.getElementById(currentScreen).classList.add('hidden');
+        document.getElementById(currentScreen).classList.remove('active-screen');
+        
+        document.getElementById(prevScreen).classList.remove('hidden');
+        document.getElementById(prevScreen).classList.add('active-screen');
+        
+        if(prevScreen === 'landing-screen') {
+            document.getElementById('universal-back').classList.add('hidden');
+        }
+    }
 }
 
 function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-screen'); }
 function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
 function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
 function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
-
-function guestLogin() {
-    document.getElementById('landing-screen').classList.add('hidden');
-    document.getElementById('dashboard-screen').classList.remove('hidden');
-}
+function guestLogin() { switchScreen('landing-screen', 'dashboard-screen'); }
 
 function showAllTheBest(testId, timeInMins) {
     pendingTestId = testId;
@@ -75,7 +112,6 @@ function confirmStartTest() {
     startTest(pendingTestId, pendingTestTime);
 }
 
-// --- DUMMY FETCH (Is data ko baad me apni json se replace kar lena) ---
 async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
@@ -83,7 +119,7 @@ async function fetchQuestions(testId) {
         const database = await response.json();
         return database[testId] || null;
     } catch (e) {
-        console.warn("Using local fallback data because fetch failed.");
+        console.warn("Using local fallback data");
         return {
             "Physics": [
                 { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3 },
@@ -112,14 +148,9 @@ async function startTest(testId, timeInMins) {
         });
     });
 
-    document.getElementById('day-selection-screen').classList.add('hidden');
-    document.getElementById('test-selection-screen').classList.add('hidden');
-    document.getElementById('dashboard-screen').classList.add('hidden');
-    document.getElementById('clouds').classList.add('hidden');
-    document.getElementById('science-bg').classList.add('hidden');
-    document.getElementById('ai-bot-container').classList.add('hidden'); 
-    document.getElementById('nta-screen').classList.remove('hidden');
-    document.body.className = 'theme-nta';
+    document.querySelector('.floating-dock').classList.add('hidden'); // Hide dock during test
+    switchScreen(document.querySelector('.active-screen').id, 'nta-screen');
+    document.getElementById('universal-back').classList.add('hidden'); // Hide back button during test
     
     totalTime = timeInMins * 60;
     timeSpent = 0;
@@ -237,10 +268,9 @@ function calculateAndShowResult() {
     let finalScore = totalPositive - totalNegative;
     let maxScore = totalQs * 4;
     
-    document.getElementById('nta-screen').classList.add('hidden');
-    document.getElementById('analysis-screen').classList.remove('hidden');
-    document.getElementById('ai-bot-container').classList.remove('hidden'); 
-    document.body.className = 'theme-premium';
+    switchScreen('nta-screen', 'analysis-screen');
+    document.querySelector('.floating-dock').classList.remove('hidden'); // Bring back dock
+    document.getElementById('universal-back').classList.add('hidden'); // Hide back button on result
     
     document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
     document.getElementById('positive-score').innerText = `+${totalPositive}`;
@@ -258,26 +288,4 @@ function calculateAndShowResult() {
         document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
         document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
     });
-}
-
-// --- AI BOT LOGIC ---
-function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
-function botReply(response) {
-    const chatArea = document.getElementById('bot-chat-area');
-    const optionsDiv = document.getElementById('bot-options');
-    const inputField = document.getElementById('bot-input');
-    
-    if(optionsDiv) optionsDiv.remove();
-    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
-    
-    setTimeout(() => {
-        if(response === 'Yes') {
-            chatArea.innerHTML += `<div class="bot-msg">Great! You can ask me anything about the test patterns. Type below!</div>`;
-            inputField.disabled = false;
-            document.getElementById('bot-send-btn').disabled = false;
-        } else {
-            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
-        }
-        chatArea.scrollTop = chatArea.scrollHeight;
-    }, 600);
 }
