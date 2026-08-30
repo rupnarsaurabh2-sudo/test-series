@@ -1,232 +1,233 @@
-let selectedExam = "";
-let currentQuestions = [];
-let currentQuestionIndex = 0;
-let score = 0;
+let currentTestType = "";
+let questions = [];
+let currentSubject = "Physics";
+let currentQIndex = 0; // Relative to subject
 let timerInterval;
-let activeDayToPlay = 1; // Konsa din chal raha hai
+let totalTime; // in seconds
+let timeSpent = 0;
 
-window.onload = function() { checkLoginStatus(); };
+// State array to track answers: { id, status: 'visited'|'answered'|'marked', selectedOpt: null }
+let testState = {}; 
 
-function switchScreen(hideId, showId) {
-    const hideEl = document.getElementById(hideId);
-    const showEl = document.getElementById(showId);
-    hideEl.classList.add('fade-out');
-    setTimeout(() => {
-        hideEl.classList.add('hidden');
-        hideEl.classList.remove('fade-out');
-        showEl.classList.remove('hidden');
-        void showEl.offsetWidth;
-        showEl.classList.remove('fade-out');
-    }, 400); 
+// Mock Data Fetch (JSON se aayega)
+async function fetchQuestions(testId) {
+    // Real implementation me fetch('data.json') use karna
+    const dummyData = {
+        "Physics": [
+            { id: "p1", q: "A solid sphere rolls on rough surface...", options: ["Option A", "Option B", "Option C", "Option D"], ans: 0 },
+            { id: "p2", q: "In YDSE, if source is shifted...", options: ["Up", "Down", "Same", "None"], ans: 1 }
+        ],
+        "Chemistry": [
+            { id: "c1", q: "Resonating structure stability...", options: ["A", "B", "C", "D"], ans: 2 }
+        ],
+        "Mathematics": [
+            { id: "m1", q: "Roots of equation x3 - 12x2...", options: ["1", "2", "3", "4"], ans: 2 }
+        ]
+    };
+    return dummyData; // Assuming testId fetches appropriate length data
 }
 
-function checkLoginStatus() {
-    const savedName = localStorage.getItem('userName');
-    const savedExam = localStorage.getItem('userExam');
-    if (savedName && savedExam) {
-        document.getElementById('hero-section').classList.add('hidden');
-        document.getElementById('dashboard-section').classList.remove('hidden');
-        document.getElementById('logout-btn').classList.remove('hidden');
-        document.getElementById('user-name-display').innerText = savedName;
-        document.getElementById('target-exam-display').innerText = savedExam;
-        
-        // Ensure account creation time exists
-        if(!localStorage.getItem('accountCreatedTime')) {
-            localStorage.setItem('accountCreatedTime', Date.now());
-        }
-    }
+// UI Navigation
+function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
+function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
+function openLogin() { alert("Login System Integration Pending. Using Guest Mode."); guestLogin(); }
+
+function guestLogin() {
+    document.getElementById('landing-screen').classList.add('hidden');
+    document.getElementById('dashboard-screen').classList.remove('hidden');
+    document.body.className = 'theme-sky'; // Reset
 }
 
-function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
-function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
-
-function selectExam(exam) {
-    selectedExam = exam;
-    document.querySelectorAll('.exam-select-btn').forEach(btn => btn.classList.remove('selected'));
-    event.target.classList.add('selected');
-    document.getElementById('exam-warning').classList.add('hidden');
-}
-
-function saveProfile() {
-    const name = document.getElementById('username-input').value;
-    if (name.trim() === "") return alert("Please enter your name.");
-    if (selectedExam === "") return document.getElementById('exam-warning').classList.remove('hidden');
+// --- TEST ENGINE ---
+async function startTest(testId, timeInMins) {
+    questions = await fetchQuestions(testId);
     
-    localStorage.setItem('userName', name);
-    localStorage.setItem('userExam', selectedExam);
+    // Initialize State
+    testState = {};
+    Object.keys(questions).forEach(sub => {
+        questions[sub].forEach((q, idx) => {
+            testState[q.id] = { status: 'not-visited', selectedOpt: null, globalIdx: idx, subject: sub };
+        });
+    });
+
+    // Theme & UI Switch
+    document.getElementById('dashboard-screen').classList.add('hidden');
+    document.getElementById('nta-screen').classList.remove('hidden');
+    document.body.className = 'theme-nta';
     
-    // Yahan hum pehli baar account banne ka time save kar rahe hain
-    if(!localStorage.getItem('accountCreatedTime')) {
-        localStorage.setItem('accountCreatedTime', Date.now());
-    }
+    totalTime = timeInMins * 60;
+    timeSpent = 0;
+    startTimer();
     
-    closeLoginModal();
-    checkLoginStatus();
+    switchSubject('Physics'); // Default
 }
 
-function logout() { localStorage.clear(); location.reload(); }
-
-/* --- 30-DAY TIMELINE LOGIC --- */
-function openDaySelection() {
-    switchScreen('dashboard-section', 'day-selection-screen');
-    
-    const grid = document.getElementById('days-grid');
-    grid.innerHTML = ''; // Clear purana grid
-    
-    const createdTime = parseInt(localStorage.getItem('accountCreatedTime'));
-    const hoursPassed = (Date.now() - createdTime) / (1000 * 60 * 60);
-    const unlockedDays = Math.floor(hoursPassed / 24) + 1; // Har 24 ghante mein ek aur khulega
-    
-    for(let i = 1; i <= 30; i++) {
-        let btn = document.createElement('button');
-        let isCompleted = localStorage.getItem(`completed_day_${i}`);
-        
-        if (isCompleted) {
-            btn.className = 'day-btn day-completed';
-            btn.innerHTML = `Day ${i} <br> <span style="font-size:12px;">✅ Done</span>`;
-            btn.onclick = () => alert("You have already completed this test!");
-        } 
-        else if (i <= unlockedDays) {
-            btn.className = 'day-btn day-unlocked';
-            btn.innerText = `Day ${i}`;
-            btn.onclick = () => setupPreStart(i);
-        } 
-        else {
-            btn.className = 'day-btn day-locked';
-            btn.innerHTML = `Day ${i} <br> <span style="font-size:12px;">🔒 Locked</span>`;
-            btn.onclick = () => alert(`This test will unlock in ${Math.ceil((i - (hoursPassed/24)) * 24)} hours.`);
-        }
-        grid.appendChild(btn);
-    }
-}
-
-function setupPreStart(dayNumber) {
-    activeDayToPlay = dayNumber;
-    document.getElementById('selected-day-title').innerText = `Challenge: Day ${dayNumber}`;
-    switchScreen('day-selection-screen', 'pre-start-screen');
-}
-
-/* --- QUIZ & TIMER LOGIC --- */
-async function startDailyQuiz() {
-    try {
-        const response = await fetch('data/jee_daily.json'); 
-        const database = await response.json();
-        const dayKey = `day_${activeDayToPlay}`;
-        
-        if(!database[dayKey] || database[dayKey].length === 0) {
-            return alert("Is din ke questions abhi upload nahi hue hain bhai! JSON check kar.");
-        }
-        
-        currentQuestions = database[dayKey]; 
-        currentQuestionIndex = 0;
-        score = 0;
-        
-        document.body.classList.add('quiz-active');
-        
-        document.getElementById('logout-btn').classList.add('fade-out');
-        setTimeout(() => {
-            document.getElementById('logout-btn').classList.add('hidden');
-            document.getElementById('score-display').classList.remove('hidden');
-            document.getElementById('live-score').innerText = '0';
-        }, 400);
-
-        switchScreen('pre-start-screen', 'quiz-screen');
-        
-        loadQuestion();
-        startTimer(15 * 60); 
-        
-    } catch (error) {
-        alert("JSON load nahi hua. GitHub repo aur file path check karo.");
-    }
-}
-
-function startTimer(duration) {
-    let timer = duration, minutes, seconds;
-    const display = document.getElementById('timer-display');
+function startTimer() {
     clearInterval(timerInterval);
+    const display = document.getElementById('time-left');
     
-    timerInterval = setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
+    timerInterval = setInterval(() => {
+        totalTime--;
+        timeSpent++;
+        
+        let h = Math.floor(totalTime / 3600);
+        let m = Math.floor((totalTime % 3600) / 60);
+        let s = totalTime % 60;
+        
+        display.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        
+        if (totalTime <= 0) {
             clearInterval(timerInterval);
-            alert("Time's Up! Test is automatically submitting.");
-            endQuiz();
+            alert("Time's Up! Auto-submitting test.");
+            calculateAndShowResult();
         }
     }, 1000);
 }
 
-function loadQuestion() {
-    let q = currentQuestions[currentQuestionIndex];
-    document.getElementById('question-text').innerText = q.question;
-    document.getElementById('q-counter').innerText = `Q: ${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+function switchSubject(subName) {
+    currentSubject = subName;
+    currentQIndex = 0;
     
-    let optionsHtml = '';
-    q.options.forEach((opt, index) => {
-        optionsHtml += `<button class="option-btn" onclick="checkAnswer(${index}, this)">${opt}</button>`;
+    // Update Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText === subName);
+    });
+    document.getElementById('current-subject-name').innerText = subName;
+    
+    buildPalette();
+    loadQuestion(0);
+}
+
+function buildPalette() {
+    const palette = document.getElementById('question-palette');
+    palette.innerHTML = '';
+    
+    questions[currentSubject].forEach((q, idx) => {
+        let btn = document.createElement('div');
+        let state = testState[q.id].status;
+        
+        btn.className = `badge ${state}`;
+        btn.innerText = idx + 1;
+        btn.onclick = () => loadQuestion(idx);
+        palette.appendChild(btn);
+    });
+    updateCounts();
+}
+
+function updateCounts() {
+    let ans=0, notAns=0, notVis=0, mark=0;
+    Object.values(testState).forEach(s => {
+        if(s.status === 'answered') ans++;
+        else if(s.status === 'not-answered') notAns++;
+        else if(s.status === 'not-visited') notVis++;
+        else if(s.status === 'marked') mark++;
     });
     
-    document.getElementById('options-container').innerHTML = optionsHtml;
-    
-    const nextBtn = document.getElementById('next-btn');
-    const hintBox = document.getElementById('hint-box');
-    
-    nextBtn.classList.add('fade-out');
-    hintBox.classList.add('fade-out');
-    setTimeout(() => {
-        nextBtn.classList.add('hidden');
-        hintBox.classList.add('hidden');
-        nextBtn.classList.remove('fade-out');
-        hintBox.classList.remove('fade-out');
-    }, 400);
+    document.getElementById('cnt-answered').innerText = ans;
+    document.getElementById('cnt-not-answered').innerText = notAns;
+    document.getElementById('cnt-not-visited').innerText = notVis;
+    document.getElementById('cnt-marked').innerText = mark;
 }
 
-function checkAnswer(selectedIndex, buttonElement) {
-    let q = currentQuestions[currentQuestionIndex];
-    let correctIndex = q.answer;
-    document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+function loadQuestion(idx) {
+    currentQIndex = idx;
+    let q = questions[currentSubject][idx];
     
-    if(selectedIndex === correctIndex) {
-        buttonElement.classList.add('correct');
-        score += 4;
-    } else {
-        buttonElement.classList.add('wrong');
-        score -= 1;
-        const hintBox = document.getElementById('hint-box');
-        document.getElementById('hint-text').innerText = q.hint;
-        hintBox.classList.remove('hidden');
+    // Mark as not-answered if it was not-visited
+    if(testState[q.id].status === 'not-visited') {
+        testState[q.id].status = 'not-answered';
     }
     
-    document.getElementById('live-score').innerText = score;
-    document.getElementById('next-btn').classList.remove('hidden');
+    document.getElementById('current-q-no').innerText = idx + 1;
+    document.getElementById('q-text').innerText = q.q;
+    
+    const optArea = document.getElementById('options-area');
+    optArea.innerHTML = '';
+    
+    q.options.forEach((opt, oIdx) => {
+        let isChecked = testState[q.id].selectedOpt === oIdx ? 'checked' : '';
+        optArea.innerHTML += `
+            <label class="opt-row">
+                <input type="radio" name="opt" value="${oIdx}" ${isChecked} onchange="selectOption(${oIdx})">
+                ${opt}
+            </label>
+        `;
+    });
+    
+    buildPalette(); // Refresh palette colors
 }
 
-function nextQuestion() {
-    currentQuestionIndex++;
-    if(currentQuestionIndex < currentQuestions.length) {
-        loadQuestion();
+function selectOption(oIdx) {
+    let qId = questions[currentSubject][currentQIndex].id;
+    testState[qId].selectedOpt = oIdx;
+}
+
+// Action Buttons
+function saveAndNext() {
+    let qId = questions[currentSubject][currentQIndex].id;
+    if(testState[qId].selectedOpt !== null) {
+        testState[qId].status = 'answered';
+    }
+    moveToNext();
+}
+
+function markForReview() {
+    let qId = questions[currentSubject][currentQIndex].id;
+    testState[qId].status = 'marked';
+    moveToNext();
+}
+
+function clearResponse() {
+    let qId = questions[currentSubject][currentQIndex].id;
+    testState[qId].selectedOpt = null;
+    testState[qId].status = 'not-answered';
+    loadQuestion(currentQIndex); // Reload to uncheck radio
+}
+
+function moveToNext() {
+    if(currentQIndex < questions[currentSubject].length - 1) {
+        loadQuestion(currentQIndex + 1);
     } else {
-        endQuiz();
+        alert("Section End. Switch tab to continue.");
+        buildPalette();
     }
 }
 
-function endQuiz() {
-    clearInterval(timerInterval);
-    // Mark this day as completed
-    localStorage.setItem(`completed_day_${activeDayToPlay}`, true);
-    
-    document.getElementById('score-text').innerText = score;
-    document.getElementById('score-display').classList.add('hidden');
-    document.body.classList.remove('quiz-active'); // Remove nature theme
-    
-    switchScreen('quiz-screen', 'result-screen');
+function submitTestEarly() {
+    if(confirm("Are you sure you want to submit the test early?")) {
+        clearInterval(timerInterval);
+        calculateAndShowResult();
+    }
 }
 
-function returnToTimeline() {
-    switchScreen('result-screen', 'day-selection-screen');
-    openDaySelection(); // Re-render grid to show the new completed badge
+// --- ANALYSIS LOGIC ---
+function calculateAndShowResult() {
+    let finalScore = 0;
+    let correct = 0;
+    let totalAttempted = 0;
+    
+    Object.keys(questions).forEach(sub => {
+        questions[sub].forEach(q => {
+            let state = testState[q.id];
+            if(state.selectedOpt !== null) {
+                totalAttempted++;
+                if(state.selectedOpt === q.ans) {
+                    finalScore += 4;
+                    correct++;
+                } else {
+                    finalScore -= 1;
+                }
+            }
+        });
+    });
+
+    let accuracy = totalAttempted > 0 ? Math.round((correct/totalAttempted)*100) : 0;
+    
+    document.getElementById('nta-screen').classList.add('hidden');
+    document.getElementById('analysis-screen').classList.remove('hidden');
+    document.body.className = 'theme-forest';
+    
+    document.getElementById('final-score').innerText = finalScore;
+    document.getElementById('final-accuracy').innerText = `${accuracy}%`;
+    document.getElementById('final-time').innerText = `${Math.floor(timeSpent/60)}m ${timeSpent%60}s`;
 }
