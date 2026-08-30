@@ -1,11 +1,6 @@
 {
   "full_test_1": {
     "Physics": [
-      { "id": "t1_p1", "q": "Force is defined as the rate of change of:", "options": ["Velocity", "Acceleration", "Momentum", "Mass"], "ans": 2, "hint": "Newton's Second Law." },
-      { "id": "t1_p2", "q": "Unit of Capacitance is:", "options": ["Henry", "Farad", "Coulomb", "Volt"], "ans": 1, "hint": "Named after Michael Faraday." },
-      { "id": "t1_p3", "q": "Work done by conservative force in a closed loop is:", "options": ["Positive", "Negative", "Zero", "Infinite"], "ans": 2, "hint": "Depends only on initial and final points." },
-      { "id": "t1_p4", "q": "Speed of light is maximum in:", "options": ["Water", "Glass", "Diamond", "Vacuum"], "ans": 3, "hint": "Refractive index is minimum here." },
-      { "id": "t1_p5", "q": "The dimension of Energy is:", "options": ["MLT-1", "ML2T-2", "MLT-2", "M2LT-1"], "ans": 1, "hint": "Work = Force x Displacement." }
       { "id": "t1_p1", "type": "mcq", "q": "The maximum error in the measurement of resistance, current and time for which current flows in an electrical circuit are $1\\%$, $2\\%$ and $3\\%$ respectively. The maximum percentage error in the detection of the dissipated heat will be:", "options": ["2", "4", "6", "8"], "ans": 3 },
       { "id": "t1_p2", "type": "mcq", "q": "A helicopter flying horizontally with a speed of $360~km/h$ at an altitude of 2 km, drops an object at an instant. The object hits the ground at a point O, 20 s after it is dropped. Displacement of 'O' from the position of helicopter where the object was released is: (use $g=10~m/s^2$)", "options": ["$2\\sqrt{5}~km$", "$4~km$", "$7.2~km$", "$2\\sqrt{2}~km$"], "ans": 3 },
       { "id": "t1_p3", "type": "numerical", "q": "A particle of mass 10 g moves in a straight line with retardation $2x$, where $x$ is the displacement in SI units. Its loss of kinetic energy for above displacement is $(10/x)^{-n} J$. The value of $n$ will be:", "ans": 2 },
@@ -15,21 +10,31 @@
       { "id": "t1_p7", "type": "numerical", "q": "Two blocks ($m=0.5~kg$ and $M=4.5~kg$) are arranged on a horizontal frictionless table. The coefficient of static friction between the two blocks is $3/7$. The maximum horizontal force that can be applied on the larger block so that the blocks move together is (in N):", "ans": 21 },
       { "id": "t1_p8", "type": "numerical", "q": "A nucleus disintegrates into two nuclear parts, in such a way that ratio of their nuclear sizes is $1:2^{1/3}$. Their respective speeds have a ratio of $n:1$. The value of $n$ is:", "ans": 2 },
       { "id": "t1_p9", "type": "mcq", "q": "The fractional compression $(\\Delta V/V)$ of water at the depth of 2.5 km below the sea level is: (Bulk modulus $= 2\\times10^9~N/m^2$, density $= 10^3~kg/m^3$, $g = 10~m/s^2$)", "options": ["$1.25\\%$", "$1.0\\%$", "$1.75\\%$", "$1.5\\%$"], "ans": 0 },
-      { "id": "t1_p10", "type": "numerical", "q": "A container of fixed volume contains a gas at $27^\\circ C$. To double the pressure of the gas, the temperature of gas should be raised to (in $^\\circ C$):", "ans": 327 },
+      { "id": "t1_p10", "type": "numerical", "q": "A container of fixed volume contains a gas at $27^\\circ C$. To double the pressure of the gas, the temperature of gas should be raised to (in $^\\circ C$):", "ans": 327 }
     ],
     "Chemistry": [
-      { "id": "t1_c1", "q": "Atomic number of Carbon is:", "options": ["5", "6", "7", "8"], "ans": 1, "hint": "It has 4 valence electrons." },
-      { "id": "t1_c2", "q": "pH of pure water at 25°C is:", "options": ["5", "6", "7", "8"], "ans": 2, "hint": "It is perfectly neutral." },
-      { "id": "t1_c3", "q": "Which is a noble gas?", "options": ["Nitrogen", "Oxygen", "Neon", "Chlorine"], "ans": 2, "hint": "Group 18 element." },
-      { "id": "t1_c4", "q": "Formula of Benzene is:", "options": ["C6H6", "C6H12", "C5H10", "C6H5OH"], "ans": 0, "hint": "Highly stable aromatic ring." },
-      { "id": "t1_c5", "q": "Strongest acid among these is:", "options": ["HCl", "CH3COOH", "H2O", "NH3"], "ans": 0, "hint": "Strong mineral acid." }
+      { "id": "t1_c1", "type": "mcq", "q": "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is: (Molar mass Mg = $24~g/mol$)", "options": ["235.7 g", "0.24 mg", "236 mg", "2.444 g"], "ans": 2 },
+      { "id": "t1_c2", "type": "mcq", "q": "Among $10^{-9}$ g (each) of the following elements, which one will have the highest number of atoms?", "options": ["Po", "Pr", "Pb", "Pt"], "ans": 1 },
+      { "id": "t1_c3", "type": "mcq", "q": "Concentrated nitric acid is labelled as $75\\%$ by mass. The volume in mL of the solution which contains 30 g of nitric acid is: (Density $= 1.25~g/mL$)", "options": ["40", "32", "45", "55"], "ans": 1 },
+      { "id": "t1_c4", "type": "mcq", "q": "The density of 'x' M solution of NaOH is $1.12~g/mL$ while in molality, the concentration is 3 m. Then x is:", "options": ["3.5", "3.8", "2.8", "3.0"], "ans": 3 },
+      { "id": "t1_c5", "type": "numerical", "q": "10 mL of gaseous hydrocarbon on combustion gives 40 mL of $CO_2(g)$ and 50 mL of water vapour. Total number of carbon and hydrogen atoms in the hydrocarbon is:", "ans": 14 },
+      { "id": "t1_c6", "type": "mcq", "q": "A commercially sold conc. HCl is $35\\%$ HCl by mass. If the density of this acid is $1.46~g/mL$, the molarity of this solution is:", "options": ["10.2 M", "14.0 M", "12.5 M", "18.2 M"], "ans": 1 },
+      { "id": "t1_c7", "type": "mcq", "q": "The number of radial node(s) for 3p orbital is:", "options": ["1", "4", "2", "3"], "ans": 0 },
+      { "id": "t1_c8", "type": "numerical", "q": "An ideal gas $C_v=5/2 R$ is expanded adiabatically against a constant pressure of 1 atm until it doubles in volume. Initial temp and pressure is 298 K and 5 atm. The final temperature is (nearest integer):", "ans": 274 },
+      { "id": "t1_c9", "type": "numerical", "q": "When 600 mL of 0.2M $HNO_3$ is mixed with 400 mL of 0.1M NaOH solution in a flask, the rise in temperature of the flask is $x\\times10^{-2} ^\\circ C$. The value of x is:", "ans": 54 },
+      { "id": "t1_c10", "type": "mcq", "q": "One mole of an ideal gas expands isothermally and reversibly from $10~dm^3$ to $20~dm^3$ at 300 K. $\\Delta U$, q and work done respectively are:", "options": ["0, 21.84 kJ, -1.26 kJ", "0, -17.18 kJ, 1.718 kJ", "0, 21.84 kJ, 21.84 kJ", "0, 1.718 kJ, -1.718 kJ"], "ans": 3 }
     ],
     "Mathematics": [
-      { "id": "t1_m1", "q": "Derivative of sin(x) is:", "options": ["cos(x)", "-cos(x)", "sin(x)", "-sin(x)"], "ans": 0, "hint": "Basic calculus rule." },
-      { "id": "t1_m2", "q": "Value of log(1) base 10 is:", "options": ["1", "10", "0", "Undefined"], "ans": 2, "hint": "Any number to the power 0 is 1." },
-      { "id": "t1_m3", "q": "Sum of angles in a triangle is:", "options": ["90", "180", "360", "270"], "ans": 1, "hint": "Basic geometry." },
-      { "id": "t1_m4", "q": "Integral of 2x dx is:", "options": ["x^2", "x", "2x^2", "x^2/2"], "ans": 0, "hint": "Power rule of integration." },
-      { "id": "t1_m5", "q": "Probability of sure event is:", "options": ["0", "0.5", "1", "Infinity"], "ans": 2, "hint": "It will definitely happen." }
+      { "id": "t1_m1", "type": "mcq", "q": "The number of solutions of the equation $e^{\\sin x}-2e^{-\\sin x}=2$ is:", "options": ["2", "more than 2", "1", "0"], "ans": 3 },
+      { "id": "t1_m2", "type": "numerical", "q": "The number of real solutions of the equation $x|x+5|+2|x+7|-2=0$ is:", "ans": 3 },
+      { "id": "t1_m3", "type": "mcq", "q": "The equation $e^{4x}+8e^{3x}+13e^{2x}-8e^x+1=0$ has:", "options": ["four solutions two negative", "two solutions both negative", "no solution", "two solutions one negative"], "ans": 1 },
+      { "id": "t1_m4", "type": "mcq", "q": "The number of real roots of the equation $\\sqrt{x^2-4x+3}+\\sqrt{x^2-9}=\\sqrt{4x^2-14x+6}$ is:", "options": ["0", "1", "3", "2"], "ans": 1 },
+      { "id": "t1_m5", "type": "mcq", "q": "If the sum of the second, fourth and sixth terms of a G.P. is 21 and the sum of eighth, tenth and twelfth terms is 15309, then the sum of its first nine terms is:", "options": ["760", "755", "750", "757"], "ans": 3 },
+      { "id": "t1_m6", "type": "mcq", "q": "Let $x_1, x_2, x_3, x_4$ be in GP. 2, 7, 9, 5 are subtracted respectively resulting in AP. Then the value of $1/24(x_1x_2x_3x_4)$ is:", "options": ["72", "18", "36", "216"], "ans": 3 },
+      { "id": "t1_m7", "type": "mcq", "q": "The number of different 5 digit numbers greater than 50000 that can be formed using 0, 1, 2, 3, 4, 5, 6, 7 such that the sum of their first and last digits is not more than 8, is:", "options": ["4608", "5720", "5719", "4607"], "ans": 3 },
+      { "id": "t1_m8", "type": "mcq", "q": "The number of words which can be formed using all the letters of the word 'DAUGHTER', so that all the vowels never come together, is:", "options": ["36000", "37000", "34000", "35000"], "ans": 0 },
+      { "id": "t1_m9", "type": "numerical", "q": "The total number of two digit numbers 'n', such that $3^n+7^n$ is a multiple of 10, is:", "ans": 45 },
+      { "id": "t1_m10", "type": "numerical", "q": "The remainder on dividing $5^{99}$ by 11 is:", "ans": 9 }
     ]
   }
 }
