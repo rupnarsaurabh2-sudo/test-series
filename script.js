@@ -12,6 +12,23 @@ let screenHistory = ['landing-screen'];
 
 window.onload = function() {
     generateGrids();
+    createLeaves();
+}
+
+// 1. MAGICAL HEAVENLY LEAVES
+function createLeaves() {
+    const container = document.getElementById('leaf-container');
+    const leafShapes = ['🍁', '🍂', '✨', '🍃'];
+    for(let i=0; i<20; i++) {
+        let leaf = document.createElement('div');
+        leaf.className = 'leaf';
+        leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
+        leaf.style.left = Math.random() * 100 + 'vw';
+        leaf.style.animationDuration = (Math.random() * 6 + 7) + 's, ' + (Math.random() * 3 + 2) + 's';
+        leaf.style.animationDelay = (Math.random() * 5) + 's, ' + (Math.random() * 2) + 's';
+        leaf.style.fontSize = (Math.random() * 12 + 14) + 'px';
+        container.appendChild(leaf);
+    }
 }
 
 function generateGrids() {
@@ -39,6 +56,7 @@ function generateGrids() {
     }
 }
 
+// 2. GLITCH-FREE SMART NAVIGATION
 function switchScreen(hideId, showId) {
     document.getElementById(hideId).classList.add('hidden');
     document.getElementById(hideId).classList.remove('active-screen');
@@ -49,13 +67,7 @@ function switchScreen(hideId, showId) {
     if(showId !== screenHistory[screenHistory.length - 1]) {
         screenHistory.push(showId);
     }
-    
-    // Manage Back Button visibility
-    if(showId === 'landing-screen' || showId === 'nta-screen' || showId === 'analysis-screen') {
-        document.getElementById('universal-back').classList.add('hidden');
-    } else {
-        document.getElementById('universal-back').classList.remove('hidden');
-    }
+    updateSystemUI(showId);
 }
 
 function goBack() {
@@ -69,11 +81,28 @@ function goBack() {
         document.getElementById(prevScreen).classList.remove('hidden');
         document.getElementById(prevScreen).classList.add('active-screen');
         
-        if(prevScreen === 'landing-screen') {
-            document.getElementById('universal-back').classList.add('hidden');
-        } else {
-            document.getElementById('universal-back').classList.remove('hidden');
-        }
+        updateSystemUI(prevScreen);
+    }
+}
+
+// THIS LOCKS THE THEME SO IT NEVER BREAKS
+function updateSystemUI(activeScreenId) {
+    if(activeScreenId === 'landing-screen' || activeScreenId === 'nta-screen' || activeScreenId === 'analysis-screen') {
+        document.getElementById('universal-back').classList.add('hidden');
+    } else {
+        document.getElementById('universal-back').classList.remove('hidden');
+    }
+
+    if(activeScreenId === 'nta-screen') {
+        document.body.className = 'theme-nta';
+        document.getElementById('floating-dock').classList.add('hidden');
+        document.getElementById('leaf-container').classList.add('hidden');
+        document.getElementById('science-bg').classList.add('hidden');
+    } else {
+        document.body.className = 'theme-premium';
+        document.getElementById('floating-dock').classList.remove('hidden');
+        document.getElementById('leaf-container').classList.remove('hidden');
+        document.getElementById('science-bg').classList.remove('hidden');
     }
 }
 
@@ -88,7 +117,6 @@ function showAllTheBest(testId, timeInMins) {
     pendingTestTime = timeInMins;
     document.getElementById('all-best-modal').classList.remove('hidden');
 }
-
 function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
 
 function confirmStartTest() {
@@ -96,7 +124,7 @@ function confirmStartTest() {
     startTest(pendingTestId, pendingTestTime);
 }
 
-// FETCH DATA
+// 3. DUMMY FETCH (Replace with your actual JSON)
 async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
@@ -104,14 +132,14 @@ async function fetchQuestions(testId) {
         const database = await response.json();
         return database[testId] || null;
     } catch (e) {
-        console.warn("Using local fallback data");
+        console.warn("Using local fallback data.");
         return {
             "Physics": [
-                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3, hint: "Check units of permeability and permittivity." },
-                { id: "p2", type: "numerical", q: "A particle of mass 10g moves in a straight line with retardation 2x. Loss of kinetic energy is (10/x)^-n. The value of n is:", ans: 2, hint: "Use Work-Energy Theorem." }
+                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3, hint: "Check the units of permeability and permittivity." },
+                { id: "p2", type: "numerical", q: "A particle of mass 10g moves in a straight line with retardation 2x. Loss of KE is (10/x)^-n. The value of n is:", ans: 2, hint: "Apply Work-Energy Theorem: dK = F dx" }
             ],
             "Chemistry": [
-                { id: "c1", type: "mcq", q: "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is:", options: ["235.7 mg", "0.24 mg", "236 mg", "2.444 g"], ans: 2, hint: "Use mole concept at STP (22.4 L)." }
+                { id: "c1", type: "mcq", q: "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is:", options: ["235.7 mg", "0.24 mg", "236 mg", "2.444 g"], ans: 2, hint: "Use mole concept: 1 mole gas at STP = 22.4 L" }
             ],
             "Mathematics": [
                 { id: "m1", type: "mcq", q: "The number of real roots of the equation x|x-2| + 3|x-3| + 1 = 0 is:", options: ["4", "2", "1", "3"], ans: 1, hint: "Open modulus based on critical points 2 and 3." }
@@ -120,6 +148,7 @@ async function fetchQuestions(testId) {
     }
 }
 
+// 4. TEST ENGINE
 async function startTest(testId, timeInMins) {
     questions = await fetchQuestions(testId);
     if(!questions) { alert("Data missing for " + testId); return; }
@@ -131,14 +160,7 @@ async function startTest(testId, timeInMins) {
         });
     });
 
-    // Hide Backgrounds & Docks for NTA interface
-    document.getElementById('floating-dock').classList.add('hidden'); 
-    document.getElementById('universal-back').classList.add('hidden'); 
-    document.getElementById('leaf-container').classList.add('hidden');
-    document.getElementById('science-bg').classList.add('hidden');
-    
     switchScreen(document.querySelector('.active-screen').id, 'nta-screen');
-    document.body.className = 'theme-nta';
     
     totalTime = timeInMins * 60;
     timeSpent = 0;
@@ -257,18 +279,11 @@ function calculateAndShowResult() {
     let finalScore = totalPositive - totalNegative;
     let maxScore = totalQs * 4;
     
-    // Setup Time Display
     let m = Math.floor(timeSpent / 60);
     let s = timeSpent % 60;
     document.getElementById('time-taken').innerText = `${m}m ${s}s`;
 
     switchScreen('nta-screen', 'analysis-screen');
-    document.body.className = 'theme-premium';
-    
-    // Restore Backgrounds
-    document.getElementById('floating-dock').classList.remove('hidden'); 
-    document.getElementById('leaf-container').classList.remove('hidden');
-    document.getElementById('science-bg').classList.remove('hidden');
     
     document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
     document.getElementById('positive-score').innerText = `+${totalPositive}`;
@@ -280,15 +295,18 @@ function calculateAndShowResult() {
         document.getElementById('safe-zone-banner').classList.add('hidden');
     }
 
-    ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
-        let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
-        let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
-        document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
-        document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
-    });
+    // Trigger Graph Animation
+    setTimeout(() => {
+        ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
+            let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
+            let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
+            document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
+            document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
+        });
+    }, 500); // Small delay to let the screen render first
 }
 
-// --- VIEW SOLUTIONS LOGIC ---
+// 5. VIEW SOLUTIONS (Review Engine)
 function openReviewScreen() {
     switchScreen('analysis-screen', 'review-screen');
     const container = document.getElementById('review-content');
@@ -327,11 +345,9 @@ function openReviewScreen() {
     });
 }
 
-function closeReviewScreen() {
-    switchScreen('review-screen', 'analysis-screen');
-}
+function closeReviewScreen() { switchScreen('review-screen', 'analysis-screen'); }
 
-// --- AI BOT LOGIC ---
+// 6. AI BOT LOGIC
 function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
 function botReply(response) {
     const chatArea = document.getElementById('bot-chat-area');
