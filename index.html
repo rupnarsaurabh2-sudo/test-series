@@ -3,17 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RANKER'S VAULT</title>
+    <title>RANKER'S VAULT | Pro Ed-Tech</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-sky">
 
-    <!-- FLOATING CLOUDS BACKGROUND -->
+    <!-- FLOATING CLOUDS & SCIENCE BACKGROUND -->
     <div class="clouds-container" id="clouds">
         <div class="cloud c1"></div>
         <div class="cloud c2"></div>
         <div class="cloud c3"></div>
         <div class="cloud c4"></div>
+    </div>
+    <div class="science-bg" id="science-bg">
+        <div class="sci-symbol s1">⌬</div>
+        <div class="sci-symbol s2">∫e^x dx</div>
+        <div class="sci-symbol s3">E=mc²</div>
+        <div class="sci-symbol s4">∇×B</div>
+        <div class="sci-symbol s5">⌬</div>
+        <div class="sci-symbol s6">∑ F = ma</div>
     </div>
 
     <!-- 1. LANDING PAGE & NAVBAR -->
@@ -22,33 +30,39 @@
             <div class="logo">RANKER'S VAULT</div>
             <div class="nav-links">
                 <button class="nav-btn" onclick="location.reload()">Home</button>
-                <button class="icon-btn" onclick="openInfoModal()" title="What is this?">ℹ️</button>
+                <button class="icon-btn" onclick="openInfoModal()" title="About this platform">ℹ️</button>
                 <button class="nav-btn primary" onclick="openLogin()">Log In / Sign Up</button>
                 <button class="nav-btn secondary" onclick="guestLogin()">Guest Mode</button>
             </div>
         </nav>
 
         <section class="hero">
+            <!-- JEE Mains / Advanced Toggle -->
+            <div class="exam-toggle-container">
+                <button class="toggle-btn active">JEE Main</button>
+                <button class="toggle-btn locked" onclick="alert('JEE Advanced Premium Test Series is currently being curated by top experts. Coming Soon!')">JEE Advanced 🔒</button>
+            </div>
+
             <div class="quotes-container">
                 <h2>"The clock is ticking, the crowd is vast,<br> Master the patterns to build a future that lasts."</h2>
-                <h2 style="margin-top: 30px; font-size: 24px; color: #a0aec0; font-style: normal;">Stop chasing illusions. The reality of NTA lies here.</h2>
+                <h2 style="margin-top: 30px; font-size: 20px; color: #a0aec0; font-style: normal; font-weight: normal;">Stop chasing illusions. The reality of NTA lies here.</h2>
             </div>
         </section>
     </div>
 
-    <!-- 2. INFO MODAL (Smooth & Suspenseful) -->
+    <!-- 2. INFO MODAL (Suspenseful Rules) -->
     <div id="info-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim">
             <span class="close-btn" onclick="closeInfoModal()">&times;</span>
             <h2 style="color: #64ffda; margin-bottom: 20px; font-size: 28px;">The Reality Check</h2>
-            <p style="text-align: left; line-height: 1.8; color: #e2e8f0; font-size: 18px;">
+            <p style="text-align: left; line-height: 1.8; color: #e2e8f0; font-size: 16px;">
                 The 99% fail not because they don't study, but because they study the wrong things.<br><br>
                 This vault contains the exact, unfiltered patterns NTA uses to eliminate the average. <br><br>
                 <strong>The Rules:</strong><br>
                 1. +4 for the truth, -1 for the trap.<br>
                 2. No lifelines. If you are wrong, you only get a hint. The answer remains hidden.<br>
                 3. The clock does not stop.<br><br>
-                <i>Step in only if you are ready to see your true reflection.</i>
+                <i style="color: #d4af37;">Step in only if you are ready to see your true reflection.</i>
             </p>
         </div>
     </div>
@@ -82,7 +96,7 @@
         </div>
     </div>
 
-    <!-- 4. NTA CLONE INTERFACE (Unchanged) -->
+    <!-- 4. NTA CLONE INTERFACE -->
     <div id="nta-screen" class="hidden nta-layout transition-element">
         <div class="nta-header">
             <div class="nta-title">JEE MAIN 2026 - RANKER'S VAULT</div>
@@ -131,7 +145,7 @@
         </div>
     </div>
 
-    <!-- 5. FOREST ANALYSIS SCREEN (Unchanged) -->
+    <!-- 5. FOREST ANALYSIS SCREEN -->
     <div id="analysis-screen" class="hidden main-container transition-element">
         <h1 style="color: #2f855a; margin-top: 40px; font-size: 36px;">Performance Summary</h1>
         <div class="analysis-grid">
@@ -149,6 +163,28 @@
             </div>
         </div>
         <button class="action-btn" style="margin-top: 40px; background: #2f855a;" onclick="location.reload()">Back to Home</button>
+    </div>
+
+    <!-- 6. AI FOUNDER BOT WIDGET -->
+    <div id="ai-bot-container">
+        <button id="bot-toggle-btn" onclick="toggleBot()">🤖</button>
+        <div id="bot-window" class="hidden popup-anim">
+            <div class="bot-header">
+                <span class="bot-title">Ask the Founder AI</span>
+                <button onclick="toggleBot()" class="bot-close">&times;</button>
+            </div>
+            <div class="bot-chat-area" id="bot-chat-area">
+                <div class="bot-msg">Hello, I am Saurav Sugreev Rupnar. Do you have any queries about my test series?</div>
+                <div class="bot-options" id="bot-options">
+                    <button class="bot-opt-btn" onclick="botReply('Yes')">Yes</button>
+                    <button class="bot-opt-btn" onclick="botReply('No')">No</button>
+                </div>
+            </div>
+            <div class="bot-input-area">
+                <input type="text" id="bot-input" placeholder="Type a message..." disabled>
+                <button id="bot-send-btn" disabled>➤</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
