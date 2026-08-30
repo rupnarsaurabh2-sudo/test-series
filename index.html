@@ -8,37 +8,48 @@
 </head>
 <body class="theme-sky">
 
+    <!-- FLOATING CLOUDS BACKGROUND -->
+    <div class="clouds-container" id="clouds">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
+        <div class="cloud c4"></div>
+    </div>
+
     <!-- 1. LANDING PAGE & NAVBAR -->
-    <div id="landing-screen">
+    <div id="landing-screen" class="transition-element">
         <nav class="navbar glass-nav">
             <div class="logo">RANKER'S VAULT</div>
             <div class="nav-links">
                 <button class="nav-btn" onclick="location.reload()">Home</button>
-                <button class="icon-btn" onclick="openInfoModal()">ℹ️</button>
+                <button class="icon-btn" onclick="openInfoModal()" title="What is this?">ℹ️</button>
                 <button class="nav-btn primary" onclick="openLogin()">Log In / Sign Up</button>
                 <button class="nav-btn secondary" onclick="guestLogin()">Guest Mode</button>
             </div>
         </nav>
 
-        <section class="hero transition-element">
+        <section class="hero">
             <div class="quotes-container">
-                <h2>"Waqt fisal raha hai ret ki tarah, <br> Kitabo mein nahi, PYQs mein chupa hai tera kal sunehra."</h2>
-                <h2 class="hidden">"Aasman chu lene ki zidd hai agar, <br> Toh NTA ke pattern par rakh apni nazar."</h2>
+                <h2>"The clock is ticking, the crowd is vast,<br> Master the patterns to build a future that lasts."</h2>
+                <h2 style="margin-top: 30px; font-size: 24px; color: #a0aec0; font-style: normal;">Stop chasing illusions. The reality of NTA lies here.</h2>
             </div>
         </section>
     </div>
 
-    <!-- 2. INFO MODAL -->
+    <!-- 2. INFO MODAL (Smooth & Suspenseful) -->
     <div id="info-modal" class="modal hidden">
-        <div class="modal-content glass-panel">
+        <div class="modal-content glass-panel popup-anim">
             <span class="close-btn" onclick="closeInfoModal()">&times;</span>
-            <h2>About This Platform</h2>
-            <ul style="text-align: left; margin: 20px 0; line-height: 1.8;">
-                <li><strong>Daily 10 PYQs:</strong> Hand-picked tricky questions. (15 Mins)</li>
-                <li><strong>Pro Test Series (₹9):</strong> 75 Questions (25 PCM each). Exact NTA Pattern. (2 Hours 30 Mins)</li>
-                <li><strong>Marking:</strong> +4 for Correct, -1 for Incorrect.</li>
-                <li><strong>System:</strong> Auto-submit when time is up.</li>
-            </ul>
+            <h2 style="color: #64ffda; margin-bottom: 20px; font-size: 28px;">The Reality Check</h2>
+            <p style="text-align: left; line-height: 1.8; color: #e2e8f0; font-size: 18px;">
+                The 99% fail not because they don't study, but because they study the wrong things.<br><br>
+                This vault contains the exact, unfiltered patterns NTA uses to eliminate the average. <br><br>
+                <strong>The Rules:</strong><br>
+                1. +4 for the truth, -1 for the trap.<br>
+                2. No lifelines. If you are wrong, you only get a hint. The answer remains hidden.<br>
+                3. The clock does not stop.<br><br>
+                <i>Step in only if you are ready to see your true reflection.</i>
+            </p>
         </div>
     </div>
 
@@ -49,12 +60,12 @@
             <button class="nav-btn outline" onclick="location.reload()">Logout</button>
         </nav>
         
-        <h2 style="margin-top: 40px;">Select Your Challenge</h2>
-        <div class="cards-container">
+        <h2 style="margin-top: 40px; position: relative; z-index: 10;">Select Your Challenge</h2>
+        <div class="cards-container" style="position: relative; z-index: 10;">
             <!-- Daily PYQs -->
             <div class="dash-card">
                 <h3>Selected Hand-Picked 10 PYQs</h3>
-                <p>Day 1 & Day 2 Unlocked</p>
+                <p>Curated for pure concept building.</p>
                 <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
                     <button class="action-btn" onclick="startTest('day_1', 15)">Day 1</button>
                     <button class="action-btn" onclick="startTest('day_2', 15)">Day 2</button>
@@ -71,23 +82,19 @@
         </div>
     </div>
 
-    <!-- 4. NTA CLONE INTERFACE -->
-    <div id="nta-screen" class="hidden nta-layout">
-        <!-- NTA Header -->
+    <!-- 4. NTA CLONE INTERFACE (Unchanged) -->
+    <div id="nta-screen" class="hidden nta-layout transition-element">
         <div class="nta-header">
             <div class="nta-title">JEE MAIN 2026 - RANKER'S VAULT</div>
             <div class="nta-timer">Time Left : <span id="time-left">00:00:00</span></div>
         </div>
-
         <div class="nta-body">
-            <!-- Left Side: Question Panel -->
             <div class="nta-left">
                 <div class="nta-tabs">
                     <button class="tab-btn active" onclick="switchSubject('Physics')">Physics</button>
                     <button class="tab-btn" onclick="switchSubject('Chemistry')">Chemistry</button>
                     <button class="tab-btn" onclick="switchSubject('Mathematics')">Mathematics</button>
                 </div>
-                
                 <div class="question-area">
                     <div class="q-header">
                         <span>Question No. <span id="current-q-no">1</span></span>
@@ -96,7 +103,6 @@
                     <div id="q-text" class="q-content">Question loading...</div>
                     <div id="options-area" class="options-container"></div>
                 </div>
-
                 <div class="nta-footer">
                     <div class="left-btns">
                         <button class="nta-btn white" onclick="markForReview()">Mark for Review & Next</button>
@@ -108,33 +114,26 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Right Side: Palette Panel -->
             <div class="nta-right">
                 <div class="profile-box">
                     <img src="https://via.placeholder.com/80" alt="Student">
                     <div id="student-name">Guest User</div>
                 </div>
-                
                 <div class="status-legend">
                     <div class="legend-item"><div class="badge answered" id="cnt-answered">0</div> Answered</div>
                     <div class="legend-item"><div class="badge not-answered" id="cnt-not-answered">0</div> Not Answered</div>
                     <div class="legend-item"><div class="badge not-visited" id="cnt-not-visited">0</div> Not Visited</div>
-                    <div class="legend-item"><div class="badge marked" id="cnt-marked">0</div> Marked for Review</div>
+                    <div class="legend-item"><div class="badge marked" id="cnt-marked">0</div> Marked</div>
                 </div>
-
                 <div class="palette-header" id="current-subject-name">Physics</div>
-                <div class="q-palette" id="question-palette">
-                    <!-- Buttons generated by JS -->
-                </div>
+                <div class="q-palette" id="question-palette"></div>
             </div>
         </div>
     </div>
 
-    <!-- 5. FOREST ANALYSIS SCREEN -->
+    <!-- 5. FOREST ANALYSIS SCREEN (Unchanged) -->
     <div id="analysis-screen" class="hidden main-container transition-element">
         <h1 style="color: #2f855a; margin-top: 40px; font-size: 36px;">Performance Summary</h1>
-        
         <div class="analysis-grid">
             <div class="stat-box">
                 <h3>Overall Score</h3>
@@ -149,7 +148,6 @@
                 <div class="score-big" id="final-time">0m</div>
             </div>
         </div>
-
         <button class="action-btn" style="margin-top: 40px; background: #2f855a;" onclick="location.reload()">Back to Home</button>
     </div>
 
