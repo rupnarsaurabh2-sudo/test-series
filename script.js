@@ -12,13 +12,12 @@ let screenHistory = ['landing-screen'];
 
 window.onload = function() {
     generateGrids();
-    createLeaves(); // Controlled number of leaves so it doesn't look messy
+    createLeaves();
 }
 
 function createLeaves() {
     const container = document.getElementById('leaf-container');
     const leafShapes = ['🍁', '🍂'];
-    // Reduced to 15 leaves for a cleaner look
     for(let i=0; i<15; i++) {
         let leaf = document.createElement('div');
         leaf.className = 'leaf';
@@ -74,6 +73,9 @@ function switchScreen(hideId, showId) {
     }
 }
 
+// -----------------------------------------------------
+// THE SMART BACK BUTTON FIX (Restores Premium Theme)
+// -----------------------------------------------------
 function goBack() {
     if(screenHistory.length > 1) {
         let currentScreen = screenHistory.pop();
@@ -85,8 +87,20 @@ function goBack() {
         document.getElementById(prevScreen).classList.remove('hidden');
         document.getElementById(prevScreen).classList.add('active-screen');
         
+        // Fix for White Background Bug
+        if(prevScreen !== 'nta-screen') {
+            document.body.className = 'theme-premium';
+            document.getElementById('floating-dock').classList.remove('hidden');
+            document.getElementById('leaf-container').classList.remove('hidden');
+            document.getElementById('science-bg').classList.remove('hidden');
+        } else {
+            document.body.className = 'theme-nta';
+        }
+
         if(prevScreen === 'landing-screen') {
             document.getElementById('universal-back').classList.add('hidden');
+        } else {
+            document.getElementById('universal-back').classList.remove('hidden');
         }
     }
 }
@@ -110,6 +124,7 @@ function confirmStartTest() {
     startTest(pendingTestId, pendingTestTime);
 }
 
+// FETCH (Use Real JSON Later)
 async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
@@ -117,7 +132,7 @@ async function fetchQuestions(testId) {
         const database = await response.json();
         return database[testId] || null;
     } catch (e) {
-        console.warn("Using local fallback data because fetch failed.");
+        console.warn("Using local fallback data.");
         return {
             "Physics": [
                 { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3 },
@@ -146,7 +161,6 @@ async function startTest(testId, timeInMins) {
         });
     });
 
-    // Hide UI Elements for Test Mode
     document.getElementById('floating-dock').classList.add('hidden'); 
     document.getElementById('universal-back').classList.add('hidden'); 
     document.getElementById('leaf-container').classList.add('hidden');
@@ -274,7 +288,6 @@ function calculateAndShowResult() {
     switchScreen('nta-screen', 'analysis-screen');
     document.body.className = 'theme-premium';
     
-    // Bring back decorative elements
     document.getElementById('floating-dock').classList.remove('hidden'); 
     document.getElementById('leaf-container').classList.remove('hidden');
     document.getElementById('science-bg').classList.remove('hidden');
@@ -295,4 +308,26 @@ function calculateAndShowResult() {
         document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
         document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
     });
+}
+
+// --- AI BOT LOGIC ---
+function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
+function botReply(response) {
+    const chatArea = document.getElementById('bot-chat-area');
+    const optionsDiv = document.getElementById('bot-options');
+    const inputField = document.getElementById('bot-input');
+    
+    if(optionsDiv) optionsDiv.remove();
+    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
+    
+    setTimeout(() => {
+        if(response === 'Yes') {
+            chatArea.innerHTML += `<div class="bot-msg">Great! You can ask me anything about the test patterns. Type below!</div>`;
+            inputField.disabled = false;
+            document.getElementById('bot-send-btn').disabled = false;
+        } else {
+            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
+        }
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }, 600);
 }
