@@ -3,97 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RANKER'S VAULT | Premium PYQ</title>
+    <title>RANKER'S VAULT</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <nav class="navbar">
-        <div class="logo">RANKER'S VAULT <span style="color: #d4af37;">PRO</span></div>
-        <div id="nav-right" style="display: flex; align-items: center; gap: 20px;">
-            <div id="score-display" class="hidden" style="font-size: 18px; font-weight: bold; color: #d4af37;">
-                Score: <span id="live-score">0</span>
-            </div>
-            <button id="logout-btn" onclick="logout()" class="outline-btn hidden">Logout</button>
-        </div>
-    </nav>
+<body class="theme-sky">
 
-    <div class="main-container">
-        
-        <!-- 1. HERO SECTION -->
-        <section class="hero transition-element" id="hero-section">
-            <h1>99% Aspirants Make This <span class="highlight">One Mistake.</span></h1>
-            <p class="subtitle">They run after new books and ignore the actual exam pattern.</p>
-            <div class="message-box">
-                <p><strong>Listen closely:</strong> Ye 10 questions ko ghok kar pi ja agle 4 mahino tak. Nayi kitabein kharidne se selection nahi hota, asli PYQs ghisne se hota hai.</p>
+    <!-- 1. LANDING PAGE & NAVBAR -->
+    <div id="landing-screen">
+        <nav class="navbar glass-nav">
+            <div class="logo">RANKER'S VAULT</div>
+            <div class="nav-links">
+                <button class="nav-btn" onclick="location.reload()">Home</button>
+                <button class="icon-btn" onclick="openInfoModal()">ℹ️</button>
+                <button class="nav-btn primary" onclick="openLogin()">Log In / Sign Up</button>
+                <button class="nav-btn secondary" onclick="guestLogin()">Guest Mode</button>
             </div>
-            <div class="action-buttons">
-                <button class="premium-btn" onclick="openLoginModal()">Attempt Daily 10 PYQs</button>
-                <button class="secondary-btn" onclick="alert('Full Test Series @ ₹9 unlocking soon!')">Unlock Full Test Series @ ₹9</button>
+        </nav>
+
+        <section class="hero transition-element">
+            <div class="quotes-container">
+                <h2>"Waqt fisal raha hai ret ki tarah, <br> Kitabo mein nahi, PYQs mein chupa hai tera kal sunehra."</h2>
+                <h2 class="hidden">"Aasman chu lene ki zidd hai agar, <br> Toh NTA ke pattern par rakh apni nazar."</h2>
             </div>
         </section>
-
-        <!-- 2. DASHBOARD SECTION -->
-        <section id="dashboard-section" class="hidden dashboard glass-panel transition-element">
-            <h2>Welcome back, <span id="user-name-display" class="highlight"></span></h2>
-            <p>Target: <strong><span id="target-exam-display"></span></strong></p>
-            <button class="premium-btn full-width" onclick="openDaySelection()">Enter 30-Day Challenge</button>
-        </section>
-
-        <!-- 3. DAY SELECTION TIMELINE (NEW) -->
-        <section id="day-selection-screen" class="hidden glass-panel transition-element" style="max-width: 800px;">
-            <h2 style="margin-bottom: 20px;">Your 30-Day PYQ Timeline</h2>
-            <p style="color: #94a3b8; margin-bottom: 30px;">Tests unlock exactly 24 hours after your last day unlocks. Missed a test? You can still take it.</p>
-            
-            <!-- Grid where JS will generate 30 buttons -->
-            <div id="days-grid" class="days-grid"></div>
-            
-            <button class="outline-btn full-width" style="margin-top: 30px;" onclick="switchScreen('day-selection-screen', 'dashboard-section')">Back to Dashboard</button>
-        </section>
-
-        <!-- 4. PRE-START CONFIRMATION SCREEN -->
-        <div id="pre-start-screen" class="glass-panel hidden transition-element" style="text-align: center;">
-            <h2 style="font-size: 28px; margin-bottom: 10px;" id="selected-day-title">Day X</h2>
-            <p style="color: #94a3b8; margin-bottom: 30px;">10 Tricky PYQs. 15 Minutes on the clock. +4 for correct, -1 for wrong. No answers, only hints.</p>
-            <button class="glow-btn full-width" onclick="startDailyQuiz()">Yes, Start Timer ⏱️</button>
-            <button class="outline-btn full-width" style="margin-top: 15px;" onclick="switchScreen('pre-start-screen', 'day-selection-screen')">Wait, Go Back</button>
-        </div>
-
-        <!-- 5. QUIZ SCREEN -->
-        <div id="quiz-screen" class="glass-panel hidden transition-element">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
-                <span id="q-counter" style="color: #64ffda; font-weight:bold; font-size: 18px;">Q: 1/10</span>
-                <span id="timer-display" style="color: #ff6b6b; font-weight:bold; font-size: 18px; letter-spacing: 1px;">15:00</span>
-            </div>
-            <h3 id="question-text">Question loading...</h3>
-            <div id="options-container"></div>
-            <div id="hint-box" class="hint-glass hidden transition-element">
-                <p>💡 <strong>Hint:</strong> <span id="hint-text"></span></p>
-            </div>
-            <button id="next-btn" class="glow-btn hidden full-width transition-element" onclick="nextQuestion()" style="margin-top: 25px;">Next Question ➡️</button>
-        </div>
-
-        <!-- 6. RESULT SCREEN -->
-        <div id="result-screen" class="glass-panel hidden transition-element">
-            <h2>Test Completed!</h2>
-            <p class="final-score" style="font-size: 24px; margin: 20px 0;">Score: <strong id="score-text" class="highlight"></strong> / 40</p>
-            <button class="premium-btn" onclick="returnToTimeline()">Back to Timeline</button>
-        </div>
-
     </div>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal hidden">
-        <div class="modal-content transition-element">
-            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
-            <h2>Profile Setup</h2>
-            <input type="text" id="username-input" placeholder="Enter your Name" required>
-            <div class="exam-selection">
-                <button class="exam-select-btn" onclick="selectExam('JEE')">Target JEE</button>
-                <button class="exam-select-btn" onclick="selectExam('NEET')">Target NEET</button>
-            </div>
-            <p id="exam-warning" class="error-text hidden">Please select an exam first!</p>
-            <button class="premium-btn full-width" onclick="saveProfile()">Create Account</button>
+    <!-- 2. INFO MODAL -->
+    <div id="info-modal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <span class="close-btn" onclick="closeInfoModal()">&times;</span>
+            <h2>About This Platform</h2>
+            <ul style="text-align: left; margin: 20px 0; line-height: 1.8;">
+                <li><strong>Daily 10 PYQs:</strong> Hand-picked tricky questions. (15 Mins)</li>
+                <li><strong>Pro Test Series (₹9):</strong> 75 Questions (25 PCM each). Exact NTA Pattern. (2 Hours 30 Mins)</li>
+                <li><strong>Marking:</strong> +4 for Correct, -1 for Incorrect.</li>
+                <li><strong>System:</strong> Auto-submit when time is up.</li>
+            </ul>
         </div>
+    </div>
+
+    <!-- 3. DASHBOARD -->
+    <div id="dashboard-screen" class="hidden main-container transition-element">
+        <nav class="navbar glass-nav">
+            <div class="logo">RANKER'S VAULT</div>
+            <button class="nav-btn outline" onclick="location.reload()">Logout</button>
+        </nav>
+        
+        <h2 style="margin-top: 40px;">Select Your Challenge</h2>
+        <div class="cards-container">
+            <!-- Daily PYQs -->
+            <div class="dash-card">
+                <h3>Selected Hand-Picked 10 PYQs</h3>
+                <p>Day 1 & Day 2 Unlocked</p>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+                    <button class="action-btn" onclick="startTest('day_1', 15)">Day 1</button>
+                    <button class="action-btn" onclick="startTest('day_2', 15)">Day 2</button>
+                </div>
+            </div>
+
+            <!-- Full Test -->
+            <div class="dash-card premium-card">
+                <h3>Pro Test Series Trial</h3>
+                <p>75 Questions | PCM | 2:30 Hrs</p>
+                <span class="price-tag">₹9 Only</span>
+                <button class="action-btn premium-btn" onclick="startTest('full_test_1', 150)">Unlock & Start Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. NTA CLONE INTERFACE -->
+    <div id="nta-screen" class="hidden nta-layout">
+        <!-- NTA Header -->
+        <div class="nta-header">
+            <div class="nta-title">JEE MAIN 2026 - RANKER'S VAULT</div>
+            <div class="nta-timer">Time Left : <span id="time-left">00:00:00</span></div>
+        </div>
+
+        <div class="nta-body">
+            <!-- Left Side: Question Panel -->
+            <div class="nta-left">
+                <div class="nta-tabs">
+                    <button class="tab-btn active" onclick="switchSubject('Physics')">Physics</button>
+                    <button class="tab-btn" onclick="switchSubject('Chemistry')">Chemistry</button>
+                    <button class="tab-btn" onclick="switchSubject('Mathematics')">Mathematics</button>
+                </div>
+                
+                <div class="question-area">
+                    <div class="q-header">
+                        <span>Question No. <span id="current-q-no">1</span></span>
+                        <span>Marks: +4 | -1</span>
+                    </div>
+                    <div id="q-text" class="q-content">Question loading...</div>
+                    <div id="options-area" class="options-container"></div>
+                </div>
+
+                <div class="nta-footer">
+                    <div class="left-btns">
+                        <button class="nta-btn white" onclick="markForReview()">Mark for Review & Next</button>
+                        <button class="nta-btn white" onclick="clearResponse()">Clear Response</button>
+                    </div>
+                    <div class="right-btns">
+                        <button class="nta-btn blue" onclick="saveAndNext()">Save & Next</button>
+                        <button class="nta-btn green" onclick="submitTestEarly()">Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Palette Panel -->
+            <div class="nta-right">
+                <div class="profile-box">
+                    <img src="https://via.placeholder.com/80" alt="Student">
+                    <div id="student-name">Guest User</div>
+                </div>
+                
+                <div class="status-legend">
+                    <div class="legend-item"><div class="badge answered" id="cnt-answered">0</div> Answered</div>
+                    <div class="legend-item"><div class="badge not-answered" id="cnt-not-answered">0</div> Not Answered</div>
+                    <div class="legend-item"><div class="badge not-visited" id="cnt-not-visited">0</div> Not Visited</div>
+                    <div class="legend-item"><div class="badge marked" id="cnt-marked">0</div> Marked for Review</div>
+                </div>
+
+                <div class="palette-header" id="current-subject-name">Physics</div>
+                <div class="q-palette" id="question-palette">
+                    <!-- Buttons generated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. FOREST ANALYSIS SCREEN -->
+    <div id="analysis-screen" class="hidden main-container transition-element">
+        <h1 style="color: #2f855a; margin-top: 40px; font-size: 36px;">Performance Summary</h1>
+        
+        <div class="analysis-grid">
+            <div class="stat-box">
+                <h3>Overall Score</h3>
+                <div class="score-big"><span id="final-score">0</span><span style="font-size:20px; color:#718096;">/300</span></div>
+            </div>
+            <div class="stat-box">
+                <h3>Accuracy</h3>
+                <div class="score-big" id="final-accuracy">0%</div>
+            </div>
+            <div class="stat-box">
+                <h3>Total Time Taken</h3>
+                <div class="score-big" id="final-time">0m</div>
+            </div>
+        </div>
+
+        <button class="action-btn" style="margin-top: 40px; background: #2f855a;" onclick="location.reload()">Back to Home</button>
     </div>
 
     <script src="script.js"></script>
