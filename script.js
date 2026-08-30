@@ -1,4 +1,3 @@
-let currentTestType = "";
 let questions = {};
 let currentSubject = "Physics";
 let currentQIndex = 0; 
@@ -7,11 +6,7 @@ let totalTime;
 let timeSpent = 0;
 let testState = {}; 
 
-let pendingTestId = "";
-let pendingTestTime = 0;
-
 window.onload = function() {
-    // Generate Grids automatically
     generateGrids();
 }
 
@@ -23,11 +18,10 @@ function generateGrids() {
             let btn = document.createElement('button');
             btn.className = 'day-unlocked';
             btn.innerText = `Day ${i}`;
-            btn.onclick = () => showAllTheBest(`day_${i}`, 15);
+            btn.onclick = () => startTest(`day_${i}`, 15);
             dayGrid.appendChild(btn);
         }
     }
-
     const testGrid = document.getElementById('tests-grid');
     if(testGrid) {
         testGrid.innerHTML = '';
@@ -35,7 +29,7 @@ function generateGrids() {
             let btn = document.createElement('button');
             btn.className = 'day-unlocked';
             btn.innerText = `Test ${i}`;
-            btn.onclick = () => showAllTheBest(`full_test_${i}`, 150);
+            btn.onclick = () => startTest(`full_test_${i}`, 150);
             testGrid.appendChild(btn);
         }
     }
@@ -44,108 +38,61 @@ function generateGrids() {
 function switchScreen(hideId, showId) {
     const hideEl = document.getElementById(hideId);
     const showEl = document.getElementById(showId);
-    hideEl.classList.add('fade-out');
-    setTimeout(() => {
-        hideEl.classList.add('hidden');
-        hideEl.classList.remove('fade-out');
-        showEl.classList.remove('hidden');
-        void showEl.offsetWidth;
-        showEl.classList.remove('fade-out');
-    }, 400); 
+    hideEl.classList.add('hidden');
+    showEl.classList.remove('hidden');
 }
 
 function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-screen'); }
 function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
-
-function showAllTheBest(testId, timeInMins) {
-    pendingTestId = testId;
-    pendingTestTime = timeInMins;
-    document.getElementById('all-best-modal').classList.remove('hidden');
-}
-
-function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
-
-function confirmStartTest() {
-    closeAllBestModal();
-    startTest(pendingTestId, pendingTestTime);
-}
-
-// --- DUMMY FETCH (Replace with your actual JSON later) ---
-async function fetchQuestions(testId) {
-    // For now, returning dummy data to show the UI works perfectly
-    // Jab tu pure 1500 questions dega, hum yahan se fetch lagayenge.
-    return {
-        "Physics": [
-            { id: "p1", q: "Dummy Physics Q1", options: ["A", "B", "C", "D"], ans: 0 }
-        ],
-        "Chemistry": [
-            { id: "c1", q: "Dummy Chem Q1", options: ["A", "B", "C", "D"], ans: 1 }
-        ],
-        "Mathematics": [
-            { id: "m1", q: "Dummy Math Q1", options: ["A", "B", "C", "D"], ans: 2 }
-        ]
-    };
-}
-
-// UI Modals
 function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
 function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
-function openLogin() { alert("Proceeding as Guest."); guestLogin(); }
+function guestLogin() { switchScreen('landing-screen', 'dashboard-screen'); }
 
-function guestLogin() {
-    document.getElementById('login-modal').classList.add('hidden');
-    document.getElementById('landing-screen').classList.add('hidden');
-    document.getElementById('clouds').classList.add('hidden');
-    document.getElementById('science-bg').classList.add('hidden');
-    document.getElementById('dashboard-screen').classList.remove('hidden');
-    document.body.className = 'theme-sky'; 
+// DUMMY FETCH -> Replace this with real JSON later
+async function fetchQuestions(testId) {
+    let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
+    try {
+        const response = await fetch(fileName);
+        const database = await response.json();
+        return database[testId] || null;
+    } catch (e) {
+        console.warn("Using local fallback data because fetch failed.");
+        // FALLBACK BATCH FOR TESTING (Extracted from your PDF text)
+        return {
+            "Physics": [
+                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3 },
+                { id: "p2", type: "numerical", q: "Three students measure acceleration due to gravity. The minimum percentage error is obtained by student no: (1, 2, or 3)", ans: 1 }
+            ],
+            "Chemistry": [
+                { id: "c1", type: "mcq", q: "On combustion 0.210g of an organic compound gave 0.127g H₂O and 0.307g CO₂. The percentages of hydrogen and oxygen respectively are:", options: ["53.41, 39.6", "6.72, 53.41", "7.55, 43.85", "6.72, 39.87"], ans: 3 },
+                { id: "c2", type: "numerical", q: "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is (in mg):", ans: 236 }
+            ],
+            "Mathematics": [
+                { id: "m1", type: "mcq", q: "The number of real roots of the equation x|x-2| + 3|x-3| + 1 = 0 is:", options: ["4", "2", "1", "3"], ans: 2 },
+                { id: "m2", type: "numerical", q: "Let O be the origin, point A be z₁ = √3 + 2√2 i, point B(z₂) be such that √3|z₂| = |z₁| and arg(z₂) = arg(z₁) + π/6. If area of triangle ABO is 11/x, find x:", ans: 3 }
+            ]
+        };
+    }
 }
 
-// --- AI BOT LOGIC ---
-function toggleBot() {
-    document.getElementById('bot-window').classList.toggle('hidden');
-}
-function botReply(response) {
-    const chatArea = document.getElementById('bot-chat-area');
-    const optionsDiv = document.getElementById('bot-options');
-    const inputField = document.getElementById('bot-input');
-    
-    if(optionsDiv) optionsDiv.remove();
-    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
-    
-    setTimeout(() => {
-        if(response === 'Yes') {
-            chatArea.innerHTML += `<div class="bot-msg">Great! You can ask me anything about the test patterns. Type below!</div>`;
-            inputField.disabled = false;
-            document.getElementById('bot-send-btn').disabled = false;
-        } else {
-            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
-        }
-        chatArea.scrollTop = chatArea.scrollHeight;
-    }, 600);
-}
-
-// --- TEST ENGINE LOGIC ---
 async function startTest(testId, timeInMins) {
     questions = await fetchQuestions(testId);
-    if(!questions) return; 
+    if(!questions) { alert("Data missing for " + testId); return; }
     
     testState = {};
     Object.keys(questions).forEach(sub => {
         questions[sub].forEach((q, idx) => {
-            testState[q.id] = { status: 'not-visited', selectedOpt: null, globalIdx: idx, subject: sub };
+            testState[q.id] = { status: 'not-visited', selectedOpt: null, type: q.type, subject: sub };
         });
     });
 
     document.getElementById('day-selection-screen').classList.add('hidden');
     document.getElementById('test-selection-screen').classList.add('hidden');
     document.getElementById('dashboard-screen').classList.add('hidden');
-    document.getElementById('ai-bot-container').classList.add('hidden'); 
     document.getElementById('nta-screen').classList.remove('hidden');
     document.body.className = 'theme-nta';
     
     totalTime = timeInMins * 60;
-    timeSpent = 0;
     startTimer();
     switchSubject('Physics'); 
 }
@@ -154,15 +101,10 @@ function startTimer() {
     clearInterval(timerInterval);
     const display = document.getElementById('time-left');
     timerInterval = setInterval(() => {
-        totalTime--; timeSpent++;
-        let h = Math.floor(totalTime / 3600);
-        let m = Math.floor((totalTime % 3600) / 60);
-        let s = totalTime % 60;
+        totalTime--; 
+        let h = Math.floor(totalTime / 3600), m = Math.floor((totalTime % 3600) / 60), s = totalTime % 60;
         display.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        if (totalTime <= 0) {
-            clearInterval(timerInterval);
-            calculateAndShowResult();
-        }
+        if (totalTime <= 0) { clearInterval(timerInterval); calculateAndShowResult(); }
     }, 1000);
 }
 
@@ -170,9 +112,7 @@ function switchSubject(subName) {
     if(!questions[subName]) return; 
     currentSubject = subName;
     currentQIndex = 0;
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.innerText === subName);
-    });
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === subName));
     document.getElementById('current-subject-name').innerText = subName;
     buildPalette();
     loadQuestion(0);
@@ -183,8 +123,7 @@ function buildPalette() {
     palette.innerHTML = '';
     questions[currentSubject].forEach((q, idx) => {
         let btn = document.createElement('div');
-        let state = testState[q.id].status;
-        btn.className = `badge ${state}`;
+        btn.className = `badge ${testState[q.id].status}`;
         btn.innerText = idx + 1;
         btn.onclick = () => loadQuestion(idx);
         palette.appendChild(btn);
@@ -193,83 +132,101 @@ function buildPalette() {
 }
 
 function updateCounts() {
-    let ans=0, notAns=0, notVis=0, mark=0;
-    Object.values(testState).forEach(s => {
-        if(s.status === 'answered') ans++;
-        else if(s.status === 'not-answered') notAns++;
-        else if(s.status === 'not-visited') notVis++;
-        else if(s.status === 'marked') mark++;
-    });
-    document.getElementById('cnt-answered').innerText = ans;
-    document.getElementById('cnt-not-answered').innerText = notAns;
-    document.getElementById('cnt-not-visited').innerText = notVis;
-    document.getElementById('cnt-marked').innerText = mark;
+    let counts = { 'answered': 0, 'not-answered': 0, 'not-visited': 0, 'marked': 0 };
+    Object.values(testState).forEach(s => counts[s.status]++);
+    Object.keys(counts).forEach(k => document.getElementById(`cnt-${k}`).innerText = counts[k]);
 }
 
 function loadQuestion(idx) {
     currentQIndex = idx;
     let q = questions[currentSubject][idx];
-    if(testState[q.id].status === 'not-visited') {
-        testState[q.id].status = 'not-answered';
-    }
+    if(testState[q.id].status === 'not-visited') testState[q.id].status = 'not-answered';
+    
     document.getElementById('current-q-no').innerText = idx + 1;
     document.getElementById('q-text').innerText = q.q;
+    
     const optArea = document.getElementById('options-area');
-    optArea.innerHTML = '';
-    q.options.forEach((opt, oIdx) => {
-        let isChecked = testState[q.id].selectedOpt === oIdx ? 'checked' : '';
-        optArea.innerHTML += `<label class="opt-row"><input type="radio" name="opt" value="${oIdx}" ${isChecked} onchange="selectOption(${oIdx})"> ${opt}</label>`;
-    });
+    const numArea = document.getElementById('numerical-area');
+    const numInput = document.getElementById('num-answer');
+
+    if(q.type === 'numerical') {
+        optArea.classList.add('hidden');
+        numArea.classList.remove('hidden');
+        numInput.value = testState[q.id].selectedOpt !== null ? testState[q.id].selectedOpt : '';
+    } else {
+        numArea.classList.add('hidden');
+        optArea.classList.remove('hidden');
+        optArea.innerHTML = '';
+        q.options.forEach((opt, oIdx) => {
+            let isChecked = testState[q.id].selectedOpt === oIdx ? 'checked' : '';
+            optArea.innerHTML += `<label class="opt-row"><input type="radio" name="opt" value="${oIdx}" ${isChecked} onchange="selectOption(${oIdx})"> ${opt}</label>`;
+        });
+    }
     buildPalette(); 
 }
 
-function selectOption(oIdx) { testState[questions[currentSubject][currentQIndex].id].selectedOpt = oIdx; }
+function selectOption(val) { testState[questions[currentSubject][currentQIndex].id].selectedOpt = val; }
 
 function saveAndNext() {
-    let qId = questions[currentSubject][currentQIndex].id;
-    if(testState[qId].selectedOpt !== null) testState[qId].status = 'answered';
-    moveToNext();
+    let q = questions[currentSubject][currentQIndex];
+    if(q.type === 'numerical') {
+        let val = document.getElementById('num-answer').value;
+        if(val !== "") testState[q.id].selectedOpt = parseFloat(val);
+    }
+    if(testState[q.id].selectedOpt !== null) testState[q.id].status = 'answered';
+    if(currentQIndex < questions[currentSubject].length - 1) loadQuestion(currentQIndex + 1);
+    else buildPalette();
 }
 
-function markForReview() { testState[questions[currentSubject][currentQIndex].id].status = 'marked'; moveToNext(); }
+function markForReview() { testState[questions[currentSubject][currentQIndex].id].status = 'marked'; saveAndNext(); }
 
 function clearResponse() {
-    let qId = questions[currentSubject][currentQIndex].id;
-    testState[qId].selectedOpt = null; testState[qId].status = 'not-answered';
+    let q = questions[currentSubject][currentQIndex];
+    testState[q.id].selectedOpt = null; testState[q.id].status = 'not-answered';
     loadQuestion(currentQIndex); 
 }
 
-function moveToNext() {
-    if(currentQIndex < questions[currentSubject].length - 1) loadQuestion(currentQIndex + 1);
-    else { alert("Section End. Select next subject."); buildPalette(); }
-}
-
-function submitTestEarly() {
-    if(confirm("Submit the test now?")) { clearInterval(timerInterval); calculateAndShowResult(); }
-}
+function submitTestEarly() { if(confirm("Submit the test now?")) { clearInterval(timerInterval); calculateAndShowResult(); } }
 
 function calculateAndShowResult() {
-    let finalScore = 0, positive = 0, negative = 0, totalQuestions = 0;
+    let stats = { Physics: {p:0, t:0}, Chemistry: {p:0, t:0}, Mathematics: {p:0, t:0} };
+    let totalPositive = 0, totalNegative = 0, totalQs = 0;
+
     Object.keys(questions).forEach(sub => {
         questions[sub].forEach(q => {
-            totalQuestions++;
+            totalQs++;
+            stats[sub].t++;
             let state = testState[q.id];
             if(state.selectedOpt !== null) {
-                if(state.selectedOpt === q.ans) { positive += 4; } 
-                else { negative += 1; }
+                if(state.selectedOpt === q.ans) { totalPositive += 4; stats[sub].p++; } 
+                else if (q.type === 'mcq') { totalNegative += 1; } // No negative for numerical
             }
         });
     });
 
-    finalScore = positive - negative;
-    let maxPossibleScore = totalQuestions * 4;
+    let finalScore = totalPositive - totalNegative;
+    let maxScore = totalQs * 4;
     
     document.getElementById('nta-screen').classList.add('hidden');
     document.getElementById('analysis-screen').classList.remove('hidden');
-    document.getElementById('ai-bot-container').classList.remove('hidden'); 
-    document.body.className = 'theme-forest';
+    document.body.className = 'theme-premium';
     
-    document.getElementById('final-score').innerHTML = `${finalScore} <span style="font-size:20px; color:#718096;">/${maxPossibleScore}</span>`;
-    document.getElementById('positive-score').innerText = `+${positive}`;
-    document.getElementById('negative-score').innerText = `-${negative}`;
+    document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
+    document.getElementById('positive-score').innerText = `+${totalPositive}`;
+    document.getElementById('negative-score').innerText = `-${totalNegative}`;
+
+    // SAFE ZONE LOGIC (If score > 50%)
+    if (finalScore >= (maxScore / 2)) {
+        document.getElementById('safe-zone-banner').classList.remove('hidden');
+    } else {
+        document.getElementById('safe-zone-banner').classList.add('hidden');
+    }
+
+    // UPDATE GRAPH
+    ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
+        let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
+        let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
+        document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
+        document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
+    });
 }
