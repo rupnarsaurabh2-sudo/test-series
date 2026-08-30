@@ -6,6 +6,9 @@ let totalTime;
 let timeSpent = 0;
 let testState = {}; 
 
+let pendingTestId = "";
+let pendingTestTime = 0;
+
 window.onload = function() {
     generateGrids();
 }
@@ -18,10 +21,11 @@ function generateGrids() {
             let btn = document.createElement('button');
             btn.className = 'day-unlocked';
             btn.innerText = `Day ${i}`;
-            btn.onclick = () => startTest(`day_${i}`, 15);
+            btn.onclick = () => showAllTheBest(`day_${i}`, 15);
             dayGrid.appendChild(btn);
         }
     }
+
     const testGrid = document.getElementById('tests-grid');
     if(testGrid) {
         testGrid.innerHTML = '';
@@ -29,7 +33,7 @@ function generateGrids() {
             let btn = document.createElement('button');
             btn.className = 'day-unlocked';
             btn.innerText = `Test ${i}`;
-            btn.onclick = () => startTest(`full_test_${i}`, 150);
+            btn.onclick = () => showAllTheBest(`full_test_${i}`, 150);
             testGrid.appendChild(btn);
         }
     }
@@ -38,17 +42,40 @@ function generateGrids() {
 function switchScreen(hideId, showId) {
     const hideEl = document.getElementById(hideId);
     const showEl = document.getElementById(showId);
-    hideEl.classList.add('hidden');
-    showEl.classList.remove('hidden');
+    hideEl.classList.add('fade-out');
+    setTimeout(() => {
+        hideEl.classList.add('hidden');
+        hideEl.classList.remove('fade-out');
+        showEl.classList.remove('hidden');
+        void showEl.offsetWidth;
+        showEl.classList.remove('fade-out');
+    }, 400); 
 }
 
 function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-screen'); }
 function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
 function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
 function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
-function guestLogin() { switchScreen('landing-screen', 'dashboard-screen'); }
 
-// DUMMY FETCH -> Replace this with real JSON later
+function guestLogin() {
+    document.getElementById('landing-screen').classList.add('hidden');
+    document.getElementById('dashboard-screen').classList.remove('hidden');
+}
+
+function showAllTheBest(testId, timeInMins) {
+    pendingTestId = testId;
+    pendingTestTime = timeInMins;
+    document.getElementById('all-best-modal').classList.remove('hidden');
+}
+
+function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
+
+function confirmStartTest() {
+    closeAllBestModal();
+    startTest(pendingTestId, pendingTestTime);
+}
+
+// --- DUMMY FETCH (Is data ko baad me apni json se replace kar lena) ---
 async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
@@ -57,19 +84,18 @@ async function fetchQuestions(testId) {
         return database[testId] || null;
     } catch (e) {
         console.warn("Using local fallback data because fetch failed.");
-        // FALLBACK BATCH FOR TESTING (Extracted from your PDF text)
         return {
             "Physics": [
                 { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3 },
-                { id: "p2", type: "numerical", q: "Three students measure acceleration due to gravity. The minimum percentage error is obtained by student no: (1, 2, or 3)", ans: 1 }
+                { id: "p2", type: "numerical", q: "Three students measure g using a simple pendulum. The minimum percentage error is obtained by student no: (1, 2, or 3)?", ans: 1 }
             ],
             "Chemistry": [
-                { id: "c1", type: "mcq", q: "On combustion 0.210g of an organic compound gave 0.127g H₂O and 0.307g CO₂. The percentages of hydrogen and oxygen respectively are:", options: ["53.41, 39.6", "6.72, 53.41", "7.55, 43.85", "6.72, 39.87"], ans: 3 },
+                { id: "c1", type: "mcq", q: "On combustion 0.210 g of an organic compound gave 0.127 g H₂O and 0.307 g CO₂. The percentages of hydrogen and oxygen respectively are:", options: ["53.41, 39.6", "6.72, 53.41", "7.55, 43.85", "6.72, 39.87"], ans: 2 },
                 { id: "c2", type: "numerical", q: "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is (in mg):", ans: 236 }
             ],
             "Mathematics": [
-                { id: "m1", type: "mcq", q: "The number of real roots of the equation x|x-2| + 3|x-3| + 1 = 0 is:", options: ["4", "2", "1", "3"], ans: 2 },
-                { id: "m2", type: "numerical", q: "Let O be the origin, point A be z₁ = √3 + 2√2 i, point B(z₂) be such that √3|z₂| = |z₁| and arg(z₂) = arg(z₁) + π/6. If area of triangle ABO is 11/x, find x:", ans: 3 }
+                { id: "m1", type: "mcq", q: "The number of real roots of the equation x|x-2| + 3|x-3| + 1 = 0 is:", options: ["4", "2", "1", "3"], ans: 1 },
+                { id: "m2", type: "numerical", q: "Let O be origin, A be z₁ = √3 + 2√2 i, B(z₂) be such that √3|z₂| = |z₁| and arg(z₂) = arg(z₁) + π/6. If area of triangle ABO is 11/x, find x:", ans: 3 }
             ]
         };
     }
@@ -89,10 +115,14 @@ async function startTest(testId, timeInMins) {
     document.getElementById('day-selection-screen').classList.add('hidden');
     document.getElementById('test-selection-screen').classList.add('hidden');
     document.getElementById('dashboard-screen').classList.add('hidden');
+    document.getElementById('clouds').classList.add('hidden');
+    document.getElementById('science-bg').classList.add('hidden');
+    document.getElementById('ai-bot-container').classList.add('hidden'); 
     document.getElementById('nta-screen').classList.remove('hidden');
     document.body.className = 'theme-nta';
     
     totalTime = timeInMins * 60;
+    timeSpent = 0;
     startTimer();
     switchSubject('Physics'); 
 }
@@ -199,7 +229,7 @@ function calculateAndShowResult() {
             let state = testState[q.id];
             if(state.selectedOpt !== null) {
                 if(state.selectedOpt === q.ans) { totalPositive += 4; stats[sub].p++; } 
-                else if (q.type === 'mcq') { totalNegative += 1; } // No negative for numerical
+                else if (q.type === 'mcq') { totalNegative += 1; }
             }
         });
     });
@@ -209,24 +239,45 @@ function calculateAndShowResult() {
     
     document.getElementById('nta-screen').classList.add('hidden');
     document.getElementById('analysis-screen').classList.remove('hidden');
+    document.getElementById('ai-bot-container').classList.remove('hidden'); 
     document.body.className = 'theme-premium';
     
     document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
     document.getElementById('positive-score').innerText = `+${totalPositive}`;
     document.getElementById('negative-score').innerText = `-${totalNegative}`;
 
-    // SAFE ZONE LOGIC (If score > 50%)
     if (finalScore >= (maxScore / 2)) {
         document.getElementById('safe-zone-banner').classList.remove('hidden');
     } else {
         document.getElementById('safe-zone-banner').classList.add('hidden');
     }
 
-    // UPDATE GRAPH
     ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
         let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
         let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
         document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
         document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
     });
+}
+
+// --- AI BOT LOGIC ---
+function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
+function botReply(response) {
+    const chatArea = document.getElementById('bot-chat-area');
+    const optionsDiv = document.getElementById('bot-options');
+    const inputField = document.getElementById('bot-input');
+    
+    if(optionsDiv) optionsDiv.remove();
+    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
+    
+    setTimeout(() => {
+        if(response === 'Yes') {
+            chatArea.innerHTML += `<div class="bot-msg">Great! You can ask me anything about the test patterns. Type below!</div>`;
+            inputField.disabled = false;
+            document.getElementById('bot-send-btn').disabled = false;
+        } else {
+            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
+        }
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }, 600);
 }
