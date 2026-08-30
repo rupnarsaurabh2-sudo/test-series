@@ -1,1 +1,25 @@
-
+{
+  "full_test_1": {
+    "Physics": [
+      { "id": "t1_p1", "q": "Force is defined as the rate of change of:", "options": ["Velocity", "Acceleration", "Momentum", "Mass"], "ans": 2, "hint": "Newton's Second Law." },
+      { "id": "t1_p2", "q": "Unit of Capacitance is:", "options": ["Henry", "Farad", "Coulomb", "Volt"], "ans": 1, "hint": "Named after Michael Faraday." },
+      { "id": "t1_p3", "q": "Work done by conservative force in a closed loop is:", "options": ["Positive", "Negative", "Zero", "Infinite"], "ans": 2, "hint": "Depends only on initial and final points." },
+      { "id": "t1_p4", "q": "Speed of light is maximum in:", "options": ["Water", "Glass", "Diamond", "Vacuum"], "ans": 3, "hint": "Refractive index is minimum here." },
+      { "id": "t1_p5", "q": "The dimension of Energy is:", "options": ["MLT-1", "ML2T-2", "MLT-2", "M2LT-1"], "ans": 1, "hint": "Work = Force x Displacement." }
+    ],
+    "Chemistry": [
+      { "id": "t1_c1", "q": "Atomic number of Carbon is:", "options": ["5", "6", "7", "8"], "ans": 1, "hint": "It has 4 valence electrons." },
+      { "id": "t1_c2", "q": "pH of pure water at 25°C is:", "options": ["5", "6", "7", "8"], "ans": 2, "hint": "It is perfectly neutral." },
+      { "id": "t1_c3", "q": "Which is a noble gas?", "options": ["Nitrogen", "Oxygen", "Neon", "Chlorine"], "ans": 2, "hint": "Group 18 element." },
+      { "id": "t1_c4", "q": "Formula of Benzene is:", "options": ["C6H6", "C6H12", "C5H10", "C6H5OH"], "ans": 0, "hint": "Highly stable aromatic ring." },
+      { "id": "t1_c5", "q": "Strongest acid among these is:", "options": ["HCl", "CH3COOH", "H2O", "NH3"], "ans": 0, "hint": "Strong mineral acid." }
+    ],
+    "Mathematics": [
+      { "id": "t1_m1", "q": "Derivative of sin(x) is:", "options": ["cos(x)", "-cos(x)", "sin(x)", "-sin(x)"], "ans": 0, "hint": "Basic calculus rule." },
+      { "id": "t1_m2", "q": "Value of log(1) base 10 is:", "options": ["1", "10", "0", "Undefined"], "ans": 2, "hint": "Any number to the power 0 is 1." },
+      { "id": "t1_m3", "q": "Sum of angles in a triangle is:", "options": ["90", "180", "360", "270"], "ans": 1, "hint": "Basic geometry." },
+      { "id": "t1_m4", "q": "Integral of 2x dx is:", "options": ["x^2", "x", "2x^2", "x^2/2"], "ans": 0, "hint": "Power rule of integration." },
+      { "id": "t1_m5", "q": "Probability of sure event is:", "options": ["0", "0.5", "1", "Infinity"], "ans": 2, "hint": "It will definitely happen." }
+    ]
+  }
+}
