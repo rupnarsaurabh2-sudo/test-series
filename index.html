@@ -35,8 +35,11 @@
             </div>
         </nav>
 
-        <!-- Centered Hero Section -->
         <section class="hero flex-center">
+            <div class="exam-toggle-container">
+                <button class="toggle-btn active">JEE Main</button>
+                <button class="toggle-btn locked" onclick="alert('JEE Advanced is being curated. Coming Soon!')">JEE Advanced 🔒</button>
+            </div>
             <div class="quotes-container">
                 <h2>"The clock is ticking, the crowd is vast,<br> <span class="gold-text">Master the patterns</span> to build a future that lasts."</h2>
                 <p class="subtitle">Stop chasing illusions. The reality of NTA lies here.</p>
@@ -60,14 +63,14 @@
     </div>
 
     <!-- 3. DASHBOARD -->
-    <div id="dashboard-screen" class="hidden main-container transition-element screen-layer flex-center-top">
-        <nav class="navbar glass-nav" style="width: 100vw; position: absolute; top: 0; left: 0;">
-            <div class="logo" style="margin-left: 5%;">RANKER'S VAULT</div>
-            <button class="nav-btn outline" style="margin-right: 5%;" onclick="location.reload()">Logout</button>
+    <div id="dashboard-screen" class="hidden transition-element screen-layer">
+        <nav class="navbar glass-nav">
+            <div class="logo" style="margin-left: 80px;">RANKER'S VAULT</div>
+            <button class="nav-btn outline" onclick="location.reload()">Logout</button>
         </nav>
         
-        <div class="dashboard-content" style="margin-top: 100px;">
-            <h2 class="gold-text" style="margin-bottom: 30px;">Select Your Challenge</h2>
+        <div class="main-container flex-center-top">
+            <h2 class="gold-text" style="margin-bottom: 30px; margin-top: 10px;">Select Your Challenge</h2>
             <div class="cards-container">
                 <div class="dash-card">
                     <h3>Daily 10 PYQs Challenge</h3>
@@ -84,17 +87,23 @@
     </div>
 
     <!-- DAY SELECTION GRID -->
-    <section id="day-selection-screen" class="hidden main-container transition-element screen-layer flex-center-top">
-        <div style="margin-top: 80px; width: 100%;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">Daily PYQs (75 Days)</h2>
+    <section id="day-selection-screen" class="hidden transition-element screen-layer">
+        <nav class="navbar glass-nav">
+            <div class="logo" style="margin-left: 80px;">DAILY PYQs</div>
+        </nav>
+        <div class="main-container flex-center-top">
+            <h2 class="gold-text" style="margin-bottom: 20px;">75 Days Challenge</h2>
             <div id="days-grid" class="days-grid"></div>
         </div>
     </section>
 
     <!-- TEST SELECTION GRID -->
-    <section id="test-selection-screen" class="hidden main-container transition-element screen-layer flex-center-top">
-        <div style="margin-top: 80px; width: 100%;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">Pro Test Series (10 Tests)</h2>
+    <section id="test-selection-screen" class="hidden transition-element screen-layer">
+        <nav class="navbar glass-nav">
+            <div class="logo" style="margin-left: 80px;">PRO TEST SERIES</div>
+        </nav>
+        <div class="main-container flex-center-top">
+            <h2 class="gold-text" style="margin-bottom: 20px;">10 Full Length Tests</h2>
             <div id="tests-grid" class="days-grid"></div>
         </div>
     </section>
@@ -165,7 +174,7 @@
 
     <!-- 5. ADVANCED ANALYSIS SCREEN -->
     <div id="analysis-screen" class="hidden main-container transition-element screen-layer flex-center-top">
-        <div style="margin-top: 80px; width: 100%;">
+        <div style="margin-top: 40px; width: 100%;">
             <h1 class="gold-text" style="font-size: 32px;">Performance Analysis</h1>
             <div id="safe-zone-banner" class="hidden safe-banner">🎯 YOU ARE NOW IN THE SAFE ZONE! Excellent Work.</div>
 
@@ -182,6 +191,28 @@
                 <div class="bar-container"><div class="bar-label">Maths</div><div class="bar-bg"><div class="bar-fill" id="bar-math"></div></div><div class="bar-pct" id="pct-math">0%</div></div>
             </div>
             <button class="glow-gold-btn" style="margin-top: 30px; width: 200px;" onclick="location.reload()">Back to Home</button>
+        </div>
+    </div>
+
+    <!-- 6. AI FOUNDER BOT -->
+    <div id="ai-bot-container">
+        <button id="bot-toggle-btn" onclick="toggleBot()">🤖</button>
+        <div id="bot-window" class="hidden popup-anim">
+            <div class="bot-header">
+                <span class="bot-title">Ask the Founder AI</span>
+                <button onclick="toggleBot()" class="bot-close">&times;</button>
+            </div>
+            <div class="bot-chat-area" id="bot-chat-area">
+                <div class="bot-msg">Hello, I am Saurav Sugreev Rupnar. Do you have any queries about my test series?</div>
+                <div class="bot-options" id="bot-options">
+                    <button class="bot-opt-btn" onclick="botReply('Yes')">Yes</button>
+                    <button class="bot-opt-btn" onclick="botReply('No')">No</button>
+                </div>
+            </div>
+            <div class="bot-input-area">
+                <input type="text" id="bot-input" placeholder="Type a message..." disabled>
+                <button id="bot-send-btn" disabled>➤</button>
+            </div>
         </div>
     </div>
 
