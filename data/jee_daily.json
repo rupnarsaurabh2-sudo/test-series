@@ -54,3 +54,73 @@
     ]
   }
 }
+"day_4": {
+    "Physics": [
+      { "id": "d4_p1", "type": "numerical", "q": "A physical quantity C is related to four other quantities as C = pq² / (r³ √s). The percentage errors in p, q, r, s are 1%, 2%, 3%, 2%. The percentage error in C will be:", "ans": 15, "hint": "Error = Δp/p + 2(Δq/q) + 3(Δr/r) + 0.5(Δs/s)." },
+      { "id": "d4_p2", "type": "numerical", "q": "A particle is moving with constant acceleration a. The v² versus x plot passes through (10, 40) and (20, 60). The acceleration of the particle is (in m/s²):", "ans": 1, "hint": "Use v² = u² + 2as. The slope of v² vs x graph gives 2a." }
+    ],
+    "Chemistry": [
+      { "id": "d4_c1", "type": "numerical", "q": "3 moles of an ideal gas at 300 K expand isothermally from 30 dm³ to 45 dm³ against a constant opposing pressure of 80 kPa. The amount of heat transferred is (in J):", "ans": 1200, "hint": "For isothermal process, Q = -W. W = -P_ext(V2 - V1)." },
+      { "id": "d4_c2", "type": "numerical", "q": "x mg of Mg(OH)₂ (molar mass = 58) is required to be dissolved in 1.0 L of water to produce a pH of 10.0 at 298 K. The value of x is (Nearest integer):", "ans": 3, "hint": "Find pOH, then [OH⁻]. [Mg²⁺] will be half of [OH⁻]. Calculate mass from moles." }
+    ],
+    "Mathematics": [
+      { "id": "d4_m1", "type": "mcq", "q": "Let A = {θ ∈ [0, 2π] : 1 + 10 Re( (2cosθ + isinθ)/(cosθ - 3isinθ) ) = 0}. Then Σ θ² is equal to:", "options": ["21π²/4", "8π²", "27π²/4", "6π²"], "ans": 0, "hint": "Rationalize the complex number by multiplying with conjugate of denominator to find real part." },
+      { "id": "d4_m2", "type": "mcq", "q": "Let the mean and standard deviation of 2, 3, 3, 4, 5, 7, a, b be 4 and √2 respectively. The mean deviation about the mode of these observations is:", "options": ["1", "3/4", "2", "1/2"], "ans": 0, "hint": "First identify the mode (most frequent), then find a and b using mean and variance formulas." }
+    ]
+  },
+  "day_5": {
+    "Physics": [
+      { "id": "d5_p1", "type": "mcq", "q": "A body of mass m is suspended by two strings making angles 30° and 60° with the horizontal ceiling with tensions T₁ and T₂. If T₁ = √3 T₂, the correct relation is:", "options": ["θ₁=30°, θ₂=60° with T₂=3mg/4", "θ₁=60°, θ₂=30° with T₂=mg/2", "θ₁=45°, θ₂=45° with T₂=3mg/4", "θ₁=30°, θ₂=60° with T₂=4mg/5"], "ans": 1, "hint": "Balance forces horizontally and vertically. T₁ cosθ₁ = T₂ cosθ₂ and T₁ sinθ₁ + T₂ sinθ₂ = mg." },
+      { "id": "d5_p2", "type": "mcq", "q": "A rod of length 5L is bent at right angle keeping one side length as 2L and other 3L. If L=10cm, position of centre of mass of the system is:", "options": ["2i + 3j", "3i + 7j", "5i + 8j", "4i + 9j"], "ans": 1, "hint": "Find COM of individual segments and use X_cm = (m₁x₁ + m₂x₂)/(m₁ + m₂)." }
+    ],
+    "Chemistry": [
+      { "id": "d5_c1", "type": "mcq", "q": "Which of the following binary mixture does not show the behaviour of minimum boiling azeotropes?", "options": ["H₂O + C₂H₅OH", "Phenol + Aniline", "CS₂ + Acetone", "Methanol + Chloroform"], "ans": 1, "hint": "Phenol and aniline show negative deviation from Raoult's law (maximum boiling azeotrope)." },
+      { "id": "d5_c2", "type": "numerical", "q": "1.80 g of solute A was dissolved in 62.5 cm³ of ethanol (density 0.8 g/cm³) and freezing point was 155.1 K. If Tf of ethanol is 156.0 K and Kf is 2.00, molar mass of A is:", "ans": 80, "hint": "Use ΔTf = Kf × m. Remember to calculate the mass of solvent using density and volume." }
+    ],
+    "Mathematics": [
+      { "id": "d5_m1", "type": "mcq", "q": "Let p be the number of triangles and q be the number of quadrilaterals formed by joining vertices of a regular polygon of n sides. If p+q = 126, eccentricity of x²/16 + y²/n = 1 is:", "options": ["3/4", "1/2", "√7/4", "1/√2"], "ans": 3, "hint": "p = nC3, q = nC4. Solve for n, then find eccentricity using e = √(1 - b²/a²)." },
+      { "id": "d5_m2", "type": "mcq", "q": "Let matrix A³ = A + I (effectively A^n = A^(n-2) + A^2 - I for n≥3). The sum of all elements of A^50 for the given 3x3 matrix is:", "options": ["53", "52", "39", "44"], "ans": 0, "hint": "Find a pattern for A^n by substituting smaller values of n." }
+    ]
+  },
+  "day_6": {
+    "Physics": [
+      { "id": "d6_p1", "type": "numerical", "q": "A force of 49 N acts tangentially at the highest point of a solid sphere of mass 20 kg kept on a rough horizontal plane. If it rolls without slipping, acceleration of its center is (in m/s²):", "ans": 3.5, "hint": "Use F + f = ma and torque equation F.R - f.R = Iα. Solve for a." },
+      { "id": "d6_p2", "type": "mcq", "q": "The variation of acceleration due to gravity (g) with distance (r) from the center of the earth is correctly represented by a graph which is:", "options": ["Linear then 1/r² curve", "Linear then 1/r curve", "Parabola then 1/r² curve", "Constant then 1/r² curve"], "ans": 0, "hint": "Inside Earth, g ∝ r. Outside Earth, g ∝ 1/r²." }
+    ],
+    "Chemistry": [
+      { "id": "d6_c1", "type": "mcq", "q": "The quantity of silver deposited when one coulomb charge is passed through AgNO₃ solution is:", "options": ["1 g of silver", "1 electrochemical equivalent of silver", "1 chemical equivalent", "0.1 g atom"], "ans": 1, "hint": "Faraday's first law: m = ZQ. If Q = 1 C, m = Z (electrochemical equivalent)." },
+      { "id": "d6_c2", "type": "mcq", "q": "Half life of zero order reaction A -> product is 1 hour for initial conc 2.0 M. Time required to decrease A from 0.50 M to 0.25 M is:", "options": ["0.5 hour", "4 hour", "15 min", "60 min"], "ans": 2, "hint": "For zero order, t_1/2 is directly proportional to initial concentration." }
+    ],
+    "Mathematics": [
+      { "id": "d6_m1", "type": "mcq", "q": "The system of equations x+5y-z=1, 4x+3y-3z=7, 24x+y+λz=μ has infinitely many solutions. If x, y, z are integers and 7 ≤ x+y+z ≤ 77, the number of solutions is:", "options": ["3", "6", "5", "4"], "ans": 0, "hint": "Apply condition for infinite solutions (Δ = 0, Δx = Δy = Δz = 0) to find relation between x, y, z." },
+      { "id": "d6_m2", "type": "numerical", "q": "The number of integral terms in the expansion of (5^(1/2) + 7^(1/8))^1016 is:", "ans": 128, "hint": "General term involves 5^(r/2) and 7^((1016-r)/8). Both r/2 and (1016-r)/8 must be integers." }
+    ]
+  },
+  "day_7": {
+    "Physics": [
+      { "id": "d7_p1", "type": "mcq", "q": "Under isothermal condition, the pressure of a gas is given by P = aV⁻³. The bulk modulus at constant temperature is equal to:", "options": ["3P", "P", "2P", "P/2"], "ans": 0, "hint": "Bulk Modulus B = -V(dP/dV). Differentiate P with respect to V." },
+      { "id": "d7_p2", "type": "numerical", "q": "The amount of work done to break a big water drop of radius R into 27 small drops of equal radius is 10 J. Work done required to break the same big drop into 64 small drops is (in J):", "ans": 15, "hint": "Work done is proportional to change in surface area. W ∝ (n^(1/3) - 1)." }
+    ],
+    "Chemistry": [
+      { "id": "d7_c1", "type": "numerical", "q": "The atomic number of the element with lowest 1st ionisation enthalpy among elements with atomic numbers 32, 35, 87, 19 is:", "ans": 87, "hint": "Ionisation enthalpy decreases down a group. Look for the heaviest alkali metal." },
+      { "id": "d7_c2", "type": "mcq", "q": "Which of the following molecules show paramagnetic behavior? (A) O₂, (B) N₂, (C) F₂, (D) S₂, (E) Cl₂", "options": ["B only", "A & C only", "A & E only", "A & D only"], "ans": 3, "hint": "Use Molecular Orbital Theory. Check for unpaired electrons in anti-bonding orbitals." }
+    ],
+    "Mathematics": [
+      { "id": "d7_m1", "type": "numerical", "q": "A random variable X takes values 0,1,2,3 with P(X=0)=P(X=1)=p and P(X=2)=P(X=3)=q. If E(X²) = 2E(X), then the value of 8p - 1 is:", "ans": 2, "hint": "Use definitions of Expected Value. Sum of all probabilities must be 1." },
+      { "id": "d7_m2", "type": "numerical", "q": "The number of solutions of the equation (4-√3)sinx - 2√3 cos²x = -4/(1+√3) in the interval [-2π, 5π/2] is:", "ans": 5, "hint": "Convert cos²x to 1 - sin²x to form a quadratic in sin x. Solve for valid angles." }
+    ]
+  },
+  "day_8": {
+    "Physics": [
+      { "id": "d8_p1", "type": "numerical", "q": "A light hollow cube of side 10 cm and mass 10g is floating in water. Pushed down and released, its time period of oscillation is yπ × 10⁻² s. Value of y is (g = 10 m/s², density = 1000 kg/m³):", "ans": 2, "hint": "Time period T = 2π√(m/k), where restoring force constant k = ρ A g." },
+      { "id": "d8_p2", "type": "numerical", "q": "The internal energy of air in a 4m x 4m x 3m room at 1 atm is X × 10⁶ J. Value of X is (Consider air as diatomic):", "ans": 12, "hint": "U = (f/2)PV. For diatomic gas f = 5. V = length × breadth × height." }
+    ],
+    "Chemistry": [
+      { "id": "d8_c1", "type": "mcq", "q": "Group 14 elements A and B have 1st IE 708 and 715 kJ/mol (lowest in group). The nature of their stable ions A²⁺ and B⁴⁺ respectively is:", "options": ["both reducing", "both oxidising", "reducing and oxidising", "oxidising and reducing"], "ans": 2, "hint": "Elements are Sn and Pb. Due to inert pair effect, Pb²⁺ is more stable than Pb⁴⁺, and Sn⁴⁺ is more stable than Sn²⁺." },
+      { "id": "d8_c2", "type": "numerical", "q": "The number of colourless lanthanoid ions among Eu³⁺, Lu³⁺, Nd³⁺, La³⁺, Sm³⁺ is:", "ans": 2, "hint": "Ions with f^0 or f^14 configuration are colourless due to absence of f-f transition." }
+    ],
+    "Mathematics": [
+      { "id": "d8_m1", "type": "mcq", "q": "The value of limit x->0 [ cosec x (√(2cos²x + 3cosx) - √(cos²x + sinx + 4)) ] is:", "options": ["0", "1/√15", "1/(2√5)", "2/5"], "ans": 2, "hint": "Rationalize the numerator and use L'Hopital's rule or standard limits as x tends to 0." },
+      { "id": "d8_m2", "type": "numerical", "q": "If f(x) = (1+ax)^(1/x) for x<0, 1+b for x=0, and ((x+4)^(1/2)-2)/((x+6)^(1/3)-2) for x>0 is continuous at x=0. Then e^a b c (where c is the RHL) is:", "ans": 48, "hint": "Equate Left Hand Limit, Right Hand Limit and f(0). Use standard limit formula for (1+x)^(1/x)." }
+    ]
+  }
