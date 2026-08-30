@@ -53,7 +53,7 @@
       { "id": "d3_m3", "type": "numerical", "q": "The product of the last two digits of (1919)^1919 is:", "ans": 63, "hint": "Find (1919)^1919 mod 100. Write 1919 as (1900 + 19) or use binomial expansion on (20 - 1)." }
     ]
   }
-}
+},
 "day_4": {
     "Physics": [
       { "id": "d4_p1", "type": "numerical", "q": "A physical quantity C is related to four other quantities as C = pq² / (r³ √s). The percentage errors in p, q, r, s are 1%, 2%, 3%, 2%. The percentage error in C will be:", "ans": 15, "hint": "Error = Δp/p + 2(Δq/q) + 3(Δr/r) + 0.5(Δs/s)." },
