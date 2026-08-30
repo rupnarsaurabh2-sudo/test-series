@@ -8,6 +8,7 @@
 </head>
 <body class="theme-premium">
 
+    <!-- FIXED BACKGROUNDS -->
     <div class="clouds-container" id="clouds">
         <div class="cloud c1"></div><div class="cloud c2"></div>
         <div class="cloud c3"></div><div class="cloud c4"></div>
@@ -19,7 +20,7 @@
     </div>
 
     <!-- 1. LANDING PAGE -->
-    <div id="landing-screen" class="transition-element">
+    <div id="landing-screen" class="transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo">RANKER'S VAULT <span class="gold-text">PRO</span></div>
             <div class="nav-links">
@@ -35,7 +36,7 @@
             </div>
             <div class="quotes-container">
                 <h2>"The clock is ticking, the crowd is vast,<br> <span class="gold-text">Master the patterns</span> to build a future that lasts."</h2>
-                <h2 style="margin-top: 20px; font-size: 16px; color: #a0aec0;">Stop chasing illusions. The reality of NTA lies here.</h2>
+                <h2 style="margin-top: 20px; font-size: 16px; color: #a0aec0; font-weight: normal;">Stop chasing illusions. The reality of NTA lies here.</h2>
             </div>
         </section>
     </div>
@@ -56,14 +57,14 @@
     </div>
 
     <!-- 3. DASHBOARD -->
-    <div id="dashboard-screen" class="hidden main-container transition-element">
+    <div id="dashboard-screen" class="hidden main-container transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo">RANKER'S VAULT</div>
             <button class="nav-btn outline" onclick="location.reload()">Logout</button>
         </nav>
         
-        <h2 style="margin-top: 30px; z-index: 10; position:relative;">Select Your Challenge</h2>
-        <div class="cards-container" style="z-index: 10; position:relative;">
+        <h2 style="margin-top: 30px;">Select Your Challenge</h2>
+        <div class="cards-container">
             <div class="dash-card">
                 <h3>Daily 10 PYQs Challenge</h3>
                 <p>Curated for pure concept building.</p>
@@ -77,20 +78,30 @@
         </div>
     </div>
 
-    <section id="day-selection-screen" class="hidden main-container transition-element">
+    <section id="day-selection-screen" class="hidden main-container transition-element screen-layer">
         <h2>Daily PYQs (75 Days)</h2>
         <div id="days-grid" class="days-grid"></div>
-        <button class="outline-btn full-width" onclick="switchScreen('day-selection-screen', 'dashboard-screen')">Back to Dashboard</button>
+        <button class="outline-btn full-width" style="margin-top: 20px; max-width: 300px;" onclick="switchScreen('day-selection-screen', 'dashboard-screen')">Back to Dashboard</button>
     </section>
 
-    <section id="test-selection-screen" class="hidden main-container transition-element">
+    <section id="test-selection-screen" class="hidden main-container transition-element screen-layer">
         <h2 class="gold-text">Pro Test Series (10 Tests)</h2>
         <div id="tests-grid" class="days-grid"></div>
-        <button class="outline-btn full-width" onclick="switchScreen('test-selection-screen', 'dashboard-screen')">Back to Dashboard</button>
+        <button class="outline-btn full-width" style="margin-top: 20px; max-width: 300px;" onclick="switchScreen('test-selection-screen', 'dashboard-screen')">Back to Dashboard</button>
     </section>
 
+    <!-- ALL THE BEST POPUP -->
+    <div id="all-best-modal" class="modal hidden">
+        <div class="modal-content glass-panel popup-anim" style="padding: 40px 20px;">
+            <span class="close-btn" onclick="closeAllBestModal()">&times;</span>
+            <h2 style="color: #64ffda; font-size: 32px; margin-bottom: 10px;">All The Best! 🎯</h2>
+            <p style="color: #e2e8f0; font-size: 18px; margin-bottom: 25px;">Keep calm and trust your preparation.</p>
+            <button class="glow-gold-btn full-width" style="max-width: 250px;" onclick="confirmStartTest()">Start Now 🚀</button>
+        </div>
+    </div>
+
     <!-- 4. NTA CLONE INTERFACE -->
-    <div id="nta-screen" class="hidden nta-layout transition-element">
+    <div id="nta-screen" class="hidden nta-layout transition-element screen-layer">
         <div class="nta-header">
             <div class="nta-title">JEE MAIN 2026 - RANKER'S VAULT</div>
             <div class="nta-timer">Time Left : <span id="time-left">00:00:00</span></div>
@@ -114,7 +125,7 @@
                     
                     <!-- NUMERICAL AREA -->
                     <div id="numerical-area" class="hidden numerical-container">
-                        <label>Enter your answer (Number):</label><br>
+                        <label style="font-weight: bold; font-size: 16px;">Enter your answer (Number):</label><br>
                         <input type="number" id="num-answer" step="any" placeholder="e.g. 25.5">
                     </div>
                 </div>
@@ -146,10 +157,9 @@
     </div>
 
     <!-- 5. ADVANCED ANALYSIS SCREEN -->
-    <div id="analysis-screen" class="hidden main-container transition-element">
+    <div id="analysis-screen" class="hidden main-container transition-element screen-layer">
         <h1 class="gold-text" style="margin-top: 20px; font-size: 32px;">Performance Analysis</h1>
         
-        <!-- SAFE ZONE BANNER -->
         <div id="safe-zone-banner" class="hidden" style="background: #10b981; color: white; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; margin: 20px 0; box-shadow: 0 4px 15px rgba(16,185,129,0.4);">
             🎯 YOU ARE NOW IN THE SAFE ZONE! Excellent Work.
         </div>
@@ -168,6 +178,28 @@
         </div>
 
         <button class="action-btn" style="margin-top: 30px;" onclick="location.reload()">Back to Home</button>
+    </div>
+
+    <!-- 6. AI FOUNDER BOT -->
+    <div id="ai-bot-container">
+        <button id="bot-toggle-btn" onclick="toggleBot()">🤖</button>
+        <div id="bot-window" class="hidden popup-anim">
+            <div class="bot-header">
+                <span class="bot-title">Ask the Founder AI</span>
+                <button onclick="toggleBot()" class="bot-close">&times;</button>
+            </div>
+            <div class="bot-chat-area" id="bot-chat-area">
+                <div class="bot-msg">Hello, I am Saurav Sugreev Rupnar. Do you have any queries about my test series?</div>
+                <div class="bot-options" id="bot-options">
+                    <button class="bot-opt-btn" onclick="botReply('Yes')">Yes</button>
+                    <button class="bot-opt-btn" onclick="botReply('No')">No</button>
+                </div>
+            </div>
+            <div class="bot-input-area">
+                <input type="text" id="bot-input" placeholder="Type a message..." disabled>
+                <button id="bot-send-btn" disabled>➤</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
