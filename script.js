@@ -12,22 +12,6 @@ let screenHistory = ['landing-screen'];
 
 window.onload = function() {
     generateGrids();
-    createLeaves();
-}
-
-function createLeaves() {
-    const container = document.getElementById('leaf-container');
-    const leafShapes = ['🍁', '🍂'];
-    for(let i=0; i<15; i++) {
-        let leaf = document.createElement('div');
-        leaf.className = 'leaf';
-        leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
-        leaf.style.left = Math.random() * 100 + 'vw';
-        leaf.style.animationDuration = (Math.random() * 5 + 8) + 's, ' + (Math.random() * 3 + 2) + 's';
-        leaf.style.animationDelay = (Math.random() * 5) + 's, ' + (Math.random() * 2) + 's';
-        leaf.style.fontSize = (Math.random() * 10 + 12) + 'px';
-        container.appendChild(leaf);
-    }
 }
 
 function generateGrids() {
@@ -66,16 +50,14 @@ function switchScreen(hideId, showId) {
         screenHistory.push(showId);
     }
     
-    if(showId === 'landing-screen') {
+    // Manage Back Button visibility
+    if(showId === 'landing-screen' || showId === 'nta-screen' || showId === 'analysis-screen') {
         document.getElementById('universal-back').classList.add('hidden');
     } else {
         document.getElementById('universal-back').classList.remove('hidden');
     }
 }
 
-// -----------------------------------------------------
-// THE SMART BACK BUTTON FIX (Restores Premium Theme)
-// -----------------------------------------------------
 function goBack() {
     if(screenHistory.length > 1) {
         let currentScreen = screenHistory.pop();
@@ -87,16 +69,6 @@ function goBack() {
         document.getElementById(prevScreen).classList.remove('hidden');
         document.getElementById(prevScreen).classList.add('active-screen');
         
-        // Fix for White Background Bug
-        if(prevScreen !== 'nta-screen') {
-            document.body.className = 'theme-premium';
-            document.getElementById('floating-dock').classList.remove('hidden');
-            document.getElementById('leaf-container').classList.remove('hidden');
-            document.getElementById('science-bg').classList.remove('hidden');
-        } else {
-            document.body.className = 'theme-nta';
-        }
-
         if(prevScreen === 'landing-screen') {
             document.getElementById('universal-back').classList.add('hidden');
         } else {
@@ -124,7 +96,7 @@ function confirmStartTest() {
     startTest(pendingTestId, pendingTestTime);
 }
 
-// FETCH (Use Real JSON Later)
+// FETCH DATA
 async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
@@ -132,19 +104,17 @@ async function fetchQuestions(testId) {
         const database = await response.json();
         return database[testId] || null;
     } catch (e) {
-        console.warn("Using local fallback data.");
+        console.warn("Using local fallback data");
         return {
             "Physics": [
-                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3 },
-                { id: "p2", type: "numerical", q: "Three students measure g using a simple pendulum. The minimum percentage error is obtained by student no: (1, 2, or 3)?", ans: 1 }
+                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3, hint: "Check units of permeability and permittivity." },
+                { id: "p2", type: "numerical", q: "A particle of mass 10g moves in a straight line with retardation 2x. Loss of kinetic energy is (10/x)^-n. The value of n is:", ans: 2, hint: "Use Work-Energy Theorem." }
             ],
             "Chemistry": [
-                { id: "c1", type: "mcq", q: "On combustion 0.210 g of an organic compound gave 0.127 g H₂O and 0.307 g CO₂. The percentages of hydrogen and oxygen respectively are:", options: ["53.41, 39.6", "6.72, 53.41", "7.55, 43.85", "6.72, 39.87"], ans: 2 },
-                { id: "c2", type: "numerical", q: "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is (in mg):", ans: 236 }
+                { id: "c1", type: "mcq", q: "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is:", options: ["235.7 mg", "0.24 mg", "236 mg", "2.444 g"], ans: 2, hint: "Use mole concept at STP (22.4 L)." }
             ],
             "Mathematics": [
-                { id: "m1", type: "mcq", q: "The number of real roots of the equation x|x-2| + 3|x-3| + 1 = 0 is:", options: ["4", "2", "1", "3"], ans: 1 },
-                { id: "m2", type: "numerical", q: "Let O be origin, A be z₁ = √3 + 2√2 i, B(z₂) be such that √3|z₂| = |z₁| and arg(z₂) = arg(z₁) + π/6. If area of triangle ABO is 11/x, find x:", ans: 3 }
+                { id: "m1", type: "mcq", q: "The number of real roots of the equation x|x-2| + 3|x-3| + 1 = 0 is:", options: ["4", "2", "1", "3"], ans: 1, hint: "Open modulus based on critical points 2 and 3." }
             ]
         };
     }
@@ -161,6 +131,7 @@ async function startTest(testId, timeInMins) {
         });
     });
 
+    // Hide Backgrounds & Docks for NTA interface
     document.getElementById('floating-dock').classList.add('hidden'); 
     document.getElementById('universal-back').classList.add('hidden'); 
     document.getElementById('leaf-container').classList.add('hidden');
@@ -180,6 +151,7 @@ function startTimer() {
     const display = document.getElementById('time-left');
     timerInterval = setInterval(() => {
         totalTime--; 
+        timeSpent++;
         let h = Math.floor(totalTime / 3600), m = Math.floor((totalTime % 3600) / 60), s = totalTime % 60;
         display.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         if (totalTime <= 0) { clearInterval(timerInterval); calculateAndShowResult(); }
@@ -285,9 +257,15 @@ function calculateAndShowResult() {
     let finalScore = totalPositive - totalNegative;
     let maxScore = totalQs * 4;
     
+    // Setup Time Display
+    let m = Math.floor(timeSpent / 60);
+    let s = timeSpent % 60;
+    document.getElementById('time-taken').innerText = `${m}m ${s}s`;
+
     switchScreen('nta-screen', 'analysis-screen');
     document.body.className = 'theme-premium';
     
+    // Restore Backgrounds
     document.getElementById('floating-dock').classList.remove('hidden'); 
     document.getElementById('leaf-container').classList.remove('hidden');
     document.getElementById('science-bg').classList.remove('hidden');
@@ -310,19 +288,60 @@ function calculateAndShowResult() {
     });
 }
 
+// --- VIEW SOLUTIONS LOGIC ---
+function openReviewScreen() {
+    switchScreen('analysis-screen', 'review-screen');
+    const container = document.getElementById('review-content');
+    container.innerHTML = '';
+
+    Object.keys(questions).forEach(sub => {
+        if(questions[sub].length > 0) {
+            container.innerHTML += `<h2 class="sub-title">${sub}</h2>`;
+            questions[sub].forEach((q, i) => {
+                let state = testState[q.id];
+                let isCorrect = state.selectedOpt === q.ans;
+                let html = `<div class="review-item">
+                                <div class="review-q">Q${i+1}. ${q.q}</div>`;
+
+                if(q.type === 'numerical') {
+                    html += `<div class="review-opt ${isCorrect ? 'opt-correct' : (state.selectedOpt!==null ? 'opt-wrong':'')}">
+                                Your Answer: ${state.selectedOpt !== null ? state.selectedOpt : 'Not Attempted'}
+                             </div>
+                             <div class="review-opt opt-correct">Correct Answer: ${q.ans}</div>`;
+                } else {
+                    q.options.forEach((opt, oIdx) => {
+                        let optClass = 'review-opt';
+                        if(oIdx === q.ans) optClass += ' opt-correct';
+                        else if(oIdx === state.selectedOpt) optClass += ' opt-wrong';
+                        html += `<div class="${optClass}">${opt}</div>`;
+                    });
+                }
+                
+                if(q.hint) {
+                    html += `<div class="review-hint">💡 Hint: ${q.hint}</div>`;
+                }
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+        }
+    });
+}
+
+function closeReviewScreen() {
+    switchScreen('review-screen', 'analysis-screen');
+}
+
 // --- AI BOT LOGIC ---
 function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
 function botReply(response) {
     const chatArea = document.getElementById('bot-chat-area');
     const optionsDiv = document.getElementById('bot-options');
     const inputField = document.getElementById('bot-input');
-    
     if(optionsDiv) optionsDiv.remove();
     chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
-    
     setTimeout(() => {
         if(response === 'Yes') {
-            chatArea.innerHTML += `<div class="bot-msg">Great! You can ask me anything about the test patterns. Type below!</div>`;
+            chatArea.innerHTML += `<div class="bot-msg">Great! Ask anything about the test patterns.</div>`;
             inputField.disabled = false;
             document.getElementById('bot-send-btn').disabled = false;
         } else {
