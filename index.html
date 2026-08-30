@@ -8,17 +8,14 @@
 </head>
 <body class="theme-premium">
 
-    <!-- FALLING GOLDEN LEAVES & SCIENCE BG -->
     <div id="leaf-container"></div>
     <div class="science-bg" id="science-bg">
         <div class="sci-symbol s1">⌬</div><div class="sci-symbol s2">∫e^x dx</div>
         <div class="sci-symbol s3">E=mc²</div><div class="sci-symbol s4">∇×B</div>
     </div>
 
-    <!-- UNIVERSAL BACK BUTTON -->
     <button id="universal-back" class="back-btn hidden" onclick="goBack()">⬅ Back</button>
 
-    <!-- FLOATING BOTTOM DOCK -->
     <div class="floating-dock" id="floating-dock">
         <button class="dock-btn" onclick="location.reload()">🏠 Home</button>
         <button class="dock-btn active">JEE Main</button>
@@ -86,7 +83,6 @@
         </div>
     </div>
 
-    <!-- DAY SELECTION GRID -->
     <section id="day-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo" style="margin-left: 80px;">DAILY PYQs</div>
@@ -97,7 +93,6 @@
         </div>
     </section>
 
-    <!-- TEST SELECTION GRID -->
     <section id="test-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo" style="margin-left: 80px;">PRO TEST SERIES</div>
@@ -108,7 +103,6 @@
         </div>
     </section>
 
-    <!-- ALL THE BEST POPUP -->
     <div id="all-best-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim" style="padding: 40px 20px;">
             <span class="close-btn" onclick="closeAllBestModal()">&times;</span>
@@ -137,9 +131,7 @@
                         <span>Marks: +4 | -1</span>
                     </div>
                     <div id="q-text" class="q-content"></div>
-                    
                     <div id="options-area" class="options-container"></div>
-                    
                     <div id="numerical-area" class="hidden numerical-container">
                         <label style="font-weight: bold; font-size: 16px;">Enter your answer (Number):</label><br>
                         <input type="number" id="num-answer" step="any" placeholder="e.g. 25.5">
@@ -180,6 +172,7 @@
 
             <div class="analysis-grid">
                 <div class="stat-box"><h3>Final Score</h3><div class="score-big" id="final-score">0</div></div>
+                <div class="stat-box"><h3>Time Taken</h3><div class="score-big" id="time-taken" style="color:#64ffda;">00:00</div></div>
                 <div class="stat-box"><h3>Positive Marks</h3><div class="score-big" id="positive-score" style="color:#10b981;">0</div></div>
                 <div class="stat-box"><h3>Negative Marks</h3><div class="score-big" id="negative-score" style="color:#ef4444;">0</div></div>
             </div>
@@ -190,11 +183,22 @@
                 <div class="bar-container"><div class="bar-label">Chemistry</div><div class="bar-bg"><div class="bar-fill" id="bar-chem"></div></div><div class="bar-pct" id="pct-chem">0%</div></div>
                 <div class="bar-container"><div class="bar-label">Maths</div><div class="bar-bg"><div class="bar-fill" id="bar-math"></div></div><div class="bar-pct" id="pct-math">0%</div></div>
             </div>
-            <button class="glow-gold-btn" style="margin-top: 30px; width: 200px;" onclick="location.reload()">Back to Home</button>
+            
+            <div style="display:flex; justify-content:center; gap:20px; flex-wrap: wrap;">
+                <button class="action-btn" style="margin-top: 30px; width: 200px;" onclick="openReviewScreen()">🔍 View Solutions</button>
+                <button class="glow-gold-btn" style="margin-top: 30px; width: 200px;" onclick="location.reload()">🏠 Back to Home</button>
+            </div>
         </div>
     </div>
 
-    <!-- 6. AI FOUNDER BOT -->
+    <!-- 6. SOLUTIONS & REVIEW SCREEN -->
+    <div id="review-screen" class="hidden main-container transition-element screen-layer flex-center-top">
+        <h1 class="gold-text" style="font-size: 32px; margin-bottom: 20px; margin-top: 40px;">Review Mistakes</h1>
+        <div id="review-content" style="width: 100%; text-align: left;"></div>
+        <button class="glow-gold-btn" style="margin-top: 30px; width: 200px;" onclick="closeReviewScreen()">⬅ Back to Analysis</button>
+    </div>
+
+    <!-- 7. AI FOUNDER BOT -->
     <div id="ai-bot-container">
         <button id="bot-toggle-btn" onclick="toggleBot()">🤖</button>
         <div id="bot-window" class="hidden popup-anim">
