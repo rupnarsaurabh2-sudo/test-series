@@ -244,5 +244,119 @@
         "hint": "Find the common domain for all square roots to be real. You'll find x = 3 is the only valid solution in the allowed domain."
       }
     ]
+  },
+  "day_3": {
+    "Physics": [
+      {
+        "id": "p7",
+        "type": "mcq",
+        "q": "If B is magnetic field and μ₀ is permeability of free space, then the dimensions of (B/μ₀) is:[cite: 3]",
+        "options": [
+          "ML²T⁻²A⁻¹",
+          "MT⁻²A⁻¹",
+          "L⁻¹A",
+          "LT⁻²A⁻¹"
+        ],
+        "ans": 2,
+        "hint": "B/μ₀ is the Magnetic field intensity (H). Its unit is Ampere/meter, so the dimension is L⁻¹A."
+      },
+      {
+        "id": "p8",
+        "type": "mcq",
+        "q": "A cubic block of mass m is sliding down on an inclined plane at 60° with an acceleration of g/2. The value of coefficient of kinetic friction is:[cite: 3]",
+        "options": [
+          "sqrt(3) - 1",
+          "sqrt(3)/2",
+          "sqrt(2)/3",
+          "1 - sqrt(3)/2"
+        ],
+        "ans": 0,
+        "hint": "Use Newton's law: mg*sin(60°) - μ*mg*cos(60°) = ma. Substitute a = g/2 and solve for μ."
+      },
+      {
+        "id": "p9",
+        "type": "mcq",
+        "q": "The moment of inertia of a circular ring of mass M and diameter r about a tangential axis lying in the plane of the ring is:[cite: 3]",
+        "options": [
+          "(1/2)Mr²",
+          "(3/8)Mr²",
+          "(3/2)Mr²",
+          "2Mr²"
+        ],
+        "ans": 1,
+        "hint": "Radius R = r/2. I_cm along diameter = (1/2)MR². Using parallel axis theorem, I = I_cm + MR² = (3/2)MR². Substitute R = r/2 to get (3/8)Mr²."
+      }
+    ],
+    "Chemistry": [
+      {
+        "id": "c7",
+        "type": "numerical",
+        "q": "The molarity of 1L orthophosphoric acid (H₃PO₄) having 70% purity by weight (specific gravity 1.54 g/cm³) is ___ M.[cite: 2]",
+        "ans": 11,
+        "hint": "Molarity M = (% purity * density * 10) / Molar Mass. M = (70 * 1.54 * 10) / 98 = 11 M."
+      },
+      {
+        "id": "c8",
+        "type": "numerical",
+        "q": "10 mL of gaseous hydrocarbon on combustion gives 40 mL of CO₂(g) and 50 mL of water vapour. Total number of carbon and hydrogen atoms in one molecule of the hydrocarbon is ___[cite: 2]",
+        "ans": 14,
+        "hint": "Using Gay-Lussac's law of combining volumes: 10 mL CxHy gives 40 mL CO2 (so x=4) and 50 mL H2O (so y/2 = 5 => y=10). Total atoms = 4 + 10 = 14."
+      },
+      {
+        "id": "c9",
+        "type": "mcq",
+        "q": "The number of radial node/s for 3p orbital is:[cite: 2]",
+        "options": [
+          "1",
+          "4",
+          "2",
+          "3"
+        ],
+        "ans": 0,
+        "hint": "Number of radial nodes = n - l - 1. For 3p orbital, n = 3 and l = 1. So, radial nodes = 3 - 1 - 1 = 1."
+      },
+      {
+        "id": "c10",
+        "type": "numerical",
+        "q": "If three moles of an ideal gas at 300 K expand isothermally from 30 dm³ to 45 dm³ against a constant opposing pressure of 80 kPa, then the amount of heat transferred is ___ J.[cite: 2]",
+        "ans": 1200,
+        "hint": "For an isothermal process, ΔU = 0, so q = -W. W = -P_ext * ΔV = -80 * 10^3 * (45 - 30) * 10^-3 = -1200 J. Thus, q = +1200 J."
+      }
+    ],
+    "Mathematics": [
+      {
+        "id": "m9",
+        "type": "mcq",
+        "q": "If the locus of z in C such that Re((z-1)/(2z+i)) + Re((z'-1)/(2z'-i)) = 2 is a circle of radius r and center (a, b) then 15ab/r² is equal to:[cite: 1]",
+        "options": [
+          "24",
+          "12",
+          "18",
+          "16"
+        ],
+        "ans": 2,
+        "hint": "Substitute z = x + iy in the given equation and simplify to get the equation of the circle. Find center (a, b) and radius r, then compute 15ab/r²."
+      },
+      {
+        "id": "m10",
+        "type": "numerical",
+        "q": "If α is a root of the equation x² + x + 1 = 0 and sum(k=1 to n) (α^k + 1/α^k)² = 20, then n is equal to ___[cite: 1]",
+        "ans": 11,
+        "hint": "The roots of x² + x + 1 = 0 are complex cube roots of unity (ω and ω²). Evaluate the sum for k=1, 2, 3... and find the pattern. The sequence of squares is 1, 1, 4, 1, 1, 4... Summing these gives 20 when n = 11."
+      },
+      {
+        "id": "m11",
+        "type": "mcq",
+        "q": "Let x₁, x₂, x₃, x₄ be in a geometric progression. 2, 7, 9, 5 are subtracted respectively from x₁, x₂, x₃, x₄ resulting numbers are in an arithmetic progression. Then the value of (1/24)*(x₁x₂x₃x₄) is:[cite: 1]",
+        "options": [
+          "72",
+          "18",
+          "36",
+          "216"
+        ],
+        "ans": 3,
+        "hint": "Let the GP be a, ar, ar², ar³. The AP condition gives 2(ar - 7) = (a - 2) + (ar² - 9) and 2(ar² - 9) = (ar - 7) + (ar³ - 5). Solve for a and r, then calculate the product."
+      }
+    ]
   }
 }
