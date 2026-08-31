@@ -190,4 +190,65 @@ select.premium-input option { background: #010a04; color: #fff; }
     .heavenly-title { font-size: 24px; }
     .cards-container { flex-direction: column; align-items: center; }
     .dash-card { width: 95%; max-width: none; }
+    /* --- NEW EXAM SELECTION GRID (FLOATING CARDS) --- */
+.exam-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 50px;
+}
+
+.exam-card {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    width: 260px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.active-exam {
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.active-exam:hover {
+    transform: translateY(-15px) scale(1.05);
+    border-color: #d4af37;
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+}
+
+.locked-exam {
+    opacity: 0.6;
+    filter: grayscale(80%);
+    cursor: not-allowed;
+}
+
+.exam-logo-box {
+    width: 100px;
+    height: 100px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    padding: 15px;
+}
+
+.exam-logo-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
 }
