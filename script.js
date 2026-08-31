@@ -1,22 +1,25 @@
 // ========================================================
-// 1. GLOBAL VARIABLES & INITIALIZATION
+// 1. GLOBAL VARIABLES
 // ========================================================
 let questions = {};
-let currentSubject = "Physics";
+let currentSubject = "";
 let currentQIndex = 0; 
 let timerInterval;
 let totalTime; 
 let timeSpent = 0;
 let testState = {}; 
 let testControls = {}; 
-
 let pendingTestId = "";
 let pendingTestTime = 0;
 let screenHistory = ['landing-screen']; 
+let currentExamTarget = 'JEE'; 
+let hasPremium = false; 
+let currentUser = "Scholar";
+let currentUsername = "scholar";
 
-let currentExamTarget = 'JEE'; // Default
-let hasPremium = false; // Premium flag
-
+// ========================================================
+// 2. INITIALIZATION & FIREBASE
+// ========================================================
 window.onload = function() {
     createLeaves();
     checkAutoLogin();
@@ -24,9 +27,6 @@ window.onload = function() {
     listenToTestControls(); 
 };
 
-// ========================================================
-// 2. FIREBASE & PREMIUM LOGIC
-// ========================================================
 const firebaseConfig = {
     apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
     authDomain: "rankersvault-5e76f.firebaseapp.com",
@@ -36,36 +36,62 @@ const firebaseConfig = {
     appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
     databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
 };
-
 if (typeof firebase !== 'undefined' && !firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = typeof firebase !== 'undefined' ? firebase.database() : null;
 
-let currentUser = "Scholar";
-let currentUsername = "scholar";
+// ========================================================
+// 3. AUTH & PREMIUM LOGIC
+// ========================================================
+function checkAutoLogin() {
+    let savedUser = localStorage.getItem("vault_username");
+    if(savedUser) {
+        currentUser = savedUser; currentUsername = savedUser;
+        updateUserUI(); switchScreen('landing-screen', 'exam-selection-screen');
+    }
+}
+function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+function submitAuth() {
+    let username = document.getElementById('reg-username').value;
+    if (!username) return alert("Please enter a username.");
+    currentUser = username; currentUsername = username.toLowerCase().replace(/\s+/g, '');
+    localStorage.setItem("vault_username", currentUsername);
+    updateUserUI();
+    if(db) db.ref('users/' + currentUsername).update({ username: currentUsername, lastLogin: Date.now() });
+    closeAuthModal(); switchScreen('landing-screen', 'exam-selection-screen'); 
+}
+function performLogout() { localStorage.removeItem("vault_username"); location.reload(); }
+function updateUserUI() {
+    document.getElementById('student-name').innerText = currentUsername;
+    document.getElementById('dash-student-name').innerText = currentUsername;
+    if(document.getElementById('sidebar-name')) document.getElementById('sidebar-name').innerText = currentUsername;
+    if(document.getElementById('sidebar-username')) document.getElementById('sidebar-username').innerText = "@" + currentUsername;
+}
+function toggleSidebar() { document.getElementById('side-menu').classList.toggle('hidden'); }
 
+// --- PREMIUM PAYMENT FUNCTION ---
 function checkPremiumStatus() {
     hasPremium = localStorage.getItem("vault_premium") === "true";
 }
-
 function openPremiumModal() { document.getElementById('premium-modal').classList.remove('hidden'); }
 function closePremiumModal() { document.getElementById('premium-modal').classList.add('hidden'); }
-
-// DUMMY PAYMENT GATEWAY - In future, connect Razorpay/PhonePe here
 function activatePremium() {
-    alert("Payment Successful! Welcome to Ranker's Premium 👑");
+    // YAHI PAR RAZORPAY AAYEGA AAGE CHALKE! 
+    alert("🚀 PAYMENT GATEWAY LINKING HERE SOON! Unlocking Premium as Demo for now.");
     hasPremium = true;
     localStorage.setItem("vault_premium", "true");
     closePremiumModal();
-    generateGrids(); // Refresh grids to unlock premium tests
+    generateGrids(); // Refresh tests after buying
 }
 
 // ========================================================
-// 3. TARGET EXAM & GRIDS (FREE vs PREMIUM)
+// 4. EXAM TARGET & DASHBOARD GRIDS
 // ========================================================
 function setExamTarget(examName) {
     currentExamTarget = examName;
     document.getElementById('side-menu').classList.add('hidden');
     switchScreen('exam-selection-screen', 'dashboard-screen'); 
+    generateGrids(); 
 }
 
 function listenToTestControls() {
@@ -82,28 +108,23 @@ function generateGrids() {
     if(dayGrid) {
         dayGrid.innerHTML = '';
         for(let i=1; i<=75; i++) {
-            let isUnlocked = testControls[`day_${i}`] === true; // Founder control
+            let isUnlocked = testControls[`day_${i}`] === true;
             let isFree = (i === 1); // Only Day 1 is free
             
             let btn = document.createElement('button');
             if(isUnlocked && (isFree || hasPremium)) {
-                btn.className = 'day-unlocked';
-                btn.innerText = `Day ${i}`;
+                btn.className = 'day-unlocked'; btn.innerText = `Day ${i}`;
                 btn.onclick = () => showAllTheBest(`day_${i}`, currentExamTarget === 'NEET' ? 20 : 15);
             } else if (isUnlocked && !hasPremium && !isFree) {
-                btn.className = 'day-unlocked';
-                btn.style.background = 'rgba(212,175,55,0.2)';
-                btn.innerText = `Day ${i} 👑`;
+                btn.className = 'day-unlocked'; btn.style.background = 'rgba(212,175,55,0.2)'; btn.innerText = `Day ${i} 👑`;
                 btn.onclick = () => openPremiumModal();
             } else {
-                btn.className = 'day-locked';
-                btn.innerText = `Day ${i} 🔒`;
+                btn.className = 'day-locked'; btn.innerText = `Day ${i} 🔒`;
                 btn.onclick = () => alert("Locked by Founder. Keep revising!");
             }
             dayGrid.appendChild(btn);
         }
     }
-
     const testGrid = document.getElementById('tests-grid');
     if(testGrid) {
         testGrid.innerHTML = '';
@@ -113,64 +134,31 @@ function generateGrids() {
             
             let btn = document.createElement('button');
             if(isUnlocked && (isFree || hasPremium)) {
-                btn.className = 'day-unlocked';
-                btn.innerText = `Test ${i}`;
+                btn.className = 'day-unlocked'; btn.innerText = `Test ${i}`;
                 btn.onclick = () => showAllTheBest(`full_test_${i}`, currentExamTarget === 'NEET' ? 200 : 180);
             } else if (isUnlocked && !hasPremium && !isFree) {
-                btn.className = 'day-unlocked';
-                btn.style.background = 'rgba(212,175,55,0.2)';
-                btn.innerText = `Test ${i} 👑`;
+                btn.className = 'day-unlocked'; btn.style.background = 'rgba(212,175,55,0.2)'; btn.innerText = `Test ${i} 👑`;
                 btn.onclick = () => openPremiumModal();
             } else {
-                btn.className = 'day-locked';
-                btn.innerText = `Test ${i} 🔒`;
-                btn.onclick = () => alert("Full Test locked by Founder.");
+                btn.className = 'day-locked'; btn.innerText = `Test ${i} 🔒`;
+                btn.onclick = () => alert("Full Length Test locked.");
             }
             testGrid.appendChild(btn);
         }
     }
 }
 
-// ... [Keep checkAutoLogin, submitAuth, performLogout, updateUserUI, toggleSidebar, switchScreen, goBack, updateSystemUI exactly same as before] ...
-
-function checkAutoLogin() {
-    let savedUser = localStorage.getItem("vault_username");
-    if(savedUser) {
-        currentUser = savedUser; currentUsername = savedUser;
-        updateUserUI(); switchScreen('landing-screen', 'exam-selection-screen');
-    }
-}
-function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-function togglePassword() {
-    let passInput = document.getElementById('reg-pass'); let eyeIcon = document.getElementById('eye-icon');
-    if(passInput.type === "password") { passInput.type = "text"; eyeIcon.innerText = "🙈"; } 
-    else { passInput.type = "password"; eyeIcon.innerText = "👁️"; }
-}
-function submitAuth() {
-    let username = document.getElementById('reg-username').value;
-    if (!username) return alert("Please enter a username.");
-    currentUser = username; currentUsername = username.toLowerCase().replace(/\s+/g, '');
-    localStorage.setItem("vault_username", currentUsername);
-    updateUserUI();
-    if(db) db.ref('users/' + currentUsername).update({ username: currentUsername, lastLogin: Date.now() });
-    closeAuthModal(); switchScreen('landing-screen', 'exam-selection-screen'); 
-}
-function performLogout() { localStorage.removeItem("vault_username"); location.reload(); }
-function updateUserUI() {
-    document.getElementById('student-name').innerText = currentUsername;
-    document.getElementById('dash-student-name').innerText = currentUsername;
-}
-function toggleSidebar() { document.getElementById('side-menu').classList.toggle('hidden'); }
-function openDashboard(examType) { if (examType === 'main') { switchScreen('exam-selection-screen', 'dashboard-screen'); document.getElementById('side-menu').classList.add('hidden'); } }
+// ========================================================
+// 5. NAVIGATION & UI HELPERS
+// ========================================================
 function createLeaves() {
-    const container = document.getElementById('leaf-container'); const leafShapes = ['🍁', '🍂', '✨', '🍃'];
-    for(let i=0; i<20; i++) {
+    const container = document.getElementById('leaf-container'); const leafShapes = ['🍁', '🍂', '✨'];
+    for(let i=0; i<15; i++) {
         let leaf = document.createElement('div'); leaf.className = 'leaf';
         leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
         leaf.style.left = Math.random() * 100 + 'vw';
-        leaf.style.animationDuration = (Math.random() * 6 + 7) + 's, ' + (Math.random() * 3 + 2) + 's';
-        leaf.style.animationDelay = (Math.random() * 5) + 's, ' + (Math.random() * 2) + 's';
+        leaf.style.animationDuration = (Math.random() * 6 + 7) + 's';
+        leaf.style.animationDelay = (Math.random() * 5) + 's';
         leaf.style.fontSize = (Math.random() * 12 + 14) + 'px';
         container.appendChild(leaf);
     }
@@ -193,34 +181,31 @@ function updateSystemUI(activeScreenId) {
     const noBackScreens = ['landing-screen', 'exam-selection-screen', 'nta-screen', 'analysis-screen'];
     if(noBackScreens.includes(activeScreenId)) document.getElementById('universal-back').classList.add('hidden');
     else document.getElementById('universal-back').classList.remove('hidden');
-    if(activeScreenId === 'nta-screen') { document.body.className = 'theme-nta'; document.getElementById('floating-dock').classList.add('hidden'); document.getElementById('leaf-container').classList.add('hidden'); } 
-    else { document.body.className = 'theme-premium'; document.getElementById('floating-dock').classList.remove('hidden'); document.getElementById('leaf-container').classList.remove('hidden'); }
+    
+    if(activeScreenId === 'nta-screen') { document.body.className = 'theme-nta'; document.getElementById('leaf-container').classList.add('hidden'); } 
+    else { document.body.className = 'theme-premium'; document.getElementById('leaf-container').classList.remove('hidden'); }
 }
-function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-screen'); }
-function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
+
 function showAllTheBest(testId, timeInMins) { pendingTestId = testId; pendingTestTime = timeInMins; document.getElementById('all-best-modal').classList.remove('hidden'); }
 function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
 function confirmStartTest() { closeAllBestModal(); startTest(pendingTestId, pendingTestTime); }
 
 // ========================================================
-// 4. TEST ENGINE (DYNAMIC JEE/NEET)
+// 6. DYNAMIC TEST ENGINE (JEE vs NEET)
 // ========================================================
 async function fetchQuestions(testId) {
-    let fileName = "";
-    if (currentExamTarget === 'NEET') {
-        fileName = testId.includes('day') ? 'data/neet_daily.json' : 'data/neet_full_tests.json';
-    } else {
-        fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
-    }
+    let fileName = currentExamTarget === 'NEET' 
+        ? (testId.includes('day') ? 'data/neet_daily.json' : 'data/neet_full_tests.json')
+        : (testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json');
     
     try {
         const response = await fetch(fileName);
         if (!response.ok) throw new Error("HTTP Status " + response.status);
         const database = await response.json();
-        if (!database[testId]) { alert(`Test missing in ${fileName}.`); return null; }
+        if (!database[testId]) { alert(`Test missing in ${fileName}. Check JSON.`); return null; }
         return database[testId];
     } catch (e) {
-        alert(`Error loading ${fileName}. Check file names and JSON structure.`); return null; 
+        alert(`Failed to load ${fileName}. Make sure JSON files exist in data folder.`); return null; 
     }
 }
 
@@ -231,21 +216,18 @@ async function startTest(testId, timeInMins) {
     testState = {};
     let subjects = Object.keys(questions);
     
-    // Dynamically build NTA tabs
-    const tabsContainer = document.querySelector('.nta-tabs');
+    // Dynamic Tabs generation based on JSON (PCM for JEE, PCBZ for NEET)
+    const tabsContainer = document.getElementById('nta-tabs-container');
     tabsContainer.innerHTML = '';
     subjects.forEach(sub => {
         tabsContainer.innerHTML += `<button class="tab-btn" onclick="switchSubject('${sub}')">${sub}</button>`;
-        questions[sub].forEach((q, idx) => {
-            testState[q.id] = { status: 'not-visited', selectedOpt: null, type: q.type, subject: sub };
-        });
+        questions[sub].forEach((q, idx) => { testState[q.id] = { status: 'not-visited', selectedOpt: null, type: q.type, subject: sub }; });
     });
 
     switchScreen(document.querySelector('.active-screen').id, 'nta-screen');
-    totalTime = timeInMins * 60;
-    timeSpent = 0;
+    totalTime = timeInMins * 60; timeSpent = 0;
     startTimer();
-    switchSubject(subjects[0]); // Start with first subject (Physics)
+    switchSubject(subjects[0]); // Start with 1st subject automatically
 }
 
 function startTimer() {
@@ -261,23 +243,17 @@ function startTimer() {
 
 function switchSubject(subName) {
     if(!questions[subName]) return; 
-    currentSubject = subName;
-    currentQIndex = 0;
+    currentSubject = subName; currentQIndex = 0;
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === subName));
     document.getElementById('current-subject-name').innerText = subName;
-    buildPalette();
-    loadQuestion(0);
+    buildPalette(); loadQuestion(0);
 }
 
 function buildPalette() {
-    const palette = document.getElementById('question-palette');
-    palette.innerHTML = '';
+    const palette = document.getElementById('question-palette'); palette.innerHTML = '';
     questions[currentSubject].forEach((q, idx) => {
-        let btn = document.createElement('div');
-        btn.className = `badge ${testState[q.id].status}`;
-        btn.innerText = idx + 1;
-        btn.onclick = () => loadQuestion(idx);
-        palette.appendChild(btn);
+        let btn = document.createElement('div'); btn.className = `badge ${testState[q.id].status}`; btn.innerText = idx + 1;
+        btn.onclick = () => loadQuestion(idx); palette.appendChild(btn);
     });
     updateCounts();
 }
@@ -325,9 +301,7 @@ function clearResponse() { let q = questions[currentSubject][currentQIndex]; tes
 function submitTestEarly() { if(confirm("Submit the test now?")) { clearInterval(timerInterval); calculateAndShowResult(); } }
 
 function calculateAndShowResult() {
-    let stats = {};
-    Object.keys(questions).forEach(sub => { stats[sub] = {p:0, t:0}; });
-    
+    let stats = {}; Object.keys(questions).forEach(sub => { stats[sub] = {p:0, t:0}; });
     let totalPositive = 0, totalNegative = 0, totalQs = 0;
 
     Object.keys(questions).forEach(sub => {
@@ -341,12 +315,10 @@ function calculateAndShowResult() {
         });
     });
 
-    let finalScore = totalPositive - totalNegative;
-    let maxScore = totalQs * 4;
-    
+    let finalScore = totalPositive - totalNegative; let maxScore = totalQs * 4;
     let m = Math.floor(timeSpent / 60); let s = timeSpent % 60; let timeString = `${m}m ${s}s`;
+    
     document.getElementById('time-taken').innerText = timeString;
-
     switchScreen('nta-screen', 'analysis-screen');
     document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
     document.getElementById('positive-score').innerText = `+${totalPositive}`;
@@ -355,10 +327,9 @@ function calculateAndShowResult() {
     if (finalScore >= (maxScore / 2)) document.getElementById('safe-zone-banner').classList.remove('hidden');
     else document.getElementById('safe-zone-banner').classList.add('hidden');
 
-    // Dynamically build subject analysis bars
-    const graphBox = document.querySelector('.graph-box');
+    const graphBox = document.getElementById('subject-graph-box');
     if(graphBox) {
-        graphBox.innerHTML = '<h3 style="color: #d4af37; margin-bottom: 20px; font-size: 22px;">Subject-wise Accuracy</h3>';
+        graphBox.innerHTML = '<h3 style="color: #d4af37; margin-bottom: 20px; font-size: 20px;">Accuracy Breakdown</h3>';
         Object.keys(stats).forEach(sub => {
             let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
             graphBox.innerHTML += `
@@ -377,7 +348,9 @@ function calculateAndShowResult() {
     }
 }
 
-// ... [Keep openReviewScreen, closeReviewScreen, and Bot Logic exactly same as before] ...
+// ========================================================
+// 7. MISTAKE DIARY (REVIEW ENGINE)
+// ========================================================
 function openReviewScreen() {
     switchScreen('analysis-screen', 'review-screen'); const container = document.getElementById('review-content'); container.innerHTML = '';
     Object.keys(questions).forEach(sub => {
@@ -400,6 +373,3 @@ function openReviewScreen() {
     });
 }
 function closeReviewScreen() { switchScreen('review-screen', 'analysis-screen'); }
-function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
-const botResponses = { "Features?": "Ranker's Vault packs 3 main weapons...", "NTA Timer?": "Exactly like the real D-Day!", "Who are you?": "I am Saurav...", "Daily PYQs?": "75 Days Challenge..." };
-function botReply(userText) { /* ...Bot Logic... */ }
