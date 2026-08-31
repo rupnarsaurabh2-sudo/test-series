@@ -52,30 +52,20 @@ body.theme-nta { background-color: #f3f4f6; color: #000; height: 100vh; overflow
 
 /* SIDEBAR (HAMBURGER MENU) */
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 320px;
-    background: rgba(2, 17, 8, 0.98);
-    backdrop-filter: blur(25px);
-    border-right: 1px solid rgba(212,175,55,0.4);
-    z-index: 10000;
+    position: fixed; top: 0; left: 0; height: 100vh; width: 320px;
+    background: rgba(2, 17, 8, 0.98); backdrop-filter: blur(25px);
+    border-right: 1px solid rgba(212,175,55,0.4); z-index: 10000;
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 10px 0 30px rgba(0,0,0,0.8);
-    display: flex;
-    flex-direction: column;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column;
 }
-.sidebar.hidden {
-    transform: translateX(-105%);
-    display: flex !important; /* Keep display flex to maintain structure during slide out */
-}
+.sidebar.hidden { transform: translateX(-105%); display: flex !important; }
 
 /* CENTERING FIXES & CARDS */
 .flex-center { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 75vh; }
 .flex-center-top { display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;}
 .main-container { width: 100%; max-width: 950px; margin: 0 auto; text-align: center; }
 
+.landing-scroll { overflow-y: auto; overflow-x: hidden; max-height: 100vh; }
 .hero { text-align: center; width: 100%; padding: 0 15px; }
 .quotes-container { max-width: 850px; margin: 0 auto; }
 .quotes-container h2 { font-size: clamp(26px, 4.5vw, 48px); line-height: 1.4; color: #fff; font-weight: 700; }
@@ -92,12 +82,20 @@ body.theme-nta { background-color: #f3f4f6; color: #000; height: 100vh; overflow
 .glow-gold-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212, 175, 55, 0.7); }
 .outline-btn { background: transparent; border: 1px solid #cbd5e1; color: #cbd5e1; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 15px; font-weight: bold; transition: 0.3s;}
 .outline-btn:hover { border-color: #d4af37; color: #d4af37; }
-
 .full-width { width: 100%; }
 
 .days-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 12px; margin-top: 20px; max-height: 60vh; overflow-y: auto; width: 100%; padding: 10px;}
 .day-unlocked { background: rgba(212, 175, 55, 0.1); color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.4); padding: 15px 5px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s;}
 .day-unlocked:hover { background: rgba(212, 175, 55, 0.3); transform: scale(1.05); }
+
+/* --- NEW EXAM SELECTION GRID (FLOATING CARDS) --- */
+.exam-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 100%; max-width: 1000px; margin-bottom: 50px; }
+.exam-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; width: 260px; padding: 30px 20px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; }
+.active-exam { border-color: rgba(212, 175, 55, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.active-exam:hover { transform: translateY(-15px) scale(1.05); border-color: #d4af37; box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3); }
+.locked-exam { opacity: 0.6; filter: grayscale(80%); cursor: not-allowed; }
+.exam-logo-box { width: 100px; height: 100px; background: rgba(255,255,255,0.95); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; box-shadow: 0 0 20px rgba(255,255,255,0.1); padding: 15px; }
+.exam-logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 /* MODALS & AUTH INPUTS */
 .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 15px;}
