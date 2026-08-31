@@ -235,7 +235,29 @@
             <button class="glow-gold-btn full-width" style="max-width: 250px; font-size: 18px;" onclick="confirmStartTest()">Start Now 🚀</button>
         </div>
     </div>
-
+    
+     <!-- PREMIUM POP-UP MODAL -->
+<div id="premium-modal" class="modal hidden">
+    <div class="glass-panel" style="border-color: #d4af37; text-align: center;">
+        <button class="close-btn" onclick="closePremiumModal()">×</button>
+        <h2 class="gold-text glow-text" style="font-size: 28px; margin-bottom: 10px;">👑 Ranker's Premium</h2>
+        <p style="color: #cbd5e1; margin-bottom: 20px; font-size: 15px;">You have completed the free trial. Upgrade to unlock the full potential of your preparation!</p>
+        
+        <div style="text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px;">
+            <p style="color: #10b981; font-weight: bold; margin-bottom: 10px;">🚀 What you get for just ₹99:</p>
+            <ul style="list-style: none; padding: 0; color: #e2e8f0; font-size: 14px; line-height: 1.8;">
+                <li>✅ Access to all 75 Daily PYQ Challenges</li>
+                <li>✅ 10 Full-Length NTA/NEET Pro Tests</li>
+                <li>✅ Detailed Mistake Diary & Solutions</li>
+                <li>✅ Ad-free, Distraction-free Zone</li>
+            </ul>
+        </div>
+        
+        <button class="glow-gold-btn full-width" onclick="activatePremium()" style="font-size: 18px;">Unlock Now @ ₹99</button>
+        <p style="color: #64748b; font-size: 12px; margin-top: 15px;">*One-time payment. Valid till NEET/JEE 2026.</p>
+    </div>
+</div>
+    
     <!-- INFO MODAL -->
     <div id="info-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim">
