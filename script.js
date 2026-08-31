@@ -41,10 +41,10 @@ let currentUser = "Scholar";
 let currentUsername = "scholar";
 
 // ========================================================
-// 3. AUTHENTICATION & SIDEBAR LOGIC (NEW)
+// 3. AUTHENTICATION & SIDEBAR LOGIC
 // ========================================================
 
-function guestLogin() { openAuthModal(); } // Redirect old button to new modal
+function guestLogin() { openAuthModal(); } 
 
 function openAuthModal() {
     document.getElementById('auth-modal').classList.remove('hidden');
@@ -83,7 +83,7 @@ function submitAuth() {
     }
 
     closeAuthModal();
-    // Move to Exam Selection Screen instead of direct dashboard
+    // Redirect to the Floating Cards Exam Selection Screen
     switchScreen('landing-screen', 'exam-selection-screen'); 
 }
 
@@ -399,7 +399,7 @@ function calculateAndShowResult() {
         });
     }, 500);
 
-    // Push to Firebase
+    // Push to Firebase Leaderboard & User History
     if (pendingTestId && db) {
         let userRecord = { name: currentUser, username: currentUsername, score: finalScore, time: timeString, timestamp: Date.now() };
         db.ref('leaderboards/' + pendingTestId).push(userRecord).catch(err => console.error(err));
