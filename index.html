@@ -340,7 +340,7 @@
         <button class="glow-gold-btn" style="margin-top: 30px; width: 200px;" onclick="closeReviewScreen()">⬅ Back to Analysis</button>
     </div>
 
-    <!-- 7. AI FOUNDER BOT -->
+   <!-- 7. AI FOUNDER BOT -->
     <div id="ai-bot-container">
         <button id="bot-toggle-btn" onclick="toggleBot()">🤖</button>
         <div id="bot-window" class="hidden popup-anim">
@@ -349,15 +349,17 @@
                 <button onclick="toggleBot()" class="bot-close">&times;</button>
             </div>
             <div class="bot-chat-area" id="bot-chat-area">
-                <div class="bot-msg">Hello, I am Saurav Sugreev Rupnar. Do you have any queries about my test series?</div>
-                <div class="bot-options" id="bot-options">
-                    <button class="bot-opt-btn" onclick="botReply('Yes')">Yes</button>
-                    <button class="bot-opt-btn" onclick="botReply('No')">No</button>
+                <div class="bot-msg">Hi, I am Saurav Sugreev Rupnar! Welcome to Ranker's Vault. How can I help you dominate your exams today?</div>
+                <div class="bot-options" id="bot-options" style="flex-wrap: wrap; justify-content: flex-start; gap: 8px;">
+                    <button class="bot-opt-btn" onclick="botReply('Features?')">Vault Features?</button>
+                    <button class="bot-opt-btn" onclick="botReply('NTA Timer?')">Is it like NTA?</button>
+                    <button class="bot-opt-btn" onclick="botReply('Who are you?')">Who are you?</button>
+                    <button class="bot-opt-btn" onclick="botReply('Daily PYQs?')">Daily PYQs?</button>
                 </div>
             </div>
             <div class="bot-input-area">
-                <input type="text" id="bot-input" placeholder="Type a message..." disabled>
-                <button id="bot-send-btn" disabled>➤</button>
+                <input type="text" id="bot-input" placeholder="Select an option above..." disabled style="cursor: not-allowed; opacity: 0.7;">
+                <button id="bot-send-btn" disabled style="opacity: 0.5;">➤</button>
             </div>
         </div>
     </div>
