@@ -1,0 +1,64 @@
+{
+  "full_test_1": {
+    "Physics": [
+      {
+        "id": "np1",
+        "type": "mcq",
+        "q": "Two particles of mass 5 kg and 10 kg respectively are attached to the two ends of a rigid rod of length 1 m with negligible mass. The centre of mass of the system from the 5 kg particle is nearly at a distance of:",
+        "options": [
+          "33 cm",
+          "50 cm",
+          "67 cm",
+          "80 cm"
+        ],
+        "ans": 2,
+        "hint": "Distance of COM from m1 = (m2 * L) / (m1 + m2) = (10 * 100) / (5 + 10) = 1000 / 15 = 66.67 cm."
+      }
+    ],
+    "Chemistry": [
+      {
+        "id": "nc1",
+        "type": "mcq",
+        "q": "Identify the incorrect statement related to PCl5 from the following:",
+        "options": [
+          "Three equatorial P-Cl bonds make an angle of 120° with each other",
+          "Two axial P-Cl bonds make an angle of 180° with each other",
+          "Axial P-Cl bonds are longer than equatorial P-Cl bonds",
+          "PCl5 molecule is non-reactive"
+        ],
+        "ans": 3,
+        "hint": "PCl5 is highly reactive. The axial bonds are longer and weaker than equatorial bonds, making it reactive."
+      }
+    ],
+    "Botany": [
+      {
+        "id": "nb1",
+        "type": "mcq",
+        "q": "Which of the following algae contains mannitol as reserve food material?",
+        "options": [
+          "Ectocarpus",
+          "Gracilaria",
+          "Volvox",
+          "Ulothrix"
+        ],
+        "ans": 0,
+        "hint": "Mannitol is the reserve food material in brown algae (Phaeophyceae). Ectocarpus is a brown alga."
+      }
+    ],
+    "Zoology": [
+      {
+        "id": "nz1",
+        "type": "mcq",
+        "q": "Which of the following is not an objective of Biofortification in crops?",
+        "options": [
+          "Improve protein content and quality",
+          "Improve resistance to diseases",
+          "Improve vitamin content",
+          "Improve micronutrient and mineral content"
+        ],
+        "ans": 1,
+        "hint": "Biofortification aims to improve the nutritional quality of crops, not necessarily their disease resistance (which is a different breeding objective)."
+      }
+    ]
+  }
+}
