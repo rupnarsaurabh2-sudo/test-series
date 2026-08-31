@@ -18,20 +18,45 @@
     <!-- UNIVERSAL BACK BUTTON -->
     <button id="universal-back" class="back-btn hidden" onclick="goBack()">⬅ Back</button>
 
+    <!-- SIDEBAR (HAMBURGER MENU) - NEW -->
+    <div id="side-menu" class="sidebar hidden">
+        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="font-size: 30px;">👨‍🎓</div>
+                <div style="text-align: left;">
+                    <h3 id="sidebar-name" class="gold-text" style="font-size: 16px; margin: 0;">Scholar</h3>
+                    <p id="sidebar-username" style="font-size: 12px; color: #a0aec0; margin: 0;">@user</p>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" style="background: transparent; border: none; color: #d4af37; font-size: 30px; cursor: pointer;">&times;</button>
+        </div>
+        <div class="sidebar-links" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+            <p style="color: #cbd5e1; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Target Exams</p>
+            <button class="glow-gold-btn" onclick="openDashboard('main')">🎯 JEE Main Vault</button>
+            <button class="outline-btn" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('JEE Advanced is being curated. Coming Soon!')">🔒 JEE Advanced</button>
+            <button class="outline-btn" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('NEET UG is being curated. Coming Soon!')">🔒 NEET UG</button>
+            <button class="outline-btn" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('MHT CET is being curated. Coming Soon!')">🔒 MHT CET</button>
+            
+            <button class="outline-btn" style="margin-top: 40px; border-color: #ef4444; color: #ef4444;" onclick="location.reload()">🚪 Logout</button>
+        </div>
+    </div>
+
     <!-- FLOATING BOTTOM DOCK -->
     <div class="floating-dock" id="floating-dock">
-        <button class="dock-btn" onclick="location.reload()">🏠 Home</button>
-        <button class="dock-btn active">Dashboard</button>
-        <button class="dock-btn" onclick="alert('Profile settings coming soon!')">⚙️ Profile</button>
+        <button class="dock-btn active" onclick="location.reload()">🏠 Home</button>
+        <button class="dock-btn" onclick="toggleSidebar()">☰ Menu</button>
     </div>
 
     <!-- 1. LANDING PAGE (USA-LEVEL SHOWCASE) -->
     <div id="landing-screen" class="transition-element screen-layer active-screen landing-scroll">
         <nav class="navbar glass-nav">
-            <div class="logo">RANKER'S VAULT <span class="gold-text glow-text">PRO</span></div>
+            <div class="logo">
+                <button id="nav-menu-btn" class="hidden" onclick="toggleSidebar()" style="background: transparent; border: none; color: #d4af37; font-size: 24px; cursor: pointer; margin-right: 15px;">☰</button>
+                RANKER'S VAULT <span class="gold-text glow-text">PRO</span>
+            </div>
             <div class="nav-links">
                 <button class="icon-btn" onclick="openInfoModal()" title="Rules">ℹ️</button>
-                <button class="nav-btn primary" onclick="guestLogin()">Login / Sign Up</button>
+                <button class="nav-btn primary" id="login-nav-btn" onclick="openAuthModal()">Login / Sign Up</button>
             </div>
         </nav>
 
@@ -39,85 +64,55 @@
             <div class="quotes-container">
                 <h2 class="heavenly-title">"The clock is ticking, the crowd is vast,<br> <span class="gold-text">Master the patterns</span> to build a future that lasts."</h2>
                 <p class="subtitle">Stop chasing illusions. The exact reality of NTA testing environment lies here.</p>
-                <button class="glow-gold-btn" style="margin-top: 30px; font-size: 18px; padding: 15px 40px;" onclick="guestLogin()">Create Account / Login 🚀</button>
+                <button class="glow-gold-btn" style="margin-top: 30px; font-size: 18px; padding: 15px 40px;" onclick="openAuthModal()">Create Account / Login 🚀</button>
             </div>
         </section>
 
-        <!-- PREMIUM FEATURES SHOWCASE -->
-        <section class="features-section">
-            <div class="feature-card">
+        <!-- PREMIUM FEATURES SHOWCASE (FIXED LAYOUT) -->
+        <section class="features-section" style="display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; margin-top: 60px; padding: 20px; width: 100%; max-width: 1000px; margin-left: auto; margin-right: auto; padding-bottom: 100px;">
+            <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                 <h3 class="gold-text">Strict NTA UI</h3>
                 <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Experience the exact CBT interface. No lifelines, no pauses. Train your brain for the real D-Day.</p>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                 <h3 class="gold-text">Curated PYQs</h3>
                 <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Handpicked questions mathematically proven to repeat in high-weightage chapters.</p>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                 <h3 class="gold-text">Mistake Diary</h3>
                 <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Advanced analytics tracking your negative marks, accuracy, and detailed post-test solution views.</p>
             </div>
         </section>
     </div>
 
-    <!-- 1.5 AUTHENTICATION / PROFILE SETUP MODAL -->
+    <!-- 1.5 AUTHENTICATION / LOGIN MODAL (NEW LOGIC) -->
     <div id="auth-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim">
             <span class="close-btn" onclick="closeAuthModal()">&times;</span>
             <h2 class="gold-text heavenly-title" style="margin-bottom: 10px;">Access The Vault</h2>
-            <p style="color: #a0aec0; margin-bottom: 25px; font-size: 14px;">Sign in or create an ID to track your progress & secure your rank.</p>
+            <p style="color: #a0aec0; margin-bottom: 25px; font-size: 14px;">Sign in with your Username and Password.</p>
             
-            <input type="text" id="student-name-input" class="premium-input" placeholder="Full Name (e.g. Saurav Rupnar)">
-            <input type="email" id="student-id-input" class="premium-input" placeholder="Email ID / Username">
-            <input type="password" id="student-pass-input" class="premium-input" placeholder="Password">
+            <input type="text" id="reg-name" class="premium-input" placeholder="Full Name (e.g. Saurav Rupnar)">
+            <input type="text" id="reg-username" class="premium-input" placeholder="Create Username">
+            <input type="password" id="reg-pass" class="premium-input" placeholder="Create Password">
             
-            <button class="glow-gold-btn full-width" onclick="submitAuth()">Login / Authenticate ⚡</button>
-        </div>
-    </div>
-
-    <!-- 2. EXAM TARGET SELECTION SCREEN (NEW) -->
-    <div id="exam-selection-screen" class="hidden transition-element screen-layer">
-        <nav class="navbar glass-nav">
-            <div class="logo" style="margin-left: 5%;">SELECT TARGET</div>
-            <button class="nav-btn outline" style="margin-right: 5%;" onclick="location.reload()">Logout</button>
-        </nav>
-        
-        <div class="main-container flex-center-top" style="margin-top: 60px;">
-            <h2 class="gold-text" style="margin-bottom: 30px; font-size: 32px;">Choose Your Battlefield</h2>
-            <div class="cards-container">
-                <!-- ACTIVE: JEE MAIN -->
-                <div class="dash-card premium-card" style="cursor: pointer;" onclick="openDashboard('main')">
-                    <h3 class="gold-text glow-text" style="font-size: 24px;">JEE Main</h3>
-                    <p style="color: #a0aec0; margin: 10px 0;">Enter NTA Simulation & Notes</p>
-                </div>
-                <!-- LOCKED EXAMS -->
-                <div class="dash-card" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('JEE Advanced Modules are currently being curated. Coming Soon!')">
-                    <h3 style="font-size: 24px; color: #718096;">JEE Advanced 🔒</h3>
-                    <p style="color: #718096; margin: 10px 0;">Coming Soon</p>
-                </div>
-                <div class="dash-card" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('NEET Modules are currently being curated. Coming Soon!')">
-                    <h3 style="font-size: 24px; color: #718096;">NEET UG 🔒</h3>
-                    <p style="color: #718096; margin: 10px 0;">Coming Soon</p>
-                </div>
-                <div class="dash-card" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('MHT CET Modules are currently being curated. Coming Soon!')">
-                    <h3 style="font-size: 24px; color: #718096;">MHT CET 🔒</h3>
-                    <p style="color: #718096; margin: 10px 0;">Coming Soon</p>
-                </div>
-            </div>
+            <button class="glow-gold-btn full-width" onclick="submitAuth()">Authenticate & Enter ⚡</button>
         </div>
     </div>
 
     <!-- 3. JEE MAIN DASHBOARD -->
     <div id="dashboard-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
-            <div class="logo" style="margin-left: 5%;">JEE MAIN VAULT</div>
-            <button class="nav-btn outline" style="margin-right: 5%;" onclick="switchScreen('dashboard-screen', 'exam-selection-screen')">Change Exam</button>
+            <div class="logo" style="display: flex; align-items: center;">
+                <button class="icon-btn" onclick="toggleSidebar()" style="margin-right: 15px;">☰</button>
+                JEE MAIN VAULT
+            </div>
         </nav>
         
         <div class="main-container flex-center-top" style="margin-top: 40px;">
             <div style="text-align: left; width: 100%; max-width: 950px; margin-bottom: 20px;">
                 <h2 style="color: #fff; font-size: 24px;">Welcome back, <span id="dash-student-name" class="gold-text">Scholar</span></h2>
-                <p style="color: #10b981; font-size: 14px;">Profile Authenticated | Target: JEE Main 2026</p>
+                <p style="color: #10b981; font-size: 14px;">Target: JEE Main | System Ready</p>
             </div>
             
             <hr style="width: 100%; border: 1px solid rgba(212,175,55,0.2); margin-bottom: 30px;">
@@ -141,21 +136,53 @@
             <h2 class="gold-text" style="margin-bottom: 20px; font-size: 26px; text-align: left; width: 100%; max-width: 950px;">Arsenal (Premium Notes)</h2>
             <div class="cards-container">
                 <div class="dash-card" style="padding: 20px;">
-                    <h3 style="color: #64ffda;">Physics</h3>
+                    <h3 style="color: #64ffda;">Physics Notes</h3>
                     <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Mechanics, Electrodynamics & Modern Physics.</p>
                     <button class="outline-btn full-width" onclick="alert('Physics Notes Vault Opening Soon!')">Access Notes</button>
                 </div>
                 <div class="dash-card" style="padding: 20px;">
-                    <h3 style="color: #64ffda;">Chemistry</h3>
+                    <h3 style="color: #64ffda;">Chemistry Notes</h3>
                     <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Physical, Organic & Inorganic Modules.</p>
                     <button class="outline-btn full-width" onclick="alert('Chemistry Notes Vault Opening Soon!')">Access Notes</button>
                 </div>
                 <div class="dash-card" style="padding: 20px;">
-                    <h3 style="color: #64ffda;">Mathematics</h3>
+                    <h3 style="color: #64ffda;">Maths Notes</h3>
                     <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Calculus, Algebra & Coordinate Geometry.</p>
                     <button class="outline-btn full-width" onclick="alert('Mathematics Notes Vault Opening Soon!')">Access Notes</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- DAY SELECTION GRID -->
+    <section id="day-selection-screen" class="hidden transition-element screen-layer">
+        <nav class="navbar glass-nav">
+            <div class="logo">DAILY PYQs</div>
+        </nav>
+        <div class="main-container flex-center-top" style="margin-top: 40px;">
+            <h2 class="gold-text" style="margin-bottom: 20px;">75 Days Challenge</h2>
+            <div id="days-grid" class="days-grid"></div>
+        </div>
+    </section>
+
+    <!-- TEST SELECTION GRID -->
+    <section id="test-selection-screen" class="hidden transition-element screen-layer">
+        <nav class="navbar glass-nav">
+            <div class="logo">PRO TEST SERIES</div>
+        </nav>
+        <div class="main-container flex-center-top" style="margin-top: 40px;">
+            <h2 class="gold-text" style="margin-bottom: 20px;">10 Full Length Tests</h2>
+            <div id="tests-grid" class="days-grid"></div>
+        </div>
+    </section>
+
+    <!-- ALL THE BEST POPUP -->
+    <div id="all-best-modal" class="modal hidden">
+        <div class="modal-content glass-panel popup-anim" style="padding: 40px 20px;">
+            <span class="close-btn" onclick="closeAllBestModal()">&times;</span>
+            <h2 style="color: #64ffda; font-size: 32px; margin-bottom: 10px; text-shadow: 0 0 15px #64ffda;">All The Best! 🎯</h2>
+            <p style="color: #e2e8f0; font-size: 18px; margin-bottom: 25px;">Keep calm and trust your preparation.</p>
+            <button class="glow-gold-btn full-width" style="max-width: 250px; font-size: 18px;" onclick="confirmStartTest()">Start Now 🚀</button>
         </div>
     </div>
 
@@ -171,38 +198,6 @@
                 2. No lifelines. You only get hints if wrong.<br>
                 3. The clock does not stop.
             </p>
-        </div>
-    </div>
-
-    <!-- DAY SELECTION GRID -->
-    <section id="day-selection-screen" class="hidden transition-element screen-layer">
-        <nav class="navbar glass-nav">
-            <div class="logo" style="margin-left: 5%;">DAILY PYQs</div>
-        </nav>
-        <div class="main-container flex-center-top" style="margin-top: 40px;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">75 Days Challenge</h2>
-            <div id="days-grid" class="days-grid"></div>
-        </div>
-    </section>
-
-    <!-- TEST SELECTION GRID -->
-    <section id="test-selection-screen" class="hidden transition-element screen-layer">
-        <nav class="navbar glass-nav">
-            <div class="logo" style="margin-left: 5%;">PRO TEST SERIES</div>
-        </nav>
-        <div class="main-container flex-center-top" style="margin-top: 40px;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">10 Full Length Tests</h2>
-            <div id="tests-grid" class="days-grid"></div>
-        </div>
-    </section>
-
-    <!-- ALL THE BEST POPUP -->
-    <div id="all-best-modal" class="modal hidden">
-        <div class="modal-content glass-panel popup-anim" style="padding: 40px 20px;">
-            <span class="close-btn" onclick="closeAllBestModal()">&times;</span>
-            <h2 style="color: #64ffda; font-size: 32px; margin-bottom: 10px; text-shadow: 0 0 15px #64ffda;">All The Best! 🎯</h2>
-            <p style="color: #e2e8f0; font-size: 18px; margin-bottom: 25px;">Keep calm and trust your preparation.</p>
-            <button class="glow-gold-btn full-width" style="max-width: 250px; font-size: 18px;" onclick="confirmStartTest()">Start Now 🚀</button>
         </div>
     </div>
 
