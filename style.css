@@ -153,4 +153,14 @@ body.theme-nta { background-color: #f3f4f6; color: #000; height: 100vh; overflow
 .bot-opt-btn { background: transparent; border: 1px solid #d4af37; color: #d4af37; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold;}
 .bot-input-area { display: flex; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); background: #010a04; }
 #bot-input { flex: 1; background: transparent; border: none; color: white; padding: 8px; font-size: 14px; outline: none; }
-#bot-send-btn { background: transparent; border: none; color: #d4af37; font-size: 20px; cursor: pointer; padding: 0 10px; transition: 0.2s; }
+#bot-send-btn { background: transparent; border: none; color: #d4af37; font-size: 20px; cursor: pointer; padding: 0 10px; transition: 0.2s; 
+              /* --- PREMIUM PROFILE & SHOWCASE CSS --- */
+.landing-scroll { overflow-y: auto; overflow-x: hidden; max-height: 100vh; }
+.features-section { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; margin-top: 60px; padding: 20px; width: 100%; max-width: 1000px; margin-left: auto; margin-right: auto; padding-bottom: 100px;}
+.feature-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.2); padding: 25px; border-radius: 12px; width: 280px; backdrop-filter: blur(8px); transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: left;}
+.feature-card:hover { transform: translateY(-5px); border-color: #d4af37; box-shadow: 0 8px 25px rgba(212,175,55,0.3); }
+
+.premium-input { width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.6); border: 1px solid rgba(212, 175, 55, 0.4); color: #fff; border-radius: 8px; outline: none; font-size: 15px; transition: 0.3s; }
+.premium-input:focus { border-color: #10b981; box-shadow: 0 0 15px rgba(16,185,129,0.3); background: rgba(0,0,0,0.8);}
+.premium-input::placeholder { color: #a0aec0; }
+select.premium-input option { background: #010a04; color: #fff; } }
