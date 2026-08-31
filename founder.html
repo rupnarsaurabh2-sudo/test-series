@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Mode | Ranker's Vault</title>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <style>
+        body { background: #010a04; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0;}
+        .founder-container { max-width: 1000px; margin: 50px auto; padding: 20px; }
+        .admin-login-box { background: rgba(2, 17, 8, 0.95); border: 2px solid #d4af37; border-radius: 12px; padding: 40px; width: 100%; max-width: 400px; margin: 100px auto; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        .admin-input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #d4af37; color: #d4af37; border-radius: 6px; outline: none; }
+        .admin-btn { background: linear-gradient(135deg, #d4af37, #8b6508); color: #000; border: none; padding: 12px 20px; width: 100%; font-weight: bold; font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d4af37; padding-bottom: 15px; margin-bottom: 30px; }
+        .control-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
+        .control-panel { background: rgba(255,255,255,0.05); border: 1px solid rgba(212, 175, 55, 0.3); padding: 20px; border-radius: 12px; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .data-table th, .data-table td { border: 1px solid rgba(212,175,55,0.3); padding: 10px; text-align: left; }
+        .data-table th { background: rgba(212,175,55,0.1); color: #d4af37; }
+    </style>
+</head>
+<body>
+
+    <div id="admin-login" class="admin-login-box">
+        <h2 style="color: #d4af37; margin-bottom: 20px;">GOD MODE</h2>
+        <input type="text" id="admin-id" class="admin-input" placeholder="Founder ID">
+        <input type="password" id="admin-pass" class="admin-input" placeholder="Passkey">
+        <button class="admin-btn" onclick="verifyAdmin()">Initialize Terminal</button>
+        <p id="error-msg" style="color: #ef4444; margin-top: 10px; display: none;">Access Denied.</p>
+    </div>
+
+    <div id="founder-dashboard" class="founder-container" style="display: none;">
+        <div class="dashboard-header">
+            <div>
+                <h1 style="color: #d4af37; font-size: 32px;">Founder Terminal: Saurav Sugreev Rupnar</h1>
+                <p id="db-status" style="color: #10b981;">🟢 Firebase Connected</p>
+            </div>
+            <button class="admin-btn" style="width: auto; margin-top: 0;" onclick="location.reload()">Lock Terminal</button>
+        </div>
+
+        <div class="control-grid">
+            <div class="control-panel">
+                <h2 style="color: #d4af37; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px;">Live Leaderboard Radar</h2>
+                <select id="leaderboard-select" class="admin-input" style="background: rgba(0,0,0,0.5);" onchange="loadLeaderboard()">
+                    <option value="">Select Test to View</option>
+                    <option value="day_1">Day 1</option>
+                    <option value="day_2">Day 2</option>
+                    <option value="day_3">Day 3</option>
+                    <option value="full_test_1">Full Test 1</option>
+                </select>
+                <table class="data-table" id="leaderboard-table">
+                    <tr><th>Rank</th><th>Student Name</th><th>Score</th><th>Time</th></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
+            authDomain: "rankersvault-5e76f.firebaseapp.com",
+            projectId: "rankersvault-5e76f",
+            storageBucket: "rankersvault-5e76f.firebasestorage.app",
+            messagingSenderId: "56527682160",
+            appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
+            databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function verifyAdmin() {
+            if(document.getElementById('admin-id').value === "ssr911715" && document.getElementById('admin-pass').value === "ssr191715") {
+                document.getElementById('admin-login').style.display = "none";
+                document.getElementById('founder-dashboard').style.display = "block";
+            } else {
+                document.getElementById('error-msg').style.display = "block";
+            }
+        }
+
+        function loadLeaderboard() {
+            const testId = document.getElementById('leaderboard-select').value;
+            if(!testId) return;
+            
+            db.ref('leaderboards/' + testId).on('value', (snapshot) => {
+                const table = document.getElementById('leaderboard-table');
+                table.innerHTML = '<tr><th>Rank</th><th>Student Name</th><th>Score</th><th>Time</th></tr>';
+                
+                let data = snapshot.val();
+                if(data) {
+                    let sortedData = Object.values(data).sort((a, b) => b.score - a.score);
+                    sortedData.forEach((entry, idx) => {
+                        table.innerHTML += `<tr><td>${idx+1}</td><td>${entry.name}</td><td>${entry.score}</td><td>${entry.time}</td></tr>`;
+                    });
+                } else {
+                    table.innerHTML += `<tr><td colspan="4" style="text-align:center;">No data yet</td></tr>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
