@@ -87,13 +87,15 @@
             <h2 class="gold-text heavenly-title" style="margin-bottom: 10px;">Access The Vault</h2>
             <p style="color: #a0aec0; margin-bottom: 25px; font-size: 14px;">Sign in with your Username and Password.</p>
             
-            <input type="text" id="reg-name" class="premium-input" placeholder="Full Name (e.g. Saurav Rupnar)">
-            <input type="text" id="reg-username" class="premium-input" placeholder="Create Username">
-            <input type="password" id="reg-pass" class="premium-input" placeholder="Create Password">
+            <input type="text" id="reg-username" class="premium-input" placeholder="Username (e.g. saurav)">
+            
+            <div style="position: relative;">
+                <input type="password" id="reg-pass" class="premium-input" placeholder="Password" style="padding-right: 40px;">
+                <span id="eye-icon" onclick="togglePassword()" style="position: absolute; right: 15px; top: 15px; cursor: pointer; font-size: 18px; user-select: none;">👁️</span>
+            </div>
             
             <button class="glow-gold-btn full-width" onclick="submitAuth()">Authenticate & Enter ⚡</button>
-        </div>
-    </div>
+        </div> 
 
     <!-- 2. EXAM TARGET SELECTION SCREEN (NEW FLOATING CARDS) -->
     <div id="exam-selection-screen" class="hidden transition-element screen-layer">
