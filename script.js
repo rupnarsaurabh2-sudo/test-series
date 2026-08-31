@@ -1,32 +1,27 @@
 // ========================================================
-// 1. GLOBAL VARIABLES
+// 1. GLOBAL VARIABLES & INITIALIZATION
 // ========================================================
 let questions = {};
-let currentSubject = "";
+let currentSubject = "Physics";
 let currentQIndex = 0; 
 let timerInterval;
 let totalTime; 
 let timeSpent = 0;
 let testState = {}; 
-let testControls = {}; 
+
 let pendingTestId = "";
 let pendingTestTime = 0;
 let screenHistory = ['landing-screen']; 
-let currentExamTarget = 'JEE'; 
-let hasPremium = false; 
-let currentUser = "Scholar";
-let currentUsername = "scholar";
 
-// ========================================================
-// 2. INITIALIZATION & FIREBASE
-// ========================================================
 window.onload = function() {
+    generateGrids();
     createLeaves();
     checkAutoLogin();
-    checkPremiumStatus();
-    listenToTestControls(); 
 };
 
+// ========================================================
+// 2. FIREBASE BACKEND SETUP
+// ========================================================
 const firebaseConfig = {
     apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
     authDomain: "rankersvault-5e76f.firebaseapp.com",
@@ -36,71 +31,119 @@ const firebaseConfig = {
     appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
     databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
 };
-if (typeof firebase !== 'undefined' && !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const db = typeof firebase !== 'undefined' ? firebase.database() : null;
 
+let currentUser = "Scholar";
+let currentUsername = "scholar";
+
 // ========================================================
-// 3. AUTH & PREMIUM LOGIC
+// 3. AUTHENTICATION, AUTO-LOGIN & SIDEBAR LOGIC
 // ========================================================
+
 function checkAutoLogin() {
     let savedUser = localStorage.getItem("vault_username");
     if(savedUser) {
-        currentUser = savedUser; currentUsername = savedUser;
-        updateUserUI(); switchScreen('landing-screen', 'exam-selection-screen');
+        currentUser = savedUser;
+        currentUsername = savedUser;
+        updateUserUI();
+        switchScreen('landing-screen', 'exam-selection-screen');
     }
 }
-function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+
+function guestLogin() { openAuthModal(); } 
+
+function openAuthModal() {
+    document.getElementById('auth-modal').classList.remove('hidden');
+}
+
+function closeAuthModal() {
+    document.getElementById('auth-modal').classList.add('hidden');
+}
+
+function togglePassword() {
+    let passInput = document.getElementById('reg-pass');
+    let eyeIcon = document.getElementById('eye-icon');
+    if(passInput.type === "password") {
+        passInput.type = "text";
+        eyeIcon.innerText = "🙈";
+    } else {
+        passInput.type = "password";
+        eyeIcon.innerText = "👁️";
+    }
+}
+
 function submitAuth() {
     let username = document.getElementById('reg-username').value;
-    if (!username) return alert("Please enter a username.");
-    currentUser = username; currentUsername = username.toLowerCase().replace(/\s+/g, '');
+    let pass = document.getElementById('reg-pass').value;
+
+    if (!username || username.trim() === "") {
+        alert("Please enter a username to unlock the vault.");
+        return;
+    }
+
+    currentUser = username;
+    currentUsername = username.toLowerCase().replace(/\s+/g, '');
+    
+    // Save to LocalStorage for Auto-Login
     localStorage.setItem("vault_username", currentUsername);
     updateUserUI();
-    if(db) db.ref('users/' + currentUsername).update({ username: currentUsername, lastLogin: Date.now() });
-    closeAuthModal(); switchScreen('landing-screen', 'exam-selection-screen'); 
+
+    if(db) {
+        db.ref('users/' + currentUsername).update({
+            username: currentUsername,
+            lastLogin: Date.now()
+        }).catch(err => console.error("Profile DB Error:", err));
+    }
+
+    closeAuthModal();
+    switchScreen('landing-screen', 'exam-selection-screen'); 
 }
-function performLogout() { localStorage.removeItem("vault_username"); location.reload(); }
+
+function performLogout() {
+    localStorage.removeItem("vault_username");
+    location.reload();
+}
+
 function updateUserUI() {
     document.getElementById('student-name').innerText = currentUsername;
     document.getElementById('dash-student-name').innerText = currentUsername;
     if(document.getElementById('sidebar-name')) document.getElementById('sidebar-name').innerText = currentUsername;
     if(document.getElementById('sidebar-username')) document.getElementById('sidebar-username').innerText = "@" + currentUsername;
 }
-function toggleSidebar() { document.getElementById('side-menu').classList.toggle('hidden'); }
 
-// --- PREMIUM PAYMENT FUNCTION ---
-function checkPremiumStatus() {
-    hasPremium = localStorage.getItem("vault_premium") === "true";
+function toggleSidebar() {
+    const sidebar = document.getElementById('side-menu');
+    sidebar.classList.toggle('hidden');
 }
-function openPremiumModal() { document.getElementById('premium-modal').classList.remove('hidden'); }
-function closePremiumModal() { document.getElementById('premium-modal').classList.add('hidden'); }
-function activatePremium() {
-    // YAHI PAR RAZORPAY AAYEGA AAGE CHALKE! 
-    alert("🚀 PAYMENT GATEWAY LINKING HERE SOON! Unlocking Premium as Demo for now.");
-    hasPremium = true;
-    localStorage.setItem("vault_premium", "true");
-    closePremiumModal();
-    generateGrids(); // Refresh tests after buying
+
+function openDashboard(examType) {
+    if (examType === 'main') {
+        switchScreen('exam-selection-screen', 'dashboard-screen');
+        document.getElementById('side-menu').classList.add('hidden');
+    }
 }
 
 // ========================================================
-// 4. EXAM TARGET & DASHBOARD GRIDS
+// 4. UI, NAVIGATION & SMART BACK BUTTON LOGIC
 // ========================================================
-function setExamTarget(examName) {
-    currentExamTarget = examName;
-    document.getElementById('side-menu').classList.add('hidden');
-    switchScreen('exam-selection-screen', 'dashboard-screen'); 
-    generateGrids(); 
-}
 
-function listenToTestControls() {
-    if(db) {
-        db.ref('test_controls').on('value', (snapshot) => {
-            testControls = snapshot.val() || {};
-            generateGrids();
-        });
-    } else { generateGrids(); }
+function createLeaves() {
+    const container = document.getElementById('leaf-container');
+    const leafShapes = ['🍁', '🍂', '✨', '🍃'];
+    for(let i=0; i<20; i++) {
+        let leaf = document.createElement('div');
+        leaf.className = 'leaf';
+        leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
+        leaf.style.left = Math.random() * 100 + 'vw';
+        leaf.style.animationDuration = (Math.random() * 6 + 7) + 's, ' + (Math.random() * 3 + 2) + 's';
+        leaf.style.animationDelay = (Math.random() * 5) + 's, ' + (Math.random() * 2) + 's';
+        leaf.style.fontSize = (Math.random() * 12 + 14) + 'px';
+        container.appendChild(leaf);
+    }
 }
 
 function generateGrids() {
@@ -108,20 +151,10 @@ function generateGrids() {
     if(dayGrid) {
         dayGrid.innerHTML = '';
         for(let i=1; i<=75; i++) {
-            let isUnlocked = testControls[`day_${i}`] === true;
-            let isFree = (i === 1); // Only Day 1 is free
-            
             let btn = document.createElement('button');
-            if(isUnlocked && (isFree || hasPremium)) {
-                btn.className = 'day-unlocked'; btn.innerText = `Day ${i}`;
-                btn.onclick = () => showAllTheBest(`day_${i}`, currentExamTarget === 'NEET' ? 20 : 15);
-            } else if (isUnlocked && !hasPremium && !isFree) {
-                btn.className = 'day-unlocked'; btn.style.background = 'rgba(212,175,55,0.2)'; btn.innerText = `Day ${i} 👑`;
-                btn.onclick = () => openPremiumModal();
-            } else {
-                btn.className = 'day-locked'; btn.innerText = `Day ${i} 🔒`;
-                btn.onclick = () => alert("Locked by Founder. Keep revising!");
-            }
+            btn.className = 'day-unlocked';
+            btn.innerText = `Day ${i}`;
+            btn.onclick = () => showAllTheBest(`day_${i}`, 15);
             dayGrid.appendChild(btn);
         }
     }
@@ -129,112 +162,133 @@ function generateGrids() {
     if(testGrid) {
         testGrid.innerHTML = '';
         for(let i=1; i<=10; i++) {
-            let isUnlocked = testControls[`full_test_${i}`] === true;
-            let isFree = (i === 1);
-            
             let btn = document.createElement('button');
-            if(isUnlocked && (isFree || hasPremium)) {
-                btn.className = 'day-unlocked'; btn.innerText = `Test ${i}`;
-                btn.onclick = () => showAllTheBest(`full_test_${i}`, currentExamTarget === 'NEET' ? 200 : 180);
-            } else if (isUnlocked && !hasPremium && !isFree) {
-                btn.className = 'day-unlocked'; btn.style.background = 'rgba(212,175,55,0.2)'; btn.innerText = `Test ${i} 👑`;
-                btn.onclick = () => openPremiumModal();
-            } else {
-                btn.className = 'day-locked'; btn.innerText = `Test ${i} 🔒`;
-                btn.onclick = () => alert("Full Length Test locked.");
-            }
+            btn.className = 'day-unlocked';
+            btn.innerText = `Test ${i}`;
+            btn.onclick = () => showAllTheBest(`full_test_${i}`, 150);
             testGrid.appendChild(btn);
         }
     }
 }
 
-// ========================================================
-// 5. NAVIGATION & UI HELPERS
-// ========================================================
-function createLeaves() {
-    const container = document.getElementById('leaf-container'); const leafShapes = ['🍁', '🍂', '✨'];
-    for(let i=0; i<15; i++) {
-        let leaf = document.createElement('div'); leaf.className = 'leaf';
-        leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
-        leaf.style.left = Math.random() * 100 + 'vw';
-        leaf.style.animationDuration = (Math.random() * 6 + 7) + 's';
-        leaf.style.animationDelay = (Math.random() * 5) + 's';
-        leaf.style.fontSize = (Math.random() * 12 + 14) + 'px';
-        container.appendChild(leaf);
-    }
-}
 function switchScreen(hideId, showId) {
-    document.getElementById(hideId).classList.add('hidden'); document.getElementById(hideId).classList.remove('active-screen');
-    document.getElementById(showId).classList.remove('hidden'); document.getElementById(showId).classList.add('active-screen');
-    if(showId !== screenHistory[screenHistory.length - 1]) screenHistory.push(showId);
+    document.getElementById(hideId).classList.add('hidden');
+    document.getElementById(hideId).classList.remove('active-screen');
+    
+    document.getElementById(showId).classList.remove('hidden');
+    document.getElementById(showId).classList.add('active-screen');
+
+    if(showId !== screenHistory[screenHistory.length - 1]) {
+        screenHistory.push(showId);
+    }
     updateSystemUI(showId);
 }
+
 function goBack() {
     if(screenHistory.length > 1) {
-        let currentScreen = screenHistory.pop(); let prevScreen = screenHistory[screenHistory.length - 1];
-        document.getElementById(currentScreen).classList.add('hidden'); document.getElementById(currentScreen).classList.remove('active-screen');
-        document.getElementById(prevScreen).classList.remove('hidden'); document.getElementById(prevScreen).classList.add('active-screen');
+        let currentScreen = screenHistory.pop();
+        let prevScreen = screenHistory[screenHistory.length - 1];
+        
+        document.getElementById(currentScreen).classList.add('hidden');
+        document.getElementById(currentScreen).classList.remove('active-screen');
+        
+        document.getElementById(prevScreen).classList.remove('hidden');
+        document.getElementById(prevScreen).classList.add('active-screen');
+        
         updateSystemUI(prevScreen);
     }
 }
+
 function updateSystemUI(activeScreenId) {
     const noBackScreens = ['landing-screen', 'exam-selection-screen', 'nta-screen', 'analysis-screen'];
-    if(noBackScreens.includes(activeScreenId)) document.getElementById('universal-back').classList.add('hidden');
-    else document.getElementById('universal-back').classList.remove('hidden');
-    
-    if(activeScreenId === 'nta-screen') { document.body.className = 'theme-nta'; document.getElementById('leaf-container').classList.add('hidden'); } 
-    else { document.body.className = 'theme-premium'; document.getElementById('leaf-container').classList.remove('hidden'); }
+    if(noBackScreens.includes(activeScreenId)) {
+        document.getElementById('universal-back').classList.add('hidden');
+    } else {
+        document.getElementById('universal-back').classList.remove('hidden');
+    }
+
+    const navMenuBtn = document.getElementById('nav-menu-btn');
+    if (navMenuBtn) {
+        if(activeScreenId === 'landing-screen') navMenuBtn.classList.add('hidden');
+        else navMenuBtn.classList.remove('hidden');
+    }
+
+    if(activeScreenId === 'nta-screen') {
+        document.body.className = 'theme-nta';
+        document.getElementById('floating-dock').classList.add('hidden');
+        document.getElementById('leaf-container').classList.add('hidden');
+        document.getElementById('science-bg').classList.add('hidden');
+    } else {
+        document.body.className = 'theme-premium';
+        document.getElementById('floating-dock').classList.remove('hidden');
+        document.getElementById('leaf-container').classList.remove('hidden');
+        document.getElementById('science-bg').classList.remove('hidden');
+    }
 }
 
-function showAllTheBest(testId, timeInMins) { pendingTestId = testId; pendingTestTime = timeInMins; document.getElementById('all-best-modal').classList.remove('hidden'); }
+function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-screen'); }
+function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
+function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
+function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
+
+function showAllTheBest(testId, timeInMins) {
+    pendingTestId = testId;
+    pendingTestTime = timeInMins;
+    document.getElementById('all-best-modal').classList.remove('hidden');
+}
 function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
-function confirmStartTest() { closeAllBestModal(); startTest(pendingTestId, pendingTestTime); }
+function confirmStartTest() {
+    closeAllBestModal();
+    startTest(pendingTestId, pendingTestTime);
+}
 
 // ========================================================
-// 6. DYNAMIC TEST ENGINE (JEE vs NEET)
+// 5. TEST ENGINE & FIREBASE UPLOAD
 // ========================================================
+
 async function fetchQuestions(testId) {
-    let fileName = currentExamTarget === 'NEET' 
-        ? (testId.includes('day') ? 'data/neet_daily.json' : 'data/neet_full_tests.json')
-        : (testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json');
-    
+    let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
         const response = await fetch(fileName);
         if (!response.ok) throw new Error("HTTP Status " + response.status);
         const database = await response.json();
-        if (!database[testId]) { alert(`Test missing in ${fileName}. Check JSON.`); return null; }
+        
+        if (!database[testId]) {
+            alert(`Error: Test '${testId}' is missing in your JSON file. Please check data/jee_daily.json.`);
+            return null;
+        }
         return database[testId];
     } catch (e) {
-        alert(`Failed to load ${fileName}. Make sure JSON files exist in data folder.`); return null; 
+        console.error("JSON Error:", e);
+        alert(`Bhai, teri JSON file load nahi ho rahi! (${fileName}). Ya toh tu JSON me koi bracket/comma bhool gaya hai, ya file Vercel par theek se push nahi hui.`);
+        return null; 
     }
 }
 
 async function startTest(testId, timeInMins) {
     questions = await fetchQuestions(testId);
-    if(!questions) return; 
+    if(!questions) return; // Stop if JSON failed
     
     testState = {};
-    let subjects = Object.keys(questions);
-    
-    // Dynamic Tabs generation based on JSON (PCM for JEE, PCBZ for NEET)
-    const tabsContainer = document.getElementById('nta-tabs-container');
-    tabsContainer.innerHTML = '';
-    subjects.forEach(sub => {
-        tabsContainer.innerHTML += `<button class="tab-btn" onclick="switchSubject('${sub}')">${sub}</button>`;
-        questions[sub].forEach((q, idx) => { testState[q.id] = { status: 'not-visited', selectedOpt: null, type: q.type, subject: sub }; });
+    Object.keys(questions).forEach(sub => {
+        questions[sub].forEach((q, idx) => {
+            testState[q.id] = { status: 'not-visited', selectedOpt: null, type: q.type, subject: sub };
+        });
     });
 
     switchScreen(document.querySelector('.active-screen').id, 'nta-screen');
-    totalTime = timeInMins * 60; timeSpent = 0;
+    totalTime = timeInMins * 60;
+    timeSpent = 0;
     startTimer();
-    switchSubject(subjects[0]); // Start with 1st subject automatically
+    switchSubject('Physics'); 
 }
 
 function startTimer() {
     clearInterval(timerInterval);
     const display = document.getElementById('time-left');
     timerInterval = setInterval(() => {
-        totalTime--; timeSpent++;
+        totalTime--; 
+        timeSpent++;
         let h = Math.floor(totalTime / 3600), m = Math.floor((totalTime % 3600) / 60), s = totalTime % 60;
         display.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         if (totalTime <= 0) { clearInterval(timerInterval); calculateAndShowResult(); }
@@ -243,17 +297,23 @@ function startTimer() {
 
 function switchSubject(subName) {
     if(!questions[subName]) return; 
-    currentSubject = subName; currentQIndex = 0;
+    currentSubject = subName;
+    currentQIndex = 0;
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === subName));
     document.getElementById('current-subject-name').innerText = subName;
-    buildPalette(); loadQuestion(0);
+    buildPalette();
+    loadQuestion(0);
 }
 
 function buildPalette() {
-    const palette = document.getElementById('question-palette'); palette.innerHTML = '';
+    const palette = document.getElementById('question-palette');
+    palette.innerHTML = '';
     questions[currentSubject].forEach((q, idx) => {
-        let btn = document.createElement('div'); btn.className = `badge ${testState[q.id].status}`; btn.innerText = idx + 1;
-        btn.onclick = () => loadQuestion(idx); palette.appendChild(btn);
+        let btn = document.createElement('div');
+        btn.className = `badge ${testState[q.id].status}`;
+        btn.innerText = idx + 1;
+        btn.onclick = () => loadQuestion(idx);
+        palette.appendChild(btn);
     });
     updateCounts();
 }
@@ -265,7 +325,8 @@ function updateCounts() {
 }
 
 function loadQuestion(idx) {
-    currentQIndex = idx; let q = questions[currentSubject][idx];
+    currentQIndex = idx;
+    let q = questions[currentSubject][idx];
     if(testState[q.id].status === 'not-visited') testState[q.id].status = 'not-answered';
     
     document.getElementById('current-q-no').innerText = idx + 1;
@@ -276,10 +337,13 @@ function loadQuestion(idx) {
     const numInput = document.getElementById('num-answer');
 
     if(q.type === 'numerical') {
-        optArea.classList.add('hidden'); numArea.classList.remove('hidden');
+        optArea.classList.add('hidden');
+        numArea.classList.remove('hidden');
         numInput.value = testState[q.id].selectedOpt !== null ? testState[q.id].selectedOpt : '';
     } else {
-        numArea.classList.add('hidden'); optArea.classList.remove('hidden'); optArea.innerHTML = '';
+        numArea.classList.add('hidden');
+        optArea.classList.remove('hidden');
+        optArea.innerHTML = '';
         q.options.forEach((opt, oIdx) => {
             let isChecked = testState[q.id].selectedOpt === oIdx ? 'checked' : '';
             optArea.innerHTML += `<label class="opt-row"><input type="radio" name="opt" value="${oIdx}" ${isChecked} onchange="selectOption(${oIdx})"> ${opt}</label>`;
@@ -289,24 +353,36 @@ function loadQuestion(idx) {
 }
 
 function selectOption(val) { testState[questions[currentSubject][currentQIndex].id].selectedOpt = val; }
+
 function saveAndNext() {
     let q = questions[currentSubject][currentQIndex];
-    if(q.type === 'numerical') { let val = document.getElementById('num-answer').value; if(val !== "") testState[q.id].selectedOpt = parseFloat(val); }
+    if(q.type === 'numerical') {
+        let val = document.getElementById('num-answer').value;
+        if(val !== "") testState[q.id].selectedOpt = parseFloat(val);
+    }
     if(testState[q.id].selectedOpt !== null) testState[q.id].status = 'answered';
     if(currentQIndex < questions[currentSubject].length - 1) loadQuestion(currentQIndex + 1);
     else buildPalette();
 }
+
 function markForReview() { testState[questions[currentSubject][currentQIndex].id].status = 'marked'; saveAndNext(); }
-function clearResponse() { let q = questions[currentSubject][currentQIndex]; testState[q.id].selectedOpt = null; testState[q.id].status = 'not-answered'; loadQuestion(currentQIndex); }
+
+function clearResponse() {
+    let q = questions[currentSubject][currentQIndex];
+    testState[q.id].selectedOpt = null; testState[q.id].status = 'not-answered';
+    loadQuestion(currentQIndex); 
+}
+
 function submitTestEarly() { if(confirm("Submit the test now?")) { clearInterval(timerInterval); calculateAndShowResult(); } }
 
 function calculateAndShowResult() {
-    let stats = {}; Object.keys(questions).forEach(sub => { stats[sub] = {p:0, t:0}; });
+    let stats = { Physics: {p:0, t:0}, Chemistry: {p:0, t:0}, Mathematics: {p:0, t:0} };
     let totalPositive = 0, totalNegative = 0, totalQs = 0;
 
     Object.keys(questions).forEach(sub => {
         questions[sub].forEach(q => {
-            totalQs++; stats[sub].t++;
+            totalQs++;
+            stats[sub].t++;
             let state = testState[q.id];
             if(state.selectedOpt !== null) {
                 if(state.selectedOpt === q.ans) { totalPositive += 4; stats[sub].p++; } 
@@ -315,32 +391,36 @@ function calculateAndShowResult() {
         });
     });
 
-    let finalScore = totalPositive - totalNegative; let maxScore = totalQs * 4;
-    let m = Math.floor(timeSpent / 60); let s = timeSpent % 60; let timeString = `${m}m ${s}s`;
+    let finalScore = totalPositive - totalNegative;
+    let maxScore = totalQs * 4;
     
+    let m = Math.floor(timeSpent / 60);
+    let s = timeSpent % 60;
+    let timeString = `${m}m ${s}s`;
     document.getElementById('time-taken').innerText = timeString;
+
     switchScreen('nta-screen', 'analysis-screen');
+    
     document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
     document.getElementById('positive-score').innerText = `+${totalPositive}`;
     document.getElementById('negative-score').innerText = `-${totalNegative}`;
-    
-    if (finalScore >= (maxScore / 2)) document.getElementById('safe-zone-banner').classList.remove('hidden');
-    else document.getElementById('safe-zone-banner').classList.add('hidden');
 
-    const graphBox = document.getElementById('subject-graph-box');
-    if(graphBox) {
-        graphBox.innerHTML = '<h3 style="color: #d4af37; margin-bottom: 20px; font-size: 20px;">Accuracy Breakdown</h3>';
-        Object.keys(stats).forEach(sub => {
-            let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
-            graphBox.innerHTML += `
-            <div class="bar-container">
-                <div class="bar-label">${sub.substring(0,4)}</div>
-                <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%;"></div></div>
-                <div class="bar-pct">${pct}%</div>
-            </div>`;
-        });
+    if (finalScore >= (maxScore / 2)) {
+        document.getElementById('safe-zone-banner').classList.remove('hidden');
+    } else {
+        document.getElementById('safe-zone-banner').classList.add('hidden');
     }
 
+    setTimeout(() => {
+        ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
+            let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
+            let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
+            document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
+            document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
+        });
+    }, 500);
+
+    // Push to Firebase Leaderboard & User History
     if (pendingTestId && db) {
         let userRecord = { name: currentUser, username: currentUsername, score: finalScore, time: timeString, timestamp: Date.now() };
         db.ref('leaderboards/' + pendingTestId).push(userRecord).catch(err => console.error(err));
@@ -349,27 +429,58 @@ function calculateAndShowResult() {
 }
 
 // ========================================================
-// 7. MISTAKE DIARY (REVIEW ENGINE)
+// 6. VIEW SOLUTIONS (Review Engine)
 // ========================================================
 function openReviewScreen() {
-    switchScreen('analysis-screen', 'review-screen'); const container = document.getElementById('review-content'); container.innerHTML = '';
+    switchScreen('analysis-screen', 'review-screen');
+    const container = document.getElementById('review-content');
+    container.innerHTML = '';
+
     Object.keys(questions).forEach(sub => {
         if(questions[sub].length > 0) {
             container.innerHTML += `<h2 class="sub-title">${sub}</h2>`;
             questions[sub].forEach((q, i) => {
-                let state = testState[q.id]; let isCorrect = state.selectedOpt === q.ans;
+                let state = testState[q.id];
+                let isCorrect = state.selectedOpt === q.ans;
                 let html = `<div class="review-item"><div class="review-q">Q${i+1}. ${q.q}</div>`;
-                if(q.type === 'numerical') { html += `<div class="review-opt ${isCorrect ? 'opt-correct' : (state.selectedOpt!==null ? 'opt-wrong':'')}">Your Answer: ${state.selectedOpt !== null ? state.selectedOpt : 'Not Attempted'}</div><div class="review-opt opt-correct">Correct Answer: ${q.ans}</div>`; } 
-                else {
+
+                if(q.type === 'numerical') {
+                    html += `<div class="review-opt ${isCorrect ? 'opt-correct' : (state.selectedOpt!==null ? 'opt-wrong':'')}">Your Answer: ${state.selectedOpt !== null ? state.selectedOpt : 'Not Attempted'}</div><div class="review-opt opt-correct">Correct Answer: ${q.ans}</div>`;
+                } else {
                     q.options.forEach((opt, oIdx) => {
                         let optClass = 'review-opt';
-                        if(oIdx === q.ans) optClass += ' opt-correct'; else if(oIdx === state.selectedOpt) optClass += ' opt-wrong';
+                        if(oIdx === q.ans) optClass += ' opt-correct';
+                        else if(oIdx === state.selectedOpt) optClass += ' opt-wrong';
                         html += `<div class="${optClass}">${opt}</div>`;
                     });
                 }
-                if(q.hint) html += `<div class="review-hint">💡 Hint: ${q.hint}</div>`; html += `</div>`; container.innerHTML += html;
+                if(q.hint) html += `<div class="review-hint">💡 Hint: ${q.hint}</div>`;
+                html += `</div>`;
+                container.innerHTML += html;
             });
         }
     });
 }
 function closeReviewScreen() { switchScreen('review-screen', 'analysis-screen'); }
+
+// ========================================================
+// 7. AI BOT LOGIC
+// ========================================================
+function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
+function botReply(response) {
+    const chatArea = document.getElementById('bot-chat-area');
+    const optionsDiv = document.getElementById('bot-options');
+    const inputField = document.getElementById('bot-input');
+    if(optionsDiv) optionsDiv.remove();
+    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
+    setTimeout(() => {
+        if(response === 'Yes') {
+            chatArea.innerHTML += `<div class="bot-msg">Great! Ask anything about the test patterns.</div>`;
+            inputField.disabled = false;
+            document.getElementById('bot-send-btn').disabled = false;
+        } else {
+            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
+        }
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }, 600);
+}
