@@ -366,3 +366,99 @@ function botReply(response) {
         chatArea.scrollTop = chatArea.scrollHeight;
     }, 600);
 }
+
+// ========================================================
+// FIREBASE BACKEND & LEADERBOARD LOGIC (PASTED AT THE END)
+// ========================================================
+
+const firebaseConfig = {
+    apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
+    authDomain: "rankersvault-5e76f.firebaseapp.com",
+    projectId: "rankersvault-5e76f",
+    storageBucket: "rankersvault-5e76f.firebasestorage.app",
+    messagingSenderId: "56527682160",
+    appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
+    databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
+};
+
+// Initialize Firebase only if it hasn't been initialized yet
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+let currentUser = "Guest User";
+
+// OVERWRITE LOGIN FUNCTION: Ask for name before starting
+function guestLogin() { 
+    let userName = prompt("Enter your Name for the Leaderboard:");
+    if (userName && userName.trim() !== "") {
+        currentUser = userName;
+        document.getElementById('student-name').innerText = currentUser;
+    }
+    switchScreen('landing-screen', 'dashboard-screen'); 
+}
+
+// OVERWRITE RESULT FUNCTION: Push to Firebase automatically
+function calculateAndShowResult() {
+    let stats = { Physics: {p:0, t:0}, Chemistry: {p:0, t:0}, Mathematics: {p:0, t:0} };
+    let totalPositive = 0, totalNegative = 0, totalQs = 0;
+
+    Object.keys(questions).forEach(sub => {
+        questions[sub].forEach(q => {
+            totalQs++;
+            stats[sub].t++;
+            let state = testState[q.id];
+            if(state.selectedOpt !== null) {
+                if(state.selectedOpt === q.ans) { totalPositive += 4; stats[sub].p++; } 
+                else if (q.type === 'mcq') { totalNegative += 1; }
+            }
+        });
+    });
+
+    let finalScore = totalPositive - totalNegative;
+    let maxScore = totalQs * 4;
+    
+    let m = Math.floor(timeSpent / 60);
+    let s = timeSpent % 60;
+    let timeString = `${m}m ${s}s`;
+    document.getElementById('time-taken').innerText = timeString;
+
+    switchScreen('nta-screen', 'analysis-screen');
+    document.body.className = 'theme-premium';
+    
+    document.getElementById('floating-dock').classList.remove('hidden'); 
+    document.getElementById('leaf-container').classList.remove('hidden');
+    document.getElementById('science-bg').classList.remove('hidden');
+    
+    document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
+    document.getElementById('positive-score').innerText = `+${totalPositive}`;
+    document.getElementById('negative-score').innerText = `-${totalNegative}`;
+
+    if (finalScore >= (maxScore / 2)) {
+        document.getElementById('safe-zone-banner').classList.remove('hidden');
+    } else {
+        document.getElementById('safe-zone-banner').classList.add('hidden');
+    }
+
+    setTimeout(() => {
+        ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
+            let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
+            let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
+            document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
+            document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
+        });
+    }, 500);
+
+    // --- PUSH TO FIREBASE ---
+    if (pendingTestId) {
+        let userRecord = {
+            name: currentUser,
+            score: finalScore,
+            time: timeString,
+            timestamp: Date.now()
+        };
+        db.ref('leaderboards/' + pendingTestId).push(userRecord)
+          .then(() => console.log("Data successfully sent to Founder Terminal."))
+          .catch(err => console.error("Firebase Error: ", err));
+    }
+}
