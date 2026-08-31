@@ -194,5 +194,15 @@ select.premium-input option { background: #010a04; color: #fff; }
 .toggle-btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; width: 80px; transition: 0.3s; }
 .toggle-on { background: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
 .toggle-off { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.4); }
-    
+
+   /* --- PREMIUM UPGRADE POP-UP --- */
+#premium-modal .glass-panel {
+    background: radial-gradient(circle at top center, #1a1500 0%, #050505 100%);
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+/* CROWN ICON FOR PREMIUM TESTS */
+.day-unlocked { position: relative; }
 }
