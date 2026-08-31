@@ -118,8 +118,8 @@
         "hint": "Since x=1 is an obvious root, both roots must be 1. Therefore, product of roots = c(a-b)/a(b-c) = 1. This gives b = 2ac/(a+c)."
       }
     ]
-  }
-},
+  },
+
 "day_2": {
     "Physics": [
       {
@@ -246,3 +246,4 @@
       }
     ]
   }
+}
