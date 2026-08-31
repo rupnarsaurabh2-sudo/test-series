@@ -463,24 +463,50 @@ function openReviewScreen() {
 }
 function closeReviewScreen() { switchScreen('review-screen', 'analysis-screen'); }
 
+}
+    // ========================================================
+// 7. AI FOUNDER BOT LOGIC (SMART & FAST)
 // ========================================================
-// 7. AI BOT LOGIC
-// ========================================================
-function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
-function botReply(response) {
+function toggleBot() { 
+    document.getElementById('bot-window').classList.toggle('hidden'); 
+}
+
+const botResponses = {
+    "Features?": "Ranker's Vault packs 3 main weapons: 1. Strict NTA CBT Interface. 2. Mathematically curated repeating PYQs. 3. Mistake Diary with detailed solution analysis. No lifelines allowed!",
+    "NTA Timer?": "Exactly like the real D-Day! The clock doesn't stop. You get +4 for correct, -1 for incorrect, and 0 for numerical errors. Train your brain for reality.",
+    "Who are you?": "I am Saurav Sugreev Rupnar, the mind behind Ranker's Vault. I built this platform to stop the illusions and give you the exact testing environment you need.",
+    "Daily PYQs?": "Our 75 Days Challenge gives you 10 handpicked PYQs daily. It's designed for pure concept building before you face the 10 Full-Length Pro Tests."
+};
+
+function botReply(userText) {
     const chatArea = document.getElementById('bot-chat-area');
     const optionsDiv = document.getElementById('bot-options');
-    const inputField = document.getElementById('bot-input');
+    
+    // Naye message aane par purane options hata do
     if(optionsDiv) optionsDiv.remove();
-    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
+    
+    // User ka sawal print karo
+    chatArea.innerHTML += `<div class="user-msg">${userText}</div>`;
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    // AI thinking effect (0.5 second ki delay jisse asli bot wali feel aaye)
     setTimeout(() => {
-        if(response === 'Yes') {
-            chatArea.innerHTML += `<div class="bot-msg">Great! Ask anything about the test patterns.</div>`;
-            inputField.disabled = false;
-            document.getElementById('bot-send-btn').disabled = false;
-        } else {
-            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
-        }
+        let replyText = botResponses[userText];
+        chatArea.innerHTML += `<div class="bot-msg">${replyText}</div>`;
         chatArea.scrollTop = chatArea.scrollHeight;
-    }, 600);
+        
+        // Reply dene ke 1 second baad waapas options de do loop chalane ke liye
+        setTimeout(() => {
+            let optionsHTML = `
+            <div class="bot-options" id="bot-options" style="flex-wrap: wrap; justify-content: flex-start; gap: 8px;">
+                <button class="bot-opt-btn" onclick="botReply('Features?')">Vault Features?</button>
+                <button class="bot-opt-btn" onclick="botReply('NTA Timer?')">Is it like NTA?</button>
+                <button class="bot-opt-btn" onclick="botReply('Who are you?')">Who are you?</button>
+                <button class="bot-opt-btn" onclick="botReply('Daily PYQs?')">Daily PYQs?</button>
+            </div>`;
+            chatArea.innerHTML += optionsHTML;
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }, 800);
+        
+    }, 500);
 }
