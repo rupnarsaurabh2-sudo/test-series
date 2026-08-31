@@ -3,393 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RANKER'S VAULT | Pro Ed-Tech</title>
+    <title>Ranker's Vault | God Mode Test Series</title>
     <link rel="stylesheet" href="style.css">
-</head>
-<body class="theme-premium">
-
-    <!-- HEAVENLY BACKGROUND & LEAVES -->
-    <div id="leaf-container"></div>
-    <div class="science-bg" id="science-bg">
-        <div class="sci-symbol s1">⌬</div><div class="sci-symbol s2">∫e^x dx</div>
-        <div class="sci-symbol s3">E=mc²</div><div class="sci-symbol s4">∇×B</div>
-    </div>
-
-    <!-- UNIVERSAL BACK BUTTON -->
-    <button id="universal-back" class="back-btn hidden" onclick="goBack()">⬅ Back</button>
-
-    <!-- SIDEBAR (HAMBURGER MENU) -->
-    <div id="side-menu" class="sidebar hidden">
-        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3);">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="font-size: 30px;">👨‍🎓</div>
-                <div style="text-align: left;">
-                    <h3 id="sidebar-name" class="gold-text" style="font-size: 16px; margin: 0;">Scholar</h3>
-                    <p id="sidebar-username" style="font-size: 12px; color: #a0aec0; margin: 0;">@scholar</p>
-                </div>
-            </div>
-            <button onclick="toggleSidebar()" style="background: transparent; border: none; color: #d4af37; font-size: 30px; cursor: pointer;">&times;</button>
-        </div>
-        <div class="sidebar-links" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
-            <button class="glow-gold-btn" onclick="switchScreen(document.querySelector('.active-screen').id, 'exam-selection-screen'); toggleSidebar();">🎯 Change Target Exam</button>
-            <button class="outline-btn" style="margin-top: 40px; border-color: #ef4444; color: #ef4444;" onclick="performLogout()">🚪 Logout</button>
-        </div>
-    </div>
-
-    <!-- FLOATING BOTTOM DOCK -->
-    <div class="floating-dock" id="floating-dock">
-        <button class="dock-btn active" onclick="location.reload()">🏠 Home</button>
-        <button class="dock-btn" onclick="toggleSidebar()">☰ Menu</button>
-    </div>
-
-    <!-- 1. LANDING PAGE -->
-    <div id="landing-screen" class="transition-element screen-layer active-screen landing-scroll">
-        <nav class="navbar glass-nav">
-            <div class="logo">
-                <button id="nav-menu-btn" class="hidden" onclick="toggleSidebar()" style="background: transparent; border: none; color: #d4af37; font-size: 24px; cursor: pointer; margin-right: 15px;">☰</button>
-                RANKER'S VAULT <span class="gold-text glow-text">PRO</span>
-            </div>
-            <div class="nav-links">
-                <button class="icon-btn" onclick="openInfoModal()" title="Rules">ℹ️</button>
-                <button class="nav-btn primary" id="login-nav-btn" onclick="openAuthModal()">Login / Sign Up</button>
-            </div>
-        </nav>
-
-        <section class="hero flex-center" style="min-height: 60vh;">
-            <div class="quotes-container">
-                <h2 class="heavenly-title">"The clock is ticking, the crowd is vast,<br> <span class="gold-text">Master the patterns</span> to build a future that lasts."</h2>
-                <p class="subtitle">Stop chasing illusions. The exact reality of NTA testing environment lies here.</p>
-                <button class="glow-gold-btn" style="margin-top: 30px; font-size: 18px; padding: 15px 40px;" onclick="openAuthModal()">Create Account / Login 🚀</button>
-            </div>
-        </section>
-
-        <!-- PREMIUM FEATURES SHOWCASE -->
-        <section class="features-section" style="display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; margin-top: 60px; padding: 20px; width: 100%; max-width: 1000px; margin-left: auto; margin-right: auto; padding-bottom: 100px;">
-            <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-                <h3 class="gold-text">Strict NTA UI</h3>
-                <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Experience the exact CBT interface. No lifelines, no pauses. Train your brain for the real D-Day.</p>
-            </div>
-            <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-                <h3 class="gold-text">Curated PYQs</h3>
-                <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Handpicked questions mathematically proven to repeat in high-weightage chapters.</p>
-            </div>
-            <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-                <h3 class="gold-text">Mistake Diary</h3>
-                <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Advanced analytics tracking your negative marks, accuracy, and detailed post-test solution views.</p>
-            </div>
-        </section>
-    </div>
-
-    <!-- 1.5 AUTHENTICATION / LOGIN MODAL -->
-    <div id="auth-modal" class="modal hidden">
-        <div class="modal-content glass-panel popup-anim">
-            <span class="close-btn" onclick="closeAuthModal()">&times;</span>
-            <h2 class="gold-text heavenly-title" style="margin-bottom: 10px;">Access The Vault</h2>
-            <p style="color: #a0aec0; margin-bottom: 25px; font-size: 14px;">Sign in with your Username and Password.</p>
-            
-            <input type="text" id="reg-username" class="premium-input" placeholder="Username (e.g. saurav)">
-            
-            <div style="position: relative;">
-                <input type="password" id="reg-pass" class="premium-input" placeholder="Password" style="padding-right: 40px;">
-                <span id="eye-icon" onclick="togglePassword()" style="position: absolute; right: 15px; top: 15px; cursor: pointer; font-size: 18px; user-select: none;">👁️</span>
-            </div>
-            
-            <button class="glow-gold-btn full-width" onclick="submitAuth()">Authenticate & Enter ⚡</button>
-        </div>
-    </div>
-
-    <!-- 2. EXAM TARGET SELECTION SCREEN (FLOATING CARDS WITH NEW LOGOS) -->
-    <div id="exam-selection-screen" class="hidden transition-element screen-layer">
-        <nav class="navbar glass-nav">
-            <div class="logo" style="margin-left: 5%;">
-                <button class="icon-btn" onclick="toggleSidebar()" style="margin-right: 15px; border: none;">☰</button>
-                SELECT BATTLEFIELD
-            </div>
-        </nav>
-        
-        <div class="main-container flex-center-top" style="margin-top: 60px;">
-            <h2 class="gold-text heavenly-title" style="margin-bottom: 40px; font-size: 36px;">Choose Your Target</h2>
-            
-            <div class="exam-grid">
-                <!-- JEE MAIN -->
-                <div class="exam-card active-exam" onclick="openDashboard('main')">
-                    <div class="exam-logo-box">
-                        <img src="https://cdn1.prosyllabus.com/static/jee-main-logo.png" alt="JEE Main Logo">
-                    </div>
-                    <h3 class="gold-text glow-text" style="font-size: 24px;">JEE Main</h3>
-                    <p style="color: #10b981; margin-top: 10px; font-weight: bold; font-size: 15px;">Enter Vault ➔</p>
-                </div>
-
-                <!-- JEE ADVANCED -->
-                <div class="exam-card locked-exam" onclick="alert('JEE Advanced Modules are being curated. Coming Soon!')">
-                    <div class="exam-logo-box">
-                        <img src="https://www.powermindinstitute.org/admin/assets/images/pages/jee-advanced-exam.png" alt="JEE Advanced Logo">
-                    </div>
-                    <h3 style="font-size: 24px; color: #cbd5e1;">JEE Advanced 🔒</h3>
-                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
-                </div>
-   
-           <!-- Naya NEET UG Card -->
-<div class="target-card" onclick="setExamTarget('NEET')" style="cursor: pointer;">
-    <div class="circle-icon" style="overflow: hidden;">
-        <img src="https://theshillongtimes.com/wp-content/uploads/2020/10/NEET-logo.jpg" alt="NEET UG" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-    </div>
-    <h3 style="color: #fff; margin-top: 15px;">NEET UG</h3>
-    <p style="color: #10b981; font-size: 13px; font-weight: bold; margin-top: 5px;">Enter Vault ➔</p>
-</div>
-
-                <!-- MHT CET -->
-                <div class="exam-card locked-exam" onclick="alert('MHT CET Modules are being curated. Coming Soon!')">
-                    <div class="exam-logo-box">
-                        <img src="https://medbots.in/uploads/exams/exam_images/law_(14).jpg" alt="MHT CET Logo">
-                    </div>
-                    <h3 style="font-size: 24px; color: #cbd5e1;">MHT CET 🔒</h3>
-                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. JEE MAIN DASHBOARD -->
-    <div id="dashboard-screen" class="hidden transition-element screen-layer">
-        <nav class="navbar glass-nav">
-            <div class="logo" style="display: flex; align-items: center;">
-                <button class="icon-btn" onclick="toggleSidebar()" style="margin-right: 15px; border: none;">☰</button>
-                JEE MAIN VAULT
-            </div>
-        </nav>
-        
-        <div class="main-container flex-center-top" style="margin-top: 40px;">
-            <div style="text-align: left; width: 100%; max-width: 950px; margin-bottom: 20px;">
-                <h2 style="color: #fff; font-size: 24px;">Welcome back, <span id="dash-student-name" class="gold-text">Scholar</span></h2>
-                <p style="color: #10b981; font-size: 14px;">Target: JEE Main | System Ready</p>
-            </div>
-            
-            <hr style="width: 100%; border: 1px solid rgba(212,175,55,0.2); margin-bottom: 30px;">
-
-            <!-- SECTION A: TEST SERIES -->
-            <h2 class="gold-text" style="margin-bottom: 20px; font-size: 26px; text-align: left; width: 100%; max-width: 950px;">Combat Zone (Tests)</h2>
-            <div class="cards-container" style="margin-bottom: 40px;">
-                <div class="dash-card">
-                    <h3>Daily 10 PYQs</h3>
-                    <p style="color: #a0aec0; margin: 10px 0;">Curated for pure concept building.</p>
-                    <button class="action-btn full-width" onclick="openDaySelection()">View All 75 Days</button>
-                </div>
-                <div class="dash-card premium-card">
-                    <h3 class="gold-text glow-text">Pro Test Series</h3>
-                    <p style="color: #a0aec0; margin: 10px 0;">10 Full Length Tests | 75 Qs | 2:30 Hrs</p>
-                    <button class="glow-gold-btn full-width" onclick="openTestSelection()">Give Mock Test</button>
-                </div>
-            </div>
-
-            <!-- SECTION B: PREMIUM STUDY MATERIAL -->
-            <h2 class="gold-text" style="margin-bottom: 20px; font-size: 26px; text-align: left; width: 100%; max-width: 950px;">Arsenal (Premium Notes)</h2>
-            <div class="cards-container">
-                <div class="dash-card" style="padding: 20px;">
-                    <h3 style="color: #64ffda;">Physics Notes</h3>
-                    <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Mechanics, Electrodynamics & Modern Physics.</p>
-                    <button class="outline-btn full-width" onclick="alert('Physics Notes Vault Opening Soon!')">Access Notes</button>
-                </div>
-                <div class="dash-card" style="padding: 20px;">
-                    <h3 style="color: #64ffda;">Chemistry Notes</h3>
-                    <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Physical, Organic & Inorganic Modules.</p>
-                    <button class="outline-btn full-width" onclick="alert('Chemistry Notes Vault Opening Soon!')">Access Notes</button>
-                </div>
-                <div class="dash-card" style="padding: 20px;">
-                    <h3 style="color: #64ffda;">Maths Notes</h3>
-                    <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Calculus, Algebra & Coordinate Geometry.</p>
-                    <button class="outline-btn full-width" onclick="alert('Mathematics Notes Vault Opening Soon!')">Access Notes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- DAY SELECTION GRID -->
-    <section id="day-selection-screen" class="hidden transition-element screen-layer">
-        <nav class="navbar glass-nav">
-            <div class="logo">DAILY PYQs</div>
-        </nav>
-        <div class="main-container flex-center-top" style="margin-top: 40px;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">75 Days Challenge</h2>
-            <div id="days-grid" class="days-grid"></div>
-        </div>
-    </section>
-
-    <!-- TEST SELECTION GRID -->
-    <section id="test-selection-screen" class="hidden transition-element screen-layer">
-        <nav class="navbar glass-nav">
-            <div class="logo">PRO TEST SERIES</div>
-        </nav>
-        <div class="main-container flex-center-top" style="margin-top: 40px;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">10 Full Length Tests</h2>
-            <div id="tests-grid" class="days-grid"></div>
-        </div>
-    </section>
-
-    <!-- ALL THE BEST POPUP -->
-    <div id="all-best-modal" class="modal hidden">
-        <div class="modal-content glass-panel popup-anim" style="padding: 40px 20px;">
-            <span class="close-btn" onclick="closeAllBestModal()">&times;</span>
-            <h2 style="color: #64ffda; font-size: 32px; margin-bottom: 10px; text-shadow: 0 0 15px #64ffda;">All The Best! 🎯</h2>
-            <p style="color: #e2e8f0; font-size: 18px; margin-bottom: 25px;">Keep calm and trust your preparation.</p>
-            <button class="glow-gold-btn full-width" style="max-width: 250px; font-size: 18px;" onclick="confirmStartTest()">Start Now 🚀</button>
-        </div>
-    </div>
-    
-     <!-- PREMIUM POP-UP MODAL -->
-<div id="premium-modal" class="modal hidden">
-    <div class="glass-panel" style="border-color: #d4af37; text-align: center;">
-        <button class="close-btn" onclick="closePremiumModal()">×</button>
-        <h2 class="gold-text glow-text" style="font-size: 28px; margin-bottom: 10px;">👑 Ranker's Premium</h2>
-        <p style="color: #cbd5e1; margin-bottom: 20px; font-size: 15px;">You have completed the free trial. Upgrade to unlock the full potential of your preparation!</p>
-        
-        <div style="text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px;">
-            <p style="color: #10b981; font-weight: bold; margin-bottom: 10px;">🚀 What you get for just ₹99:</p>
-            <ul style="list-style: none; padding: 0; color: #e2e8f0; font-size: 14px; line-height: 1.8;">
-                <li>✅ Access to all 75 Daily PYQ Challenges</li>
-                <li>✅ 10 Full-Length NTA/NEET Pro Tests</li>
-                <li>✅ Detailed Mistake Diary & Solutions</li>
-                <li>✅ Ad-free, Distraction-free Zone</li>
-            </ul>
-        </div>
-        
-        <button class="glow-gold-btn full-width" onclick="activatePremium()" style="font-size: 18px;">Unlock Now @ ₹99</button>
-        <p style="color: #64748b; font-size: 12px; margin-top: 15px;">*One-time payment. Valid till NEET/JEE 2026.</p>
-    </div>
-</div>
-    
-    <!-- INFO MODAL -->
-    <div id="info-modal" class="modal hidden">
-        <div class="modal-content glass-panel popup-anim">
-            <span class="close-btn" onclick="closeInfoModal()">&times;</span>
-            <h2 class="gold-text" style="margin-bottom: 15px;">The Reality Check</h2>
-            <p style="text-align: left; line-height: 1.6; font-size: 15px;">
-                The 99% fail because they study the wrong things. This vault contains the exact NTA patterns.<br><br>
-                <strong>Rules:</strong><br>
-                1. +4 for correct, -1 for incorrect (0 for numerical errors).<br>
-                2. No lifelines. You only get hints if wrong.<br>
-                3. The clock does not stop.
-            </p>
-        </div>
-    </div>
-
-    <!-- 4. NTA CLONE INTERFACE -->
-    <div id="nta-screen" class="hidden nta-layout transition-element screen-layer">
-        <div class="nta-header">
-            <div class="nta-title">JEE MAIN 2026 - RANKER'S VAULT</div>
-            <div class="nta-timer">Time Left : <span id="time-left">00:00:00</span></div>
-        </div>
-        <div class="nta-body">
-            <div class="nta-left">
-                <div class="nta-tabs">
-                    <button class="tab-btn active" onclick="switchSubject('Physics')">Physics</button>
-                    <button class="tab-btn" onclick="switchSubject('Chemistry')">Chemistry</button>
-                    <button class="tab-btn" onclick="switchSubject('Mathematics')">Mathematics</button>
-                </div>
-                <div class="question-area">
-                    <div class="q-header">
-                        <span>Question No. <span id="current-q-no">1</span></span>
-                        <span>Marks: +4 | -1</span>
-                    </div>
-                    <div id="q-text" class="q-content"></div>
-                    
-                    <div id="options-area" class="options-container"></div>
-                    
-                    <div id="numerical-area" class="hidden numerical-container">
-                        <label style="font-weight: bold; font-size: 16px;">Enter your answer (Number):</label><br>
-                        <input type="number" id="num-answer" step="any" placeholder="e.g. 25.5">
-                    </div>
-                </div>
-                <div class="nta-footer">
-                    <div class="left-btns">
-                        <button class="nta-btn white" onclick="markForReview()">Mark for Review</button>
-                        <button class="nta-btn white" onclick="clearResponse()">Clear</button>
-                    </div>
-                    <div class="right-btns">
-                        <button class="nta-btn blue" onclick="saveAndNext()">Save & Next</button>
-                        <button class="nta-btn green" onclick="submitTestEarly()">Submit</button>
-                    </div>
-                </div>
-            </div>
-            <div class="nta-right">
-                <div class="profile-box">
-                    <div id="student-name">Scholar</div>
-                </div>
-                <div class="status-legend">
-                    <div class="legend-item"><div class="badge answered" id="cnt-answered">0</div> Ans</div>
-                    <div class="legend-item"><div class="badge not-answered" id="cnt-not-answered">0</div> Not Ans</div>
-                    <div class="legend-item"><div class="badge not-visited" id="cnt-not-visited">0</div> Not Visit</div>
-                    <div class="legend-item"><div class="badge marked" id="cnt-marked">0</div> Marked</div>
-                </div>
-                <div class="palette-header" id="current-subject-name">Physics</div>
-                <div class="q-palette" id="question-palette"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. ADVANCED ANALYSIS SCREEN -->
-    <div id="analysis-screen" class="hidden main-container transition-element screen-layer flex-center-top">
-        <div style="margin-top: 40px; width: 100%;">
-            <h1 class="gold-text heavenly-title" style="font-size: 36px;">Performance Analysis</h1>
-            
-            <div id="safe-zone-banner" class="hidden safe-banner">🎯 YOU ARE NOW IN THE SAFE ZONE! Excellent Work.</div>
-
-            <div class="analysis-grid">
-                <div class="stat-box"><h3>Final Score</h3><div class="score-big" id="final-score">0</div></div>
-                <div class="stat-box"><h3>Time Taken</h3><div class="score-big" id="time-taken" style="color:#64ffda;">00:00</div></div>
-                <div class="stat-box"><h3>Positive Marks</h3><div class="score-big" id="positive-score" style="color:#10b981;">0</div></div>
-                <div class="stat-box"><h3>Negative Marks</h3><div class="score-big" id="negative-score" style="color:#ef4444;">0</div></div>
-            </div>
-
-            <div class="graph-box">
-                <h3 style="margin-bottom: 15px; color: #fff;">Subject-wise Accuracy</h3>
-                <div class="bar-container"><div class="bar-label">Physics</div><div class="bar-bg"><div class="bar-fill" id="bar-phy"></div></div><div class="bar-pct" id="pct-phy">0%</div></div>
-                <div class="bar-container"><div class="bar-label">Chemistry</div><div class="bar-bg"><div class="bar-fill" id="bar-chem"></div></div><div class="bar-pct" id="pct-chem">0%</div></div>
-                <div class="bar-container"><div class="bar-label">Maths</div><div class="bar-bg"><div class="bar-fill" id="bar-math"></div></div><div class="bar-pct" id="pct-math">0%</div></div>
-            </div>
-
-            <div style="display:flex; justify-content:center; gap:20px; flex-wrap: wrap; margin-top: 30px;">
-                <button class="action-btn" style="width: 200px; font-size: 16px;" onclick="openReviewScreen()">🔍 View Solutions</button>
-                <button class="glow-gold-btn" style="margin-top: 0; width: 200px;" onclick="switchScreen('analysis-screen', 'dashboard-screen')">🏠 Back to Dashboard</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 6. SOLUTIONS & REVIEW SCREEN -->
-    <div id="review-screen" class="hidden main-container transition-element screen-layer flex-center-top">
-        <h1 class="gold-text heavenly-title" style="font-size: 32px; margin-bottom: 20px; margin-top: 40px;">Review Mistakes</h1>
-        <div id="review-content" style="width: 100%; text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); max-height: 70vh; overflow-y: auto;"></div>
-        <button class="glow-gold-btn" style="margin-top: 30px; width: 200px;" onclick="closeReviewScreen()">⬅ Back to Analysis</button>
-    </div>
-
-   <!-- 7. AI FOUNDER BOT -->
-    <div id="ai-bot-container">
-        <button id="bot-toggle-btn" onclick="toggleBot()">🤖</button>
-        <div id="bot-window" class="hidden popup-anim">
-            <div class="bot-header">
-                <span class="bot-title">Ask the Founder AI</span>
-                <button onclick="toggleBot()" class="bot-close">&times;</button>
-            </div>
-            <div class="bot-chat-area" id="bot-chat-area">
-                <div class="bot-msg">Hi, I am Saurav Sugreev Rupnar! Welcome to Ranker's Vault. How can I help you dominate your exams today?</div>
-                <div class="bot-options" id="bot-options" style="flex-wrap: wrap; justify-content: flex-start; gap: 8px;">
-                    <button class="bot-opt-btn" onclick="botReply('Features?')">Vault Features?</button>
-                    <button class="bot-opt-btn" onclick="botReply('NTA Timer?')">Is it like NTA?</button>
-                    <button class="bot-opt-btn" onclick="botReply('Who are you?')">Who are you?</button>
-                    <button class="bot-opt-btn" onclick="botReply('Daily PYQs?')">Daily PYQs?</button>
-                </div>
-            </div>
-            <div class="bot-input-area">
-                <input type="text" id="bot-input" placeholder="Select an option above..." disabled style="cursor: not-allowed; opacity: 0.7;">
-                <button id="bot-send-btn" disabled style="opacity: 0.5;">➤</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Firebase CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    
+</head>
+<body class="theme-premium">
+    <div id="science-bg" class="science-bg">
+        <div class="sci-symbol s1">∫e^x dx</div>
+        <div class="sci-symbol s2">E = mc²</div>
+        <div class="sci-symbol s3">F = G(m1m2)/r²</div>
+        <div class="sci-symbol s4">∇ × E = -∂B/∂t</div>
+    </div>
+    <div id="leaf-container"></div>
+
+    <nav class="glass-nav">
+        <div class="logo"><span class="gold-text">RANKER'S</span> VAULT</div>
+        <div style="display:flex; gap:15px; align-items:center;">
+            <span id="student-name" style="font-weight:bold; color:#d4af37;">Scholar</span>
+            <button class="icon-btn" id="nav-menu-btn" onclick="toggleSidebar()">☰</button>
+        </div>
+    </nav>
+
+    <div id="side-menu" class="sidebar hidden">
+        <div style="padding: 25px; border-bottom: 1px solid rgba(212,175,55,0.3); text-align:center;">
+            <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 35px; margin: 0 auto 15px auto;">👨‍🎓</div>
+            <h3 id="sidebar-name" style="color: #fff; margin-bottom: 5px;">Scholar</h3>
+            <p id="sidebar-username" style="color: #10b981; font-size: 13px;">@scholar</p>
+        </div>
+        <div style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+            <button class="glow-gold-btn" onclick="switchScreen(document.querySelector('.active-screen').id, 'exam-selection-screen'); toggleSidebar();">🎯 Change Target Exam</button>
+            <button class="outline-btn" style="border-color: #ef4444; color: #ef4444;" onclick="performLogout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <!-- 1. LANDING SCREEN -->
+    <div id="landing-screen" class="screen-layer active-screen landing-scroll">
+        <div class="flex-center hero">
+            <h1 class="heavenly-title"><span class="gold-text glow-text">Ranker's</span> Vault</h1>
+            <p class="subtitle">Experience the exact NTA CBT Interface.</p>
+            <button class="glow-gold-btn" style="padding: 15px 40px; font-size: 18px; margin-top: 30px;" onclick="openAuthModal()">Unlock The Vault</button>
+        </div>
+    </div>
+
+    <!-- 2. EXAM SELECTION SCREEN -->
+    <div id="exam-selection-screen" class="screen-layer hidden">
+        <div class="flex-center">
+            <h2 class="gold-text glow-text" style="font-size: 32px; margin-bottom: 40px;">Choose Your Target</h2>
+            <div class="exam-grid">
+                <!-- JEE Main -->
+                <div class="exam-card active-exam" onclick="setExamTarget('JEE')">
+                    <div class="exam-logo-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/00/Joint_Entrance_Examination_-_Main_logo.svg/1200px-Joint_Entrance_Examination_-_Main_logo.svg.png" alt="JEE Main">
+                    </div>
+                    <h3 style="color: #fff; margin-top: 15px;">JEE Main</h3>
+                    <p style="color: #10b981; font-size: 13px; font-weight: bold; margin-top: 5px;">Enter Vault ➔</p>
+                </div>
+                <!-- NEET UG -->
+                <div class="exam-card active-exam" onclick="setExamTarget('NEET')">
+                    <div class="exam-logo-box" style="padding: 0; overflow: hidden;">
+                        <img src="https://theshillongtimes.com/wp-content/uploads/2020/10/NEET-logo.jpg" alt="NEET UG" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <h3 style="color: #fff; margin-top: 15px;">NEET UG</h3>
+                    <p style="color: #10b981; font-size: 13px; font-weight: bold; margin-top: 5px;">Enter Vault ➔</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. DASHBOARD SCREEN -->
+    <div id="dashboard-screen" class="screen-layer hidden">
+        <button id="universal-back" class="back-btn hidden" onclick="goBack()">⟵ Back</button>
+        <div class="flex-center-top">
+            <h2 style="color: #fff; margin-bottom: 25px;">Welcome to the Battlefield, <span id="dash-student-name" class="gold-text glow-text"></span></h2>
+            
+            <div class="cards-container">
+                <div class="dash-card">
+                    <div>
+                        <h3 class="gold-text" style="font-size: 22px;">75 Days Challenge</h3>
+                        <p style="color: #94a3b8; font-size: 14px; margin-top: 10px;">10 handpicked PYQs daily. Build core concepts.</p>
+                    </div>
+                    <div class="days-grid" id="days-grid"></div>
+                </div>
+
+                <div class="dash-card premium-card">
+                    <div>
+                        <h3 class="gold-text" style="font-size: 22px;">Full Length Pro Tests</h3>
+                        <p style="color: #94a3b8; font-size: 14px; margin-top: 10px;">Exact NTA Pattern.</p>
+                    </div>
+                    <div class="days-grid" id="tests-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NTA CBT SCREEN -->
+    <div id="nta-screen" class="hidden nta-layout">
+        <div class="nta-header">
+            <div>RANKER'S VAULT - <span id="current-subject-name">Physics</span></div>
+            <div style="color: #fca5a5;">Time Left: <span id="time-left">00:00:00</span></div>
+        </div>
+        <div class="nta-body">
+            <div class="nta-left">
+                <div class="nta-tabs" id="nta-tabs-container"></div>
+                <div class="question-area">
+                    <div class="q-header"><span>Question <span id="current-q-no">1</span>:</span></div>
+                    <div class="q-content" id="q-text">Loading question...</div>
+                    <div class="options-container" id="options-area"></div>
+                    <div class="numerical-container hidden" id="numerical-area">
+                        <label>Enter your answer:</label><br>
+                        <input type="number" id="num-answer" placeholder="e.g. 25">
+                    </div>
+                </div>
+                <div class="nta-footer">
+                    <div>
+                        <button class="nta-btn white" onclick="markForReview()">Mark for Review & Next</button>
+                        <button class="nta-btn white" onclick="clearResponse()">Clear Response</button>
+                    </div>
+                    <button class="nta-btn blue" onclick="saveAndNext()">Save & Next</button>
+                </div>
+            </div>
+            <div class="nta-right">
+                <div class="status-legend">
+                    <div class="legend-item"><div class="badge answered">0</div> Answered</div>
+                    <div class="legend-item"><div class="badge not-answered">0</div> Not Answered</div>
+                    <div class="legend-item"><div class="badge not-visited">0</div> Not Visited</div>
+                    <div class="legend-item"><div class="badge marked">0</div> Marked</div>
+                </div>
+                <div class="palette-header">Question Palette</div>
+                <div class="q-palette" id="question-palette"></div>
+                <button class="nta-btn green" style="margin: 15px; border-radius: 4px;" onclick="submitTestEarly()">SUBMIT TEST</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANALYSIS SCREEN -->
+    <div id="analysis-screen" class="screen-layer hidden">
+        <div class="flex-center-top">
+            <h2 class="gold-text glow-text" style="font-size: 32px; margin-bottom: 20px;">Mission Report</h2>
+            <div class="safe-banner hidden" id="safe-zone-banner">🟢 SAFE ZONE: Good Accuracy Maintained!</div>
+            <div class="analysis-grid">
+                <div class="stat-box"><p style="color:#94a3b8; font-weight:bold;">Final Score</p><div class="score-big" id="final-score">0 / 0</div></div>
+                <div class="stat-box"><p style="color:#10b981; font-weight:bold;">Positives (+)</p><div class="score-big" style="color:#10b981;" id="positive-score">+0</div></div>
+                <div class="stat-box"><p style="color:#ef4444; font-weight:bold;">Negatives (-)</p><div class="score-big" style="color:#ef4444;" id="negative-score">-0</div></div>
+                <div class="stat-box"><p style="color:#38bdf8; font-weight:bold;">Time Taken</p><div class="score-big" style="color:#38bdf8;" id="time-taken">0m 0s</div></div>
+            </div>
+            <div class="graph-box" id="subject-graph-box"></div>
+            <button class="glow-gold-btn" style="margin-top: 30px; width: 100%; max-width: 400px;" onclick="openReviewScreen()">📖 Open Mistake Diary (Solutions)</button>
+            <button class="outline-btn" style="margin-top: 15px; width: 100%; max-width: 400px;" onclick="switchScreen('analysis-screen', 'dashboard-screen')">Back to Headquarters</button>
+        </div>
+    </div>
+
+    <!-- REVIEW SCREEN -->
+    <div id="review-screen" class="screen-layer hidden">
+        <button class="back-btn" onclick="closeReviewScreen()">⟵ Back to Report</button>
+        <div class="main-container" style="padding: 20px; text-align: left; margin-top: 60px;">
+            <h2 class="gold-text glow-text" style="font-size: 32px; text-align: center;">Mistake Diary</h2>
+            <div id="review-content"></div>
+        </div>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="glass-panel">
+            <button class="close-btn" onclick="closeAuthModal()">×</button>
+            <h2 class="gold-text glow-text" style="margin-bottom: 20px;">Access The Vault</h2>
+            <input type="text" id="reg-username" class="premium-input" placeholder="Create a Username (e.g. rahul123)">
+            <button class="glow-gold-btn full-width" onclick="submitAuth()">Enter System</button>
+        </div>
+    </div>
+
+    <!-- PREMIUM MODAL -->
+    <div id="premium-modal" class="modal hidden">
+        <div class="glass-panel" style="border-color: #d4af37; text-align: center;">
+            <button class="close-btn" onclick="closePremiumModal()">×</button>
+            <h2 class="gold-text glow-text" style="font-size: 28px; margin-bottom: 10px;">👑 Ranker's Premium</h2>
+            <p style="color: #cbd5e1; margin-bottom: 20px; font-size: 15px;">Free trial ended. Upgrade to unlock full access!</p>
+            <div style="text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px;">
+                <p style="color: #10b981; font-weight: bold; margin-bottom: 10px;">🚀 What you get for ₹99:</p>
+                <ul style="list-style: none; padding: 0; color: #e2e8f0; font-size: 14px; line-height: 1.8;">
+                    <li>✅ All 75 Daily PYQ Challenges</li>
+                    <li>✅ 10 Full-Length Pro Tests</li>
+                    <li>✅ Detailed Solutions & Mistake Diary</li>
+                    <li>✅ 100% Ad-Free Experience</li>
+                </ul>
+            </div>
+            <button class="glow-gold-btn full-width" onclick="activatePremium()" style="font-size: 18px;">Unlock Now @ ₹99</button>
+            <p style="color: #64748b; font-size: 12px; margin-top: 15px;">*Valid till your 2026 attempt.</p>
+        </div>
+    </div>
+
+    <!-- ALL THE BEST MODAL -->
+    <div id="all-best-modal" class="modal hidden">
+        <div class="glass-panel">
+            <button class="close-btn" onclick="closeAllBestModal()">×</button>
+            <h2 class="gold-text glow-text" style="font-size: 28px; margin-bottom: 10px;">All The Best!</h2>
+            <p style="color: #cbd5e1; margin-bottom: 25px;">No negative thoughts. Just pure focus. Do not refresh the page during the test.</p>
+            <button class="glow-gold-btn full-width" onclick="confirmStartTest()">Start Test Now ➔</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
