@@ -119,4 +119,130 @@
       }
     ]
   }
-}
+},
+"day_2": {
+    "Physics": [
+      {
+        "id": "p4",
+        "type": "mcq",
+        "q": "The maximum percentage error in the measurement of density of a wire is [Given, mass of wire = (0.60 ± 0.003)g, radius of wire = (0.50 ± 0.01) cm, length of wire = (10.00 ± 0.05) cm].[cite: 3]",
+        "options": [
+          "8",
+          "5",
+          "4",
+          "7"
+        ],
+        "ans": 1,
+        "hint": "Density d = M / (π * r^2 * L). Percentage error = (ΔM/M) * 100 + 2 * (Δr/r) * 100 + (ΔL/L) * 100."
+      },
+      {
+        "id": "p5",
+        "type": "mcq",
+        "q": "The maximum error in the measurement of resistance, current and time for which current flows in an electrical circuit are 1%, 2% and 3% respectively. The maximum percentage error in the detection of the dissipated heat will be:[cite: 3]",
+        "options": [
+          "2",
+          "4",
+          "6",
+          "8"
+        ],
+        "ans": 3,
+        "hint": "Heat Dissipated H = I^2 * R * t. Max % error = 2*(% error in I) + (% error in R) + (% error in t)."
+      },
+      {
+        "id": "p6",
+        "type": "mcq",
+        "q": "A helicopter flying horizontally with a speed of 360 km/h at an altitude of 2 km, drops an object at an instant. The object hits the ground at a point O, 20 s after it is dropped. Displacement of 'O' from the position of helicopter where the object was released is: (use g = 10 m/s^2)[cite: 3]",
+        "options": [
+          "2√5 km",
+          "4 km",
+          "7.2 km",
+          "2√2 km"
+        ],
+        "ans": 3,
+        "hint": "Horizontal distance x = u*t = 100 m/s * 20 s = 2000 m = 2 km. Vertical distance y = 2 km. Displacement = sqrt(x^2 + y^2)."
+      }
+    ],
+    "Chemistry": [
+      {
+        "id": "c4",
+        "type": "mcq",
+        "q": "Among 10^-9 g (each) of the following elements, which one will have the highest number of atoms? Element: Pb, Po, Pr and Pt[cite: 2]",
+        "options": [
+          "Po",
+          "Pr",
+          "Pb",
+          "Pt"
+        ],
+        "ans": 1,
+        "hint": "Number of atoms is inversely proportional to the atomic mass. Praseodymium (Pr) has the lowest atomic mass among them."
+      },
+      {
+        "id": "c5",
+        "type": "numerical",
+        "q": "Concentrated nitric acid is labelled as 75% by mass. The volume in mL of the solution which contains 30 g of nitric acid is ___ (Given: Density of nitric acid solution is 1.25 g/mL)[cite: 2]",
+        "ans": 32,
+        "hint": "Mass of solution = (30 * 100) / 75 = 40 g. Volume = Mass / Density = 40 / 1.25 = 32 mL."
+      },
+      {
+        "id": "c6",
+        "type": "mcq",
+        "q": "The density of 'X' M solution ('X' molar) of NaOH is 1.12 g/mL while in molality, the concentration of the solution is 3 m (3 molal). Then X is (Given: Molar mass of NaOH is 40 g/mol)[cite: 2]",
+        "options": [
+          "3.5",
+          "3.8",
+          "2.8",
+          "3.0"
+        ],
+        "ans": 3,
+        "hint": "Use relation: m = M / (1000*d - M*Mw) * 1000, where d is density and Mw is molar mass of solute."
+      }
+    ],
+    "Mathematics": [
+      {
+        "id": "m5",
+        "type": "mcq",
+        "q": "Let P_n = α^n + β^n, n ∈ N. If P_10 = 123, P_9 = 76, P_8 = 47 and P_1 = 1, then the quadratic equation having roots 1/α and 1/β is:[cite: 1]",
+        "options": [
+          "x^2 - x + 1 = 0",
+          "x^2 + x - 1 = 0",
+          "x^2 - x - 1 = 0",
+          "x^2 + x + 1 = 0"
+        ],
+        "ans": 1,
+        "hint": "Notice that P_10 = P_9 + P_8. This means α and β are roots of x^2 - x - 1 = 0. Use transformation x -> 1/x for the new roots."
+      },
+      {
+        "id": "m6",
+        "type": "mcq",
+        "q": "The number of solutions of the equation e^(sin x) - 2e^(-sin x) = 2 is:[cite: 1]",
+        "options": [
+          "2",
+          "more than 2",
+          "1",
+          "0"
+        ],
+        "ans": 3,
+        "hint": "Put e^(sin x) = t. The equation becomes t - 2/t = 2. Solve for t, and check if sin x can produce that value."
+      },
+      {
+        "id": "m7",
+        "type": "numerical",
+        "q": "The number of real solutions of the equation x|x+5| + 2|x+7| - 2 = 0 is ___[cite: 1]",
+        "ans": 3,
+        "hint": "Define the modulus piecewise for intervals x < -7, -7 <= x < -5, and x >= -5, and solve the quadratic equations in each region."
+      },
+      {
+        "id": "m8",
+        "type": "mcq",
+        "q": "The number of real roots of the equation sqrt(x^2 - 4x + 3) + sqrt(x^2 - 9) = sqrt(4x^2 - 14x + 6) is:[cite: 1]",
+        "options": [
+          "0",
+          "1",
+          "3",
+          "2"
+        ],
+        "ans": 1,
+        "hint": "Find the common domain for all square roots to be real. You'll find x = 3 is the only valid solution in the allowed domain."
+      }
+    ]
+  }
