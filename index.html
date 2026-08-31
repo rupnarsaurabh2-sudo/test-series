@@ -25,26 +25,62 @@
         <button class="dock-btn" onclick="alert('JEE Advanced Premium Tests are being curated. Coming Soon!')">JEE Adv 🔒</button>
     </div>
 
-    <!-- 1. LANDING PAGE -->
-    <div id="landing-screen" class="transition-element screen-layer active-screen">
+    <!-- 1. LANDING PAGE (USA-LEVEL SHOWCASE) -->
+    <div id="landing-screen" class="transition-element screen-layer active-screen landing-scroll">
         <nav class="navbar glass-nav">
             <div class="logo">RANKER'S VAULT <span class="gold-text glow-text">PRO</span></div>
             <div class="nav-links">
                 <button class="icon-btn" onclick="openInfoModal()" title="Rules">ℹ️</button>
-                <button class="nav-btn primary" onclick="guestLogin()">Login / Guest Mode</button>
+                <button class="nav-btn primary" onclick="guestLogin()">Login / Unlock Vault</button>
             </div>
         </nav>
 
-        <section class="hero flex-center">
+        <section class="hero flex-center" style="min-height: 60vh;">
             <div class="exam-toggle-container">
                 <button class="toggle-btn active">JEE Main</button>
                 <button class="toggle-btn locked" onclick="alert('JEE Advanced is being curated. Coming Soon!')">JEE Advanced 🔒</button>
             </div>
             <div class="quotes-container">
                 <h2 class="heavenly-title">"The clock is ticking, the crowd is vast,<br> <span class="gold-text">Master the patterns</span> to build a future that lasts."</h2>
-                <p class="subtitle">Stop chasing illusions. The reality of NTA lies here.</p>
+                <p class="subtitle">Stop chasing illusions. The exact reality of NTA testing environment lies here.</p>
+                <button class="glow-gold-btn" style="margin-top: 30px; font-size: 18px; padding: 15px 40px;" onclick="guestLogin()">Start Your Journey 🚀</button>
             </div>
         </section>
+
+        <!-- PREMIUM FEATURES SHOWCASE -->
+        <section class="features-section">
+            <div class="feature-card">
+                <h3 class="gold-text">Strict NTA UI</h3>
+                <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Experience the exact CBT interface. No lifelines, no pauses. Train your brain for the real D-Day.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="gold-text">Curated PYQs</h3>
+                <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Handpicked questions mathematically proven to repeat in high-weightage chapters.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="gold-text">Mistake Diary</h3>
+                <p style="color: #cbd5e1; font-size: 14px; margin-top: 10px;">Advanced analytics tracking your negative marks, accuracy, and detailed post-test solution views.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- 1.5 AUTHENTICATION / PROFILE SETUP MODAL -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content glass-panel popup-anim">
+            <span class="close-btn" onclick="closeAuthModal()">&times;</span>
+            <h2 class="gold-text heavenly-title" style="margin-bottom: 10px;">Create Your Profile</h2>
+            <p style="color: #a0aec0; margin-bottom: 25px; font-size: 14px;">Enter the vault to track your progress & secure your rank.</p>
+            
+            <input type="text" id="student-name-input" class="premium-input" placeholder="Enter Full Name (e.g. Saurav Rupnar)">
+            <input type="number" id="student-phone-input" class="premium-input" placeholder="WhatsApp Number (Optional)">
+            <select id="student-class-input" class="premium-input">
+                <option value="2026 Dropper" selected>JEE 2026 (Dropper)</option>
+                <option value="2025">JEE 2025</option>
+                <option value="2026">JEE 2026 (Class 11)</option>
+            </select>
+            
+            <button class="glow-gold-btn full-width" onclick="submitProfile()">Initialize Dashboard ⚡</button>
+        </div>
     </div>
 
     <!-- 2. INFO MODAL -->
@@ -70,6 +106,11 @@
         </nav>
         
         <div class="main-container flex-center-top" style="margin-top: 60px;">
+            <div style="text-align: left; width: 100%; max-width: 700px; margin-bottom: 20px;">
+                <h2 style="color: #fff; font-size: 24px;">Welcome back, <span id="dash-student-name" class="gold-text">Scholar</span></h2>
+                <p style="color: #10b981; font-size: 14px;">Profile Active | Ready for Combat</p>
+            </div>
+            
             <h2 class="gold-text" style="margin-bottom: 30px; font-size: 28px;">Select Your Challenge</h2>
             <div class="cards-container">
                 <div class="dash-card">
@@ -158,7 +199,7 @@
             </div>
             <div class="nta-right">
                 <div class="profile-box">
-                    <div id="student-name">Saurav Sugreev Rupnar</div>
+                    <div id="student-name">Scholar</div>
                 </div>
                 <div class="status-legend">
                     <div class="legend-item"><div class="badge answered" id="cnt-answered">0</div> Ans</div>
@@ -229,6 +270,10 @@
         </div>
     </div>
 
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
