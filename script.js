@@ -1,3 +1,6 @@
+// ========================================================
+// 1. GLOBAL VARIABLES & INITIALIZATION
+// ========================================================
 let questions = {};
 let currentSubject = "Physics";
 let currentQIndex = 0; 
@@ -13,9 +16,94 @@ let screenHistory = ['landing-screen'];
 window.onload = function() {
     generateGrids();
     createLeaves();
+};
+
+// ========================================================
+// 2. FIREBASE BACKEND SETUP
+// ========================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
+    authDomain: "rankersvault-5e76f.firebaseapp.com",
+    projectId: "rankersvault-5e76f",
+    storageBucket: "rankersvault-5e76f.firebasestorage.app",
+    messagingSenderId: "56527682160",
+    appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
+    databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
+};
+
+// Initialize Firebase safely
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = typeof firebase !== 'undefined' ? firebase.database() : null;
+
+let currentUser = "Scholar";
+let currentUsername = "scholar";
+
+// ========================================================
+// 3. AUTHENTICATION & SIDEBAR LOGIC (NEW)
+// ========================================================
+
+function guestLogin() { openAuthModal(); } // Redirect old button to new modal
+
+function openAuthModal() {
+    document.getElementById('auth-modal').classList.remove('hidden');
 }
 
-// 1. MAGICAL HEAVENLY LEAVES
+function closeAuthModal() {
+    document.getElementById('auth-modal').classList.add('hidden');
+}
+
+function submitAuth() {
+    let name = document.getElementById('reg-name').value;
+    let username = document.getElementById('reg-username').value;
+    let pass = document.getElementById('reg-pass').value;
+
+    if (!name || name.trim() === "") {
+        alert("Please enter your name to unlock the vault.");
+        return;
+    }
+
+    currentUser = name;
+    currentUsername = username || name.toLowerCase().replace(/\s+/g, '');
+    
+    // Update all UI components with the new user's name
+    document.getElementById('student-name').innerText = currentUser;
+    document.getElementById('dash-student-name').innerText = currentUser;
+    document.getElementById('sidebar-name').innerText = currentUser;
+    document.getElementById('sidebar-username').innerText = "@" + currentUsername;
+
+    // Save Basic Profile to Firebase
+    if(db) {
+        db.ref('users/' + currentUsername).set({
+            fullName: currentUser,
+            username: currentUsername,
+            joinDate: Date.now()
+        }).catch(err => console.error("Profile DB Error:", err));
+    }
+
+    closeAuthModal();
+    // Move to Exam Selection Screen instead of direct dashboard
+    switchScreen('landing-screen', 'exam-selection-screen'); 
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('side-menu');
+    sidebar.classList.toggle('hidden');
+}
+
+function openDashboard(examType) {
+    if (examType === 'main') {
+        switchScreen('exam-selection-screen', 'dashboard-screen');
+        // Auto-close sidebar on mobile after clicking a link
+        document.getElementById('side-menu').classList.add('hidden');
+    }
+}
+
+// ========================================================
+// 4. UI, NAVIGATION & SMART BACK BUTTON LOGIC
+// ========================================================
+
 function createLeaves() {
     const container = document.getElementById('leaf-container');
     const leafShapes = ['🍁', '🍂', '✨', '🍃'];
@@ -56,7 +144,6 @@ function generateGrids() {
     }
 }
 
-// 2. GLITCH-FREE SMART NAVIGATION
 function switchScreen(hideId, showId) {
     document.getElementById(hideId).classList.add('hidden');
     document.getElementById(hideId).classList.remove('active-screen');
@@ -85,14 +172,23 @@ function goBack() {
     }
 }
 
-// THIS LOCKS THE THEME SO IT NEVER BREAKS
 function updateSystemUI(activeScreenId) {
-    if(activeScreenId === 'landing-screen' || activeScreenId === 'nta-screen' || activeScreenId === 'analysis-screen') {
+    // Hide back button on main hubs
+    const noBackScreens = ['landing-screen', 'exam-selection-screen', 'nta-screen', 'analysis-screen'];
+    if(noBackScreens.includes(activeScreenId)) {
         document.getElementById('universal-back').classList.add('hidden');
     } else {
         document.getElementById('universal-back').classList.remove('hidden');
     }
 
+    // Toggle nav menu button visibility based on screen
+    const navMenuBtn = document.getElementById('nav-menu-btn');
+    if (navMenuBtn) {
+        if(activeScreenId === 'landing-screen') navMenuBtn.classList.add('hidden');
+        else navMenuBtn.classList.remove('hidden');
+    }
+
+    // Background Themes
     if(activeScreenId === 'nta-screen') {
         document.body.className = 'theme-nta';
         document.getElementById('floating-dock').classList.add('hidden');
@@ -110,7 +206,6 @@ function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-sc
 function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
 function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
 function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
-function guestLogin() { switchScreen('landing-screen', 'dashboard-screen'); }
 
 function showAllTheBest(testId, timeInMins) {
     pendingTestId = testId;
@@ -118,13 +213,15 @@ function showAllTheBest(testId, timeInMins) {
     document.getElementById('all-best-modal').classList.remove('hidden');
 }
 function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
-
 function confirmStartTest() {
     closeAllBestModal();
     startTest(pendingTestId, pendingTestTime);
 }
 
-// 3. DUMMY FETCH (Replace with your actual JSON)
+// ========================================================
+// 5. TEST ENGINE & FIREBASE UPLOAD
+// ========================================================
+
 async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
@@ -135,20 +232,18 @@ async function fetchQuestions(testId) {
         console.warn("Using local fallback data.");
         return {
             "Physics": [
-                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3, hint: "Check the units of permeability and permittivity." },
-                { id: "p2", type: "numerical", q: "A particle of mass 10g moves in a straight line with retardation 2x. Loss of KE is (10/x)^-n. The value of n is:", ans: 2, hint: "Apply Work-Energy Theorem: dK = F dx" }
+                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3, hint: "Check units." }
             ],
             "Chemistry": [
-                { id: "c1", type: "mcq", q: "Mass of magnesium required to produce 220 mL of hydrogen gas at STP on reaction with excess of dil. HCl is:", options: ["235.7 mg", "0.24 mg", "236 mg", "2.444 g"], ans: 2, hint: "Use mole concept: 1 mole gas at STP = 22.4 L" }
+                { id: "c1", type: "mcq", q: "Mass of Mg required for 220 mL H2 at STP?", options: ["235.7 mg", "0.24 mg", "236 mg", "2.44 g"], ans: 2, hint: "Mole concept." }
             ],
             "Mathematics": [
-                { id: "m1", type: "mcq", q: "The number of real roots of the equation x|x-2| + 3|x-3| + 1 = 0 is:", options: ["4", "2", "1", "3"], ans: 1, hint: "Open modulus based on critical points 2 and 3." }
+                { id: "m1", type: "numerical", q: "Find roots of x|x-2| + 3|x-3| + 1 = 0", ans: 1, hint: "Open modulus." }
             ]
         };
     }
 }
 
-// 4. TEST ENGINE
 async function startTest(testId, timeInMins) {
     questions = await fetchQuestions(testId);
     if(!questions) { alert("Data missing for " + testId); return; }
@@ -161,7 +256,6 @@ async function startTest(testId, timeInMins) {
     });
 
     switchScreen(document.querySelector('.active-screen').id, 'nta-screen');
-    
     totalTime = timeInMins * 60;
     timeSpent = 0;
     startTimer();
@@ -281,154 +375,10 @@ function calculateAndShowResult() {
     
     let m = Math.floor(timeSpent / 60);
     let s = timeSpent % 60;
-    document.getElementById('time-taken').innerText = `${m}m ${s}s`;
-
-    switchScreen('nta-screen', 'analysis-screen');
-    
-    document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
-    document.getElementById('positive-score').innerText = `+${totalPositive}`;
-    document.getElementById('negative-score').innerText = `-${totalNegative}`;
-
-    if (finalScore >= (maxScore / 2)) {
-        document.getElementById('safe-zone-banner').classList.remove('hidden');
-    } else {
-        document.getElementById('safe-zone-banner').classList.add('hidden');
-    }
-
-    // Trigger Graph Animation
-    setTimeout(() => {
-        ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
-            let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
-            let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
-            document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
-            document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
-        });
-    }, 500); // Small delay to let the screen render first
-}
-
-// 5. VIEW SOLUTIONS (Review Engine)
-function openReviewScreen() {
-    switchScreen('analysis-screen', 'review-screen');
-    const container = document.getElementById('review-content');
-    container.innerHTML = '';
-
-    Object.keys(questions).forEach(sub => {
-        if(questions[sub].length > 0) {
-            container.innerHTML += `<h2 class="sub-title">${sub}</h2>`;
-            questions[sub].forEach((q, i) => {
-                let state = testState[q.id];
-                let isCorrect = state.selectedOpt === q.ans;
-                let html = `<div class="review-item">
-                                <div class="review-q">Q${i+1}. ${q.q}</div>`;
-
-                if(q.type === 'numerical') {
-                    html += `<div class="review-opt ${isCorrect ? 'opt-correct' : (state.selectedOpt!==null ? 'opt-wrong':'')}">
-                                Your Answer: ${state.selectedOpt !== null ? state.selectedOpt : 'Not Attempted'}
-                             </div>
-                             <div class="review-opt opt-correct">Correct Answer: ${q.ans}</div>`;
-                } else {
-                    q.options.forEach((opt, oIdx) => {
-                        let optClass = 'review-opt';
-                        if(oIdx === q.ans) optClass += ' opt-correct';
-                        else if(oIdx === state.selectedOpt) optClass += ' opt-wrong';
-                        html += `<div class="${optClass}">${opt}</div>`;
-                    });
-                }
-                
-                if(q.hint) {
-                    html += `<div class="review-hint">💡 Hint: ${q.hint}</div>`;
-                }
-                html += `</div>`;
-                container.innerHTML += html;
-            });
-        }
-    });
-}
-
-function closeReviewScreen() { switchScreen('review-screen', 'analysis-screen'); }
-
-// 6. AI BOT LOGIC
-function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
-function botReply(response) {
-    const chatArea = document.getElementById('bot-chat-area');
-    const optionsDiv = document.getElementById('bot-options');
-    const inputField = document.getElementById('bot-input');
-    if(optionsDiv) optionsDiv.remove();
-    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
-    setTimeout(() => {
-        if(response === 'Yes') {
-            chatArea.innerHTML += `<div class="bot-msg">Great! Ask anything about the test patterns.</div>`;
-            inputField.disabled = false;
-            document.getElementById('bot-send-btn').disabled = false;
-        } else {
-            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
-        }
-        chatArea.scrollTop = chatArea.scrollHeight;
-    }, 600);
-}
-
-// ========================================================
-// FIREBASE BACKEND & LEADERBOARD LOGIC (PASTED AT THE END)
-// ========================================================
-
-const firebaseConfig = {
-    apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
-    authDomain: "rankersvault-5e76f.firebaseapp.com",
-    projectId: "rankersvault-5e76f",
-    storageBucket: "rankersvault-5e76f.firebasestorage.app",
-    messagingSenderId: "56527682160",
-    appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
-    databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
-};
-
-// Initialize Firebase only if it hasn't been initialized yet
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const db = firebase.database();
-let currentUser = "Guest User";
-
-// OVERWRITE LOGIN FUNCTION: Ask for name before starting
-function guestLogin() { 
-    let userName = prompt("Enter your Name for the Leaderboard:");
-    if (userName && userName.trim() !== "") {
-        currentUser = userName;
-        document.getElementById('student-name').innerText = currentUser;
-    }
-    switchScreen('landing-screen', 'dashboard-screen'); 
-}
-
-// OVERWRITE RESULT FUNCTION: Push to Firebase automatically
-function calculateAndShowResult() {
-    let stats = { Physics: {p:0, t:0}, Chemistry: {p:0, t:0}, Mathematics: {p:0, t:0} };
-    let totalPositive = 0, totalNegative = 0, totalQs = 0;
-
-    Object.keys(questions).forEach(sub => {
-        questions[sub].forEach(q => {
-            totalQs++;
-            stats[sub].t++;
-            let state = testState[q.id];
-            if(state.selectedOpt !== null) {
-                if(state.selectedOpt === q.ans) { totalPositive += 4; stats[sub].p++; } 
-                else if (q.type === 'mcq') { totalNegative += 1; }
-            }
-        });
-    });
-
-    let finalScore = totalPositive - totalNegative;
-    let maxScore = totalQs * 4;
-    
-    let m = Math.floor(timeSpent / 60);
-    let s = timeSpent % 60;
     let timeString = `${m}m ${s}s`;
     document.getElementById('time-taken').innerText = timeString;
 
     switchScreen('nta-screen', 'analysis-screen');
-    document.body.className = 'theme-premium';
-    
-    document.getElementById('floating-dock').classList.remove('hidden'); 
-    document.getElementById('leaf-container').classList.remove('hidden');
-    document.getElementById('science-bg').classList.remove('hidden');
     
     document.getElementById('final-score').innerText = `${finalScore} / ${maxScore}`;
     document.getElementById('positive-score').innerText = `+${totalPositive}`;
@@ -449,16 +399,67 @@ function calculateAndShowResult() {
         });
     }, 500);
 
-    // --- PUSH TO FIREBASE ---
-    if (pendingTestId) {
-        let userRecord = {
-            name: currentUser,
-            score: finalScore,
-            time: timeString,
-            timestamp: Date.now()
-        };
-        db.ref('leaderboards/' + pendingTestId).push(userRecord)
-          .then(() => console.log("Data successfully sent to Founder Terminal."))
-          .catch(err => console.error("Firebase Error: ", err));
+    // Push to Firebase
+    if (pendingTestId && db) {
+        let userRecord = { name: currentUser, username: currentUsername, score: finalScore, time: timeString, timestamp: Date.now() };
+        db.ref('leaderboards/' + pendingTestId).push(userRecord).catch(err => console.error(err));
+        db.ref('users/' + currentUsername + '/history/' + pendingTestId).set(userRecord);
     }
+}
+
+// ========================================================
+// 6. VIEW SOLUTIONS (Review Engine)
+// ========================================================
+function openReviewScreen() {
+    switchScreen('analysis-screen', 'review-screen');
+    const container = document.getElementById('review-content');
+    container.innerHTML = '';
+
+    Object.keys(questions).forEach(sub => {
+        if(questions[sub].length > 0) {
+            container.innerHTML += `<h2 class="sub-title">${sub}</h2>`;
+            questions[sub].forEach((q, i) => {
+                let state = testState[q.id];
+                let isCorrect = state.selectedOpt === q.ans;
+                let html = `<div class="review-item"><div class="review-q">Q${i+1}. ${q.q}</div>`;
+
+                if(q.type === 'numerical') {
+                    html += `<div class="review-opt ${isCorrect ? 'opt-correct' : (state.selectedOpt!==null ? 'opt-wrong':'')}">Your Answer: ${state.selectedOpt !== null ? state.selectedOpt : 'Not Attempted'}</div><div class="review-opt opt-correct">Correct Answer: ${q.ans}</div>`;
+                } else {
+                    q.options.forEach((opt, oIdx) => {
+                        let optClass = 'review-opt';
+                        if(oIdx === q.ans) optClass += ' opt-correct';
+                        else if(oIdx === state.selectedOpt) optClass += ' opt-wrong';
+                        html += `<div class="${optClass}">${opt}</div>`;
+                    });
+                }
+                if(q.hint) html += `<div class="review-hint">💡 Hint: ${q.hint}</div>`;
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+        }
+    });
+}
+function closeReviewScreen() { switchScreen('review-screen', 'analysis-screen'); }
+
+// ========================================================
+// 7. AI BOT LOGIC
+// ========================================================
+function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
+function botReply(response) {
+    const chatArea = document.getElementById('bot-chat-area');
+    const optionsDiv = document.getElementById('bot-options');
+    const inputField = document.getElementById('bot-input');
+    if(optionsDiv) optionsDiv.remove();
+    chatArea.innerHTML += `<div class="user-msg">${response}</div>`;
+    setTimeout(() => {
+        if(response === 'Yes') {
+            chatArea.innerHTML += `<div class="bot-msg">Great! Ask anything about the test patterns.</div>`;
+            inputField.disabled = false;
+            document.getElementById('bot-send-btn').disabled = false;
+        } else {
+            chatArea.innerHTML += `<div class="bot-msg">No problem! Explore the free Daily PYQs.</div>`;
+        }
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }, 600);
 }
