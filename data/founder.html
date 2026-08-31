@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Mode | Ranker's Vault</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Special Founder Theme */
+        body { background: #010a04; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; }
+        .founder-container { max-width: 1000px; margin: 50px auto; padding: 20px; }
+        .admin-login-box { background: rgba(2, 17, 8, 0.95); border: 2px solid #d4af37; border-radius: 12px; padding: 40px; width: 100%; max-width: 400px; margin: 100px auto; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        .admin-input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #d4af37; color: #d4af37; border-radius: 6px; outline: none; }
+        .admin-btn { background: linear-gradient(135deg, #d4af37, #8b6508); color: #000; border: none; padding: 12px 20px; width: 100%; font-weight: bold; font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+        
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d4af37; padding-bottom: 15px; margin-bottom: 30px; }
+        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .control-panel { background: rgba(255,255,255,0.05); border: 1px solid rgba(212, 175, 55, 0.3); padding: 20px; border-radius: 12px; }
+        
+        /* Toggle Switch */
+        .test-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ef4444; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(20px); }
+        
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .data-table th, .data-table td { border: 1px solid rgba(212,175,55,0.3); padding: 10px; text-align: left; }
+        .data-table th { background: rgba(212,175,55,0.1); color: #d4af37; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="admin-login" class="admin-login-box">
+        <h2 style="color: #d4af37; margin-bottom: 20px;">GOD MODE</h2>
+        <input type="text" id="admin-id" class="admin-input" placeholder="Founder ID">
+        <input type="password" id="admin-pass" class="admin-input" placeholder="Passkey">
+        <button class="admin-btn" onclick="verifyAdmin()">Enter Control Room</button>
+        <p id="error-msg" style="color: #ef4444; margin-top: 10px; display: none;">Access Denied.</p>
+    </div>
+
+    <!-- 2. FOUNDER DASHBOARD -->
+    <div id="founder-dashboard" class="founder-container" style="display: none;">
+        <div class="dashboard-header">
+            <div>
+                <h1 style="color: #d4af37; font-size: 32px;">Welcome, Founder Saurav Sugreev Rupnar</h1>
+                <p style="color: #10b981;">🟢 Systems Online | Firebase Status: Pending Connection</p>
+            </div>
+            <button class="admin-btn" style="width: auto; margin-top: 0;" onclick="location.reload()">Lock Terminal</button>
+        </div>
+
+        <div class="control-grid">
+            <!-- TEST CONTROLLER -->
+            <div class="control-panel">
+                <h2 style="color: #d4af37; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px;">Test Controller</h2>
+                
+                <h3 style="color: #64ffda; margin-top: 15px;">Daily PYQs</h3>
+                <div class="test-row"><span>Day 1</span> <label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                <div class="test-row"><span>Day 2</span> <label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+                
+                <h3 style="color: #64ffda; margin-top: 20px;">Pro Test Series</h3>
+                <div class="test-row"><span>Full Test 1</span> <label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                <div class="test-row"><span>Full Test 2</span> <label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+            </div>
+
+            <!-- LIVE LEADERBOARD & USER TRACKING -->
+            <div class="control-panel">
+                <h2 style="color: #d4af37; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px;">Live User Radar</h2>
+                
+                <select class="admin-input" style="background: rgba(0,0,0,0.5);">
+                    <option>Select Test to View Leaderboard</option>
+                    <option>Full Test 1</option>
+                    <option>Day 1</option>
+                </select>
+
+                <table class="data-table">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student Name</th>
+                        <th>Score</th>
+                        <th>Time</th>
+                    </tr>
+                    <!-- Dummy Data until Firebase is connected -->
+                    <tr>
+                        <td>1</td>
+                        <td>Demo Student</td>
+                        <td>280 / 300</td>
+                        <td>1h 45m</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function verifyAdmin() {
+            const user = document.getElementById('admin-id').value;
+            const pass = document.getElementById('admin-pass').value;
+            
+            if(user === "ssr911715" && pass === "ssr191715") {
+                document.getElementById('admin-login').style.display = "none";
+                document.getElementById('founder-dashboard').style.display = "block";
+            } else {
+                document.getElementById('error-msg').style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
