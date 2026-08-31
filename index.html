@@ -18,25 +18,20 @@
     <!-- UNIVERSAL BACK BUTTON -->
     <button id="universal-back" class="back-btn hidden" onclick="goBack()">⬅ Back</button>
 
-    <!-- SIDEBAR (HAMBURGER MENU) - NEW -->
+    <!-- SIDEBAR (HAMBURGER MENU) - CLEANED UP -->
     <div id="side-menu" class="sidebar hidden">
         <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3);">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div style="font-size: 30px;">👨‍🎓</div>
                 <div style="text-align: left;">
-                    <h3 id="sidebar-name" class="gold-text" style="font-size: 16px; margin: 0;">Scholar</h3>
-                    <p id="sidebar-username" style="font-size: 12px; color: #a0aec0; margin: 0;">@user</p>
+                    <h3 id="sidebar-name" class="gold-text" style="font-size: 16px; margin: 0;">Saurav Sugreev Rupnar</h3>
+                    <p id="sidebar-username" style="font-size: 12px; color: #a0aec0; margin: 0;">@saurav</p>
                 </div>
             </div>
             <button onclick="toggleSidebar()" style="background: transparent; border: none; color: #d4af37; font-size: 30px; cursor: pointer;">&times;</button>
         </div>
         <div class="sidebar-links" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
-            <p style="color: #cbd5e1; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Target Exams</p>
-            <button class="glow-gold-btn" onclick="openDashboard('main')">🎯 JEE Main Vault</button>
-            <button class="outline-btn" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('JEE Advanced is being curated. Coming Soon!')">🔒 JEE Advanced</button>
-            <button class="outline-btn" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('NEET UG is being curated. Coming Soon!')">🔒 NEET UG</button>
-            <button class="outline-btn" style="opacity: 0.6; cursor: not-allowed;" onclick="alert('MHT CET is being curated. Coming Soon!')">🔒 MHT CET</button>
-            
+            <button class="glow-gold-btn" onclick="switchScreen(document.querySelector('.active-screen').id, 'exam-selection-screen'); toggleSidebar();">🎯 Change Target Exam</button>
             <button class="outline-btn" style="margin-top: 40px; border-color: #ef4444; color: #ef4444;" onclick="location.reload()">🚪 Logout</button>
         </div>
     </div>
@@ -47,7 +42,7 @@
         <button class="dock-btn" onclick="toggleSidebar()">☰ Menu</button>
     </div>
 
-    <!-- 1. LANDING PAGE (USA-LEVEL SHOWCASE) -->
+    <!-- 1. LANDING PAGE -->
     <div id="landing-screen" class="transition-element screen-layer active-screen landing-scroll">
         <nav class="navbar glass-nav">
             <div class="logo">
@@ -68,7 +63,7 @@
             </div>
         </section>
 
-        <!-- PREMIUM FEATURES SHOWCASE (FIXED LAYOUT) -->
+        <!-- PREMIUM FEATURES SHOWCASE -->
         <section class="features-section" style="display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; margin-top: 60px; padding: 20px; width: 100%; max-width: 1000px; margin-left: auto; margin-right: auto; padding-bottom: 100px;">
             <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                 <h3 class="gold-text">Strict NTA UI</h3>
@@ -85,7 +80,7 @@
         </section>
     </div>
 
-    <!-- 1.5 AUTHENTICATION / LOGIN MODAL (NEW LOGIC) -->
+    <!-- 1.5 AUTHENTICATION / LOGIN MODAL -->
     <div id="auth-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim">
             <span class="close-btn" onclick="closeAuthModal()">&times;</span>
@@ -100,18 +95,70 @@
         </div>
     </div>
 
+    <!-- 2. EXAM TARGET SELECTION SCREEN (NEW FLOATING CARDS) -->
+    <div id="exam-selection-screen" class="hidden transition-element screen-layer">
+        <nav class="navbar glass-nav">
+            <div class="logo" style="margin-left: 5%;">
+                <button class="icon-btn" onclick="toggleSidebar()" style="margin-right: 15px; border: none;">☰</button>
+                SELECT BATTLEFIELD
+            </div>
+        </nav>
+        
+        <div class="main-container flex-center-top" style="margin-top: 60px;">
+            <h2 class="gold-text heavenly-title" style="margin-bottom: 40px; font-size: 36px;">Choose Your Target</h2>
+            
+            <div class="exam-grid">
+                <!-- JEE MAIN -->
+                <div class="exam-card active-exam" onclick="openDashboard('main')">
+                    <div class="exam-logo-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/NTA_logo.png" alt="NTA Logo">
+                    </div>
+                    <h3 class="gold-text glow-text" style="font-size: 24px;">JEE Main</h3>
+                    <p style="color: #10b981; margin-top: 10px; font-weight: bold; font-size: 15px;">Enter Vault ➔</p>
+                </div>
+
+                <!-- JEE ADVANCED -->
+                <div class="exam-card locked-exam" onclick="alert('JEE Advanced Modules are being curated. Coming Soon!')">
+                    <div class="exam-logo-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/Indian_Institute_of_Technology_Bombay_Logo.svg/1200px-Indian_Institute_of_Technology_Bombay_Logo.svg.png" alt="IIT Logo">
+                    </div>
+                    <h3 style="font-size: 24px; color: #cbd5e1;">JEE Advanced 🔒</h3>
+                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
+                </div>
+
+                <!-- NEET UG -->
+                <div class="exam-card locked-exam" onclick="alert('NEET UG Modules are being curated. Coming Soon!')">
+                    <div class="exam-logo-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/NTA_logo.png" alt="NEET Logo">
+                    </div>
+                    <h3 style="font-size: 24px; color: #cbd5e1;">NEET UG 🔒</h3>
+                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
+                </div>
+
+                <!-- MHT CET -->
+                <div class="exam-card locked-exam" onclick="alert('MHT CET Modules are being curated. Coming Soon!')">
+                    <div class="exam-logo-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/07/Government_of_Maharashtra_Logo.svg/1200px-Government_of_Maharashtra_Logo.svg.png" alt="MHT CET Logo">
+                    </div>
+                    <h3 style="font-size: 24px; color: #cbd5e1;">MHT CET 🔒</h3>
+                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 3. JEE MAIN DASHBOARD -->
     <div id="dashboard-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo" style="display: flex; align-items: center;">
-                <button class="icon-btn" onclick="toggleSidebar()" style="margin-right: 15px;">☰</button>
+                <button class="icon-btn" onclick="toggleSidebar()" style="margin-right: 15px; border: none;">☰</button>
                 JEE MAIN VAULT
             </div>
         </nav>
         
         <div class="main-container flex-center-top" style="margin-top: 40px;">
             <div style="text-align: left; width: 100%; max-width: 950px; margin-bottom: 20px;">
-                <h2 style="color: #fff; font-size: 24px;">Welcome back, <span id="dash-student-name" class="gold-text">Scholar</span></h2>
+                <h2 style="color: #fff; font-size: 24px;">Welcome back, <span id="dash-student-name" class="gold-text">Saurav Sugreev Rupnar</span></h2>
                 <p style="color: #10b981; font-size: 14px;">Target: JEE Main | System Ready</p>
             </div>
             
@@ -312,10 +359,6 @@
         </div>
     </div>
 
-    <!-- Firebase CDN -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    
     <script src="script.js"></script>
 </body>
 </html>
