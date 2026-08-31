@@ -8,7 +8,7 @@ let timerInterval;
 let totalTime; 
 let timeSpent = 0;
 let testState = {}; 
-let testControls = {}; // Naya variable jo live ON/OFF status store karega
+let testControls = {}; 
 
 let pendingTestId = "";
 let pendingTestTime = 0;
@@ -17,7 +17,7 @@ let screenHistory = ['landing-screen'];
 window.onload = function() {
     createLeaves();
     checkAutoLogin();
-    listenToTestControls(); // Website khulte hi live ON/OFF status check karna shuru
+    listenToTestControls(); 
 };
 
 // ========================================================
@@ -40,6 +40,7 @@ const db = typeof firebase !== 'undefined' ? firebase.database() : null;
 
 let currentUser = "Scholar";
 let currentUsername = "scholar";
+let activeExamTarget = "main"; // Default is JEE Main
 
 // ========================================================
 // 3. AUTHENTICATION, AUTO-LOGIN & SIDEBAR LOGIC
@@ -91,10 +92,102 @@ function updateUserUI() {
 
 function toggleSidebar() { document.getElementById('side-menu').classList.toggle('hidden'); }
 
+// --- DASHBOARD & PAYMENT LOGIC ---
 function openDashboard(examType) {
+    activeExamTarget = examType;
+    
     if (examType === 'main') {
-        switchScreen('exam-selection-screen', 'dashboard-screen');
-        document.getElementById('side-menu').classList.add('hidden');
+        // JEE Main is free by default
+        showDashboardUI(examType);
+        return;
+    }
+
+    // Check if user has purchased the selected exam
+    if(db) {
+        db.ref('users/' + currentUsername + '/purchased/' + examType).once('value', (snapshot) => {
+            let hasPurchased = snapshot.val();
+            
+            if (hasPurchased) {
+                // User has paid, show dashboard
+                showDashboardUI(examType);
+            } else {
+                // Not paid, trigger Razorpay
+                startRazorpayPayment(examType);
+            }
+        });
+    } else {
+        alert("Database connection error. Please try again.");
+    }
+}
+
+function showDashboardUI(examType) {
+    let titleMap = {
+        'main': 'JEE MAIN VAULT',
+        'advanced': 'JEE ADVANCED VAULT',
+        'neet': 'NEET UG VAULT',
+        'mhtcet': 'MHT CET VAULT'
+    };
+    
+    document.getElementById('dashboard-header-title').innerText = titleMap[examType] || 'PRO VAULT';
+    document.getElementById('dash-target-title').innerText = `Target: ${titleMap[examType]} | System Ready`;
+    
+    switchScreen('exam-selection-screen', 'dashboard-screen');
+    document.getElementById('side-menu').classList.add('hidden');
+    generateGrids(); // Re-render grids based on exam type if needed
+}
+
+async function startRazorpayPayment(examType) {
+    alert(`Initiating ₹99 payment for ${examType.toUpperCase()} Test Series...`);
+    
+    try {
+        // 1. Fetch Order ID from Vercel Backend
+        const response = await fetch('/api/createOrder', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: 9900, currency: "INR" }) // ₹99
+        });
+
+        if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+        const orderData = await response.json();
+
+        // 2. Open Razorpay Popup
+        var options = {
+            "key": "rzp_test_YOUR_KEY_ID_HERE", // 🔥 REPLACE WITH YOUR LIVE/TEST KEY ID
+            "amount": orderData.amount, 
+            "currency": orderData.currency,
+            "name": "Ranker's Vault Pro",
+            "description": `${examType.toUpperCase()} Test Series Unlock`,
+            "order_id": orderData.id,
+            "handler": function (response){
+                // 3. Payment Success - Update Firebase
+                db.ref('users/' + currentUsername + '/purchased/' + examType).set(true)
+                .then(() => {
+                    alert("Payment Successful! Welcome to the Pro Vault.");
+                    showDashboardUI(examType); 
+                })
+                .catch((error) => {
+                     console.error("Firebase update failed:", error);
+                     alert("Payment successful but failed to update database. Contact admin.");
+                });
+            },
+            "prefill": {
+                "name": currentUser,
+                "email": currentUsername + "@rankersvault.com", 
+                "contact": "9999999999" 
+            },
+            "theme": { "color": "#d4af37" }
+        };
+        
+        var rzp = new Razorpay(options);
+        rzp.on('payment.failed', function (response){
+                console.error(response.error.description);
+                alert("Payment Failed: " + response.error.description);
+        });
+        rzp.open();
+        
+    } catch (error) {
+        console.error("Error initiating payment:", error);
+        alert("Payment setup error. Ensure you are running this on Vercel and API is active.");
     }
 }
 
@@ -106,10 +199,10 @@ function listenToTestControls() {
     if(db) {
         db.ref('test_controls').on('value', (snapshot) => {
             testControls = snapshot.val() || {};
-            generateGrids(); // Jab bhi ON/OFF hoga, grid apne aap update ho jayegi
+            if(document.getElementById('dashboard-screen').classList.contains('active-screen')){
+                generateGrids();
+            }
         });
-    } else {
-        generateGrids();
     }
 }
 
@@ -118,13 +211,13 @@ function generateGrids() {
     if(dayGrid) {
         dayGrid.innerHTML = '';
         for(let i=1; i<=75; i++) {
-            let isUnlocked = testControls[`day_${i}`] === true; // Firebase check
+            let isUnlocked = testControls[`day_${i}`] === true; 
             let btn = document.createElement('button');
             btn.className = isUnlocked ? 'day-unlocked' : 'day-locked';
             btn.innerText = isUnlocked ? `Day ${i}` : `Day ${i} 🔒`;
             btn.onclick = () => {
                 if(isUnlocked) showAllTheBest(`day_${i}`, 15);
-                else alert("Relax bro! This test is currently locked by the Founder (Saurav Sir).");
+                else alert("Relax bro! This test is currently locked by the Founder.");
             };
             dayGrid.appendChild(btn);
         }
@@ -132,14 +225,20 @@ function generateGrids() {
     const testGrid = document.getElementById('tests-grid');
     if(testGrid) {
         testGrid.innerHTML = '';
+        // Abhi ke liye generic loop hai. Advanced ya NEET ke liye prefix change kar sakte hain
+        let prefix = activeExamTarget === 'main' ? 'full_test_' : (activeExamTarget + '_test_');
+        
         for(let i=1; i<=10; i++) {
-            let isUnlocked = testControls[`full_test_${i}`] === true;
+            let testKey = prefix + i;
+            // Fallback: If specific exam toggle is not found, use the global full_test
+            let isUnlocked = testControls[testKey] === true || testControls[`full_test_${i}`] === true;
+            
             let btn = document.createElement('button');
             btn.className = isUnlocked ? 'day-unlocked' : 'day-locked';
             btn.innerText = isUnlocked ? `Test ${i}` : `Test ${i} 🔒`;
             btn.onclick = () => {
-                if(isUnlocked) showAllTheBest(`full_test_${i}`, 150);
-                else alert("Full Length Test is locked right now. Keep revising!");
+                if(isUnlocked) showAllTheBest(testKey, 150);
+                else alert("Full Length Test is locked right now.");
             };
             testGrid.appendChild(btn);
         }
@@ -169,6 +268,7 @@ function switchScreen(hideId, showId) {
 
     if(showId !== screenHistory[screenHistory.length - 1]) screenHistory.push(showId);
     updateSystemUI(showId);
+    if(showId === 'day-selection-screen' || showId === 'test-selection-screen') generateGrids();
 }
 
 function goBack() {
@@ -241,7 +341,7 @@ async function fetchQuestions(testId) {
         return database[testId];
     } catch (e) {
         console.error("JSON Error:", e);
-        alert(`Bhai, teri JSON file load nahi ho rahi! (${fileName}). Ya toh tu JSON me koi bracket/comma bhool gaya hai, ya file Vercel par theek se push nahi hui.`);
+        alert(`Data fetch failed! File: ${fileName}. Please check Vercel deployment.`);
         return null; 
     }
 }
@@ -261,7 +361,7 @@ async function startTest(testId, timeInMins) {
     totalTime = timeInMins * 60;
     timeSpent = 0;
     startTimer();
-    switchSubject('Physics'); 
+    switchSubject(Object.keys(questions)[0] || 'Physics'); 
 }
 
 function startTimer() {
@@ -357,10 +457,11 @@ function clearResponse() {
 function submitTestEarly() { if(confirm("Submit the test now?")) { clearInterval(timerInterval); calculateAndShowResult(); } }
 
 function calculateAndShowResult() {
-    let stats = { Physics: {p:0, t:0}, Chemistry: {p:0, t:0}, Mathematics: {p:0, t:0} };
+    let stats = { Physics: {p:0, t:0}, Chemistry: {p:0, t:0}, Mathematics: {p:0, t:0}, Biology: {p:0, t:0} };
     let totalPositive = 0, totalNegative = 0, totalQs = 0;
 
     Object.keys(questions).forEach(sub => {
+        if(!stats[sub]) stats[sub] = {p:0, t:0};
         questions[sub].forEach(q => {
             totalQs++;
             stats[sub].t++;
@@ -394,10 +495,14 @@ function calculateAndShowResult() {
 
     setTimeout(() => {
         ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
-            let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
-            let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
-            document.getElementById(`bar-${shortSub}`).style.width = `${pct}%`;
-            document.getElementById(`pct-${shortSub}`).innerText = `${pct}%`;
+            if(stats[sub]) {
+                let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
+                let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
+                let bar = document.getElementById(`bar-${shortSub}`);
+                let pctText = document.getElementById(`pct-${shortSub}`);
+                if(bar) bar.style.width = `${pct}%`;
+                if(pctText) pctText.innerText = `${pct}%`;
+            }
         });
     }, 500);
 
