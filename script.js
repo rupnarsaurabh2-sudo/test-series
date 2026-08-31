@@ -16,6 +16,7 @@ let screenHistory = ['landing-screen'];
 window.onload = function() {
     generateGrids();
     createLeaves();
+    checkAutoLogin();
 };
 
 // ========================================================
@@ -31,7 +32,6 @@ const firebaseConfig = {
     databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
 };
 
-// Initialize Firebase safely
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -41,8 +41,18 @@ let currentUser = "Scholar";
 let currentUsername = "scholar";
 
 // ========================================================
-// 3. AUTHENTICATION & SIDEBAR LOGIC
+// 3. AUTHENTICATION, AUTO-LOGIN & SIDEBAR LOGIC
 // ========================================================
+
+function checkAutoLogin() {
+    let savedUser = localStorage.getItem("vault_username");
+    if(savedUser) {
+        currentUser = savedUser;
+        currentUsername = savedUser;
+        updateUserUI();
+        switchScreen('landing-screen', 'exam-selection-screen');
+    }
+}
 
 function guestLogin() { openAuthModal(); } 
 
@@ -54,37 +64,55 @@ function closeAuthModal() {
     document.getElementById('auth-modal').classList.add('hidden');
 }
 
+function togglePassword() {
+    let passInput = document.getElementById('reg-pass');
+    let eyeIcon = document.getElementById('eye-icon');
+    if(passInput.type === "password") {
+        passInput.type = "text";
+        eyeIcon.innerText = "🙈";
+    } else {
+        passInput.type = "password";
+        eyeIcon.innerText = "👁️";
+    }
+}
+
 function submitAuth() {
-    let name = document.getElementById('reg-name').value;
     let username = document.getElementById('reg-username').value;
     let pass = document.getElementById('reg-pass').value;
 
-    if (!name || name.trim() === "") {
-        alert("Please enter your name to unlock the vault.");
+    if (!username || username.trim() === "") {
+        alert("Please enter a username to unlock the vault.");
         return;
     }
 
-    currentUser = name;
-    currentUsername = username || name.toLowerCase().replace(/\s+/g, '');
+    currentUser = username;
+    currentUsername = username.toLowerCase().replace(/\s+/g, '');
     
-    // Update all UI components with the new user's name
-    document.getElementById('student-name').innerText = currentUser;
-    document.getElementById('dash-student-name').innerText = currentUser;
-    document.getElementById('sidebar-name').innerText = currentUser;
-    document.getElementById('sidebar-username').innerText = "@" + currentUsername;
+    // Save to LocalStorage for Auto-Login
+    localStorage.setItem("vault_username", currentUsername);
+    updateUserUI();
 
-    // Save Basic Profile to Firebase
     if(db) {
-        db.ref('users/' + currentUsername).set({
-            fullName: currentUser,
+        db.ref('users/' + currentUsername).update({
             username: currentUsername,
-            joinDate: Date.now()
+            lastLogin: Date.now()
         }).catch(err => console.error("Profile DB Error:", err));
     }
 
     closeAuthModal();
-    // Redirect to the Floating Cards Exam Selection Screen
     switchScreen('landing-screen', 'exam-selection-screen'); 
+}
+
+function performLogout() {
+    localStorage.removeItem("vault_username");
+    location.reload();
+}
+
+function updateUserUI() {
+    document.getElementById('student-name').innerText = currentUsername;
+    document.getElementById('dash-student-name').innerText = currentUsername;
+    if(document.getElementById('sidebar-name')) document.getElementById('sidebar-name').innerText = currentUsername;
+    if(document.getElementById('sidebar-username')) document.getElementById('sidebar-username').innerText = "@" + currentUsername;
 }
 
 function toggleSidebar() {
@@ -95,7 +123,6 @@ function toggleSidebar() {
 function openDashboard(examType) {
     if (examType === 'main') {
         switchScreen('exam-selection-screen', 'dashboard-screen');
-        // Auto-close sidebar on mobile after clicking a link
         document.getElementById('side-menu').classList.add('hidden');
     }
 }
@@ -173,7 +200,6 @@ function goBack() {
 }
 
 function updateSystemUI(activeScreenId) {
-    // Hide back button on main hubs
     const noBackScreens = ['landing-screen', 'exam-selection-screen', 'nta-screen', 'analysis-screen'];
     if(noBackScreens.includes(activeScreenId)) {
         document.getElementById('universal-back').classList.add('hidden');
@@ -181,14 +207,12 @@ function updateSystemUI(activeScreenId) {
         document.getElementById('universal-back').classList.remove('hidden');
     }
 
-    // Toggle nav menu button visibility based on screen
     const navMenuBtn = document.getElementById('nav-menu-btn');
     if (navMenuBtn) {
         if(activeScreenId === 'landing-screen') navMenuBtn.classList.add('hidden');
         else navMenuBtn.classList.remove('hidden');
     }
 
-    // Background Themes
     if(activeScreenId === 'nta-screen') {
         document.body.className = 'theme-nta';
         document.getElementById('floating-dock').classList.add('hidden');
@@ -226,27 +250,24 @@ async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
     try {
         const response = await fetch(fileName);
+        if (!response.ok) throw new Error("HTTP Status " + response.status);
         const database = await response.json();
-        return database[testId] || null;
+        
+        if (!database[testId]) {
+            alert(`Error: Test '${testId}' is missing in your JSON file. Please check data/jee_daily.json.`);
+            return null;
+        }
+        return database[testId];
     } catch (e) {
-        console.warn("Using local fallback data.");
-        return {
-            "Physics": [
-                { id: "p1", type: "mcq", q: "The dimension of sqrt(μ₀/ε₀) is equal to that of:", options: ["Voltage", "Capacitance", "Inductance", "Resistance"], ans: 3, hint: "Check units." }
-            ],
-            "Chemistry": [
-                { id: "c1", type: "mcq", q: "Mass of Mg required for 220 mL H2 at STP?", options: ["235.7 mg", "0.24 mg", "236 mg", "2.44 g"], ans: 2, hint: "Mole concept." }
-            ],
-            "Mathematics": [
-                { id: "m1", type: "numerical", q: "Find roots of x|x-2| + 3|x-3| + 1 = 0", ans: 1, hint: "Open modulus." }
-            ]
-        };
+        console.error("JSON Error:", e);
+        alert(`Bhai, teri JSON file load nahi ho rahi! (${fileName}). Ya toh tu JSON me koi bracket/comma bhool gaya hai, ya file Vercel par theek se push nahi hui.`);
+        return null; 
     }
 }
 
 async function startTest(testId, timeInMins) {
     questions = await fetchQuestions(testId);
-    if(!questions) { alert("Data missing for " + testId); return; }
+    if(!questions) return; // Stop if JSON failed
     
     testState = {};
     Object.keys(questions).forEach(sub => {
