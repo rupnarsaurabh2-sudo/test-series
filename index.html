@@ -5,20 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RANKER'S VAULT | Pro Ed-Tech</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body class="theme-premium">
 
-    <!-- HEAVENLY BACKGROUND & LEAVES -->
     <div id="leaf-container"></div>
     <div class="science-bg" id="science-bg">
         <div class="sci-symbol s1">⌬</div><div class="sci-symbol s2">∫e^x dx</div>
         <div class="sci-symbol s3">E=mc²</div><div class="sci-symbol s4">∇×B</div>
     </div>
 
-    <!-- UNIVERSAL BACK BUTTON -->
     <button id="universal-back" class="back-btn hidden" onclick="goBack()">⬅ Back</button>
 
-    <!-- SIDEBAR (HAMBURGER MENU) -->
     <div id="side-menu" class="sidebar hidden">
         <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3);">
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -36,13 +34,11 @@
         </div>
     </div>
 
-    <!-- FLOATING BOTTOM DOCK -->
     <div class="floating-dock" id="floating-dock">
         <button class="dock-btn active" onclick="location.reload()">🏠 Home</button>
         <button class="dock-btn" onclick="toggleSidebar()">☰ Menu</button>
     </div>
 
-    <!-- 1. LANDING PAGE -->
     <div id="landing-screen" class="transition-element screen-layer active-screen landing-scroll">
         <nav class="navbar glass-nav">
             <div class="logo">
@@ -63,7 +59,6 @@
             </div>
         </section>
 
-        <!-- PREMIUM FEATURES SHOWCASE -->
         <section class="features-section" style="display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; margin-top: 60px; padding: 20px; width: 100%; max-width: 1000px; margin-left: auto; margin-right: auto; padding-bottom: 100px;">
             <div class="feature-card" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 12px; width: 280px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                 <h3 class="gold-text">Strict NTA UI</h3>
@@ -80,7 +75,6 @@
         </section>
     </div>
 
-    <!-- 1.5 AUTHENTICATION / LOGIN MODAL -->
     <div id="auth-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim">
             <span class="close-btn" onclick="closeAuthModal()">&times;</span>
@@ -98,7 +92,6 @@
         </div>
     </div>
 
-    <!-- 2. EXAM TARGET SELECTION SCREEN (FLOATING CARDS WITH NEW LOGOS) -->
     <div id="exam-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo" style="margin-left: 5%;">
@@ -111,7 +104,6 @@
             <h2 class="gold-text heavenly-title" style="margin-bottom: 40px; font-size: 36px;">Choose Your Target</h2>
             
             <div class="exam-grid">
-                <!-- JEE MAIN -->
                 <div class="exam-card active-exam" onclick="openDashboard('main')">
                     <div class="exam-logo-box">
                         <img src="https://cdn1.prosyllabus.com/static/jee-main-logo.png" alt="JEE Main Logo">
@@ -120,75 +112,69 @@
                     <p style="color: #10b981; margin-top: 10px; font-weight: bold; font-size: 15px;">Enter Vault ➔</p>
                 </div>
 
-                <!-- JEE ADVANCED -->
-                <div class="exam-card locked-exam" onclick="alert('JEE Advanced Modules are being curated. Coming Soon!')">
+                <div class="exam-card locked-exam" onclick="openDashboard('advanced')">
                     <div class="exam-logo-box">
                         <img src="https://www.powermindinstitute.org/admin/assets/images/pages/jee-advanced-exam.png" alt="JEE Advanced Logo">
                     </div>
                     <h3 style="font-size: 24px; color: #cbd5e1;">JEE Advanced 🔒</h3>
-                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
+                    <p style="color: #d4af37; margin-top: 10px; font-weight: bold;">₹99 / Unlock Now</p>
                 </div>
 
-                <!-- NEET UG -->
-                <div class="exam-card locked-exam" onclick="alert('NEET UG Modules are being curated. Coming Soon!')">
+                <div class="exam-card locked-exam" onclick="openDashboard('neet')">
                     <div class="exam-logo-box">
                         <img src="https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2025/01/neet-ug-1738285369.jpg" alt="NEET Logo">
                     </div>
                     <h3 style="font-size: 24px; color: #cbd5e1;">NEET UG 🔒</h3>
-                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
+                    <p style="color: #d4af37; margin-top: 10px; font-weight: bold;">₹99 / Unlock Now</p>
                 </div>
 
-                <!-- MHT CET -->
-                <div class="exam-card locked-exam" onclick="alert('MHT CET Modules are being curated. Coming Soon!')">
+                <div class="exam-card locked-exam" onclick="openDashboard('mhtcet')">
                     <div class="exam-logo-box">
                         <img src="https://medbots.in/uploads/exams/exam_images/law_(14).jpg" alt="MHT CET Logo">
                     </div>
                     <h3 style="font-size: 24px; color: #cbd5e1;">MHT CET 🔒</h3>
-                    <p style="color: #718096; margin-top: 10px;">Coming Soon</p>
+                    <p style="color: #d4af37; margin-top: 10px; font-weight: bold;">₹99 / Unlock Now</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. JEE MAIN DASHBOARD -->
     <div id="dashboard-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo" style="display: flex; align-items: center;">
                 <button class="icon-btn" onclick="toggleSidebar()" style="margin-right: 15px; border: none;">☰</button>
-                JEE MAIN VAULT
+                <span id="dashboard-header-title">VAULT DASHBOARD</span>
             </div>
         </nav>
         
         <div class="main-container flex-center-top" style="margin-top: 40px;">
             <div style="text-align: left; width: 100%; max-width: 950px; margin-bottom: 20px;">
                 <h2 style="color: #fff; font-size: 24px;">Welcome back, <span id="dash-student-name" class="gold-text">Scholar</span></h2>
-                <p style="color: #10b981; font-size: 14px;">Target: JEE Main | System Ready</p>
+                <p id="dash-target-title" style="color: #10b981; font-size: 14px;">Target: System Ready</p>
             </div>
             
             <hr style="width: 100%; border: 1px solid rgba(212,175,55,0.2); margin-bottom: 30px;">
 
-            <!-- SECTION A: TEST SERIES -->
             <h2 class="gold-text" style="margin-bottom: 20px; font-size: 26px; text-align: left; width: 100%; max-width: 950px;">Combat Zone (Tests)</h2>
             <div class="cards-container" style="margin-bottom: 40px;">
                 <div class="dash-card">
-                    <h3>Daily 10 PYQs</h3>
+                    <h3>Daily Practice</h3>
                     <p style="color: #a0aec0; margin: 10px 0;">Curated for pure concept building.</p>
-                    <button class="action-btn full-width" onclick="openDaySelection()">View All 75 Days</button>
+                    <button class="action-btn full-width" onclick="openDaySelection()">View All Days</button>
                 </div>
                 <div class="dash-card premium-card">
                     <h3 class="gold-text glow-text">Pro Test Series</h3>
-                    <p style="color: #a0aec0; margin: 10px 0;">10 Full Length Tests | 75 Qs | 2:30 Hrs</p>
+                    <p style="color: #a0aec0; margin: 10px 0;">10 Full Length Tests</p>
                     <button class="glow-gold-btn full-width" onclick="openTestSelection()">Give Mock Test</button>
                 </div>
             </div>
 
-            <!-- SECTION B: PREMIUM STUDY MATERIAL -->
             <h2 class="gold-text" style="margin-bottom: 20px; font-size: 26px; text-align: left; width: 100%; max-width: 950px;">Arsenal (Premium Notes)</h2>
             <div class="cards-container">
                 <div class="dash-card" style="padding: 20px;">
-                    <h3 style="color: #64ffda;">Physics Notes</h3>
-                    <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Mechanics, Electrodynamics & Modern Physics.</p>
-                    <button class="outline-btn full-width" onclick="alert('Physics Notes Vault Opening Soon!')">Access Notes</button>
+                    <h3 style="color: #64ffda;">Physics / Biology</h3>
+                    <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Core Modules.</p>
+                    <button class="outline-btn full-width" onclick="alert('Notes Vault Opening Soon!')">Access Notes</button>
                 </div>
                 <div class="dash-card" style="padding: 20px;">
                     <h3 style="color: #64ffda;">Chemistry Notes</h3>
@@ -204,18 +190,16 @@
         </div>
     </div>
 
-    <!-- DAY SELECTION GRID -->
     <section id="day-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
-            <div class="logo">DAILY PYQs</div>
+            <div class="logo">DAILY PRACTICE</div>
         </nav>
         <div class="main-container flex-center-top" style="margin-top: 40px;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">75 Days Challenge</h2>
+            <h2 class="gold-text" style="margin-bottom: 20px;">Daily Challenge</h2>
             <div id="days-grid" class="days-grid"></div>
         </div>
     </section>
 
-    <!-- TEST SELECTION GRID -->
     <section id="test-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo">PRO TEST SERIES</div>
@@ -226,7 +210,6 @@
         </div>
     </section>
 
-    <!-- ALL THE BEST POPUP -->
     <div id="all-best-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim" style="padding: 40px 20px;">
             <span class="close-btn" onclick="closeAllBestModal()">&times;</span>
@@ -236,25 +219,23 @@
         </div>
     </div>
 
-    <!-- INFO MODAL -->
     <div id="info-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim">
             <span class="close-btn" onclick="closeInfoModal()">&times;</span>
             <h2 class="gold-text" style="margin-bottom: 15px;">The Reality Check</h2>
             <p style="text-align: left; line-height: 1.6; font-size: 15px;">
-                The 99% fail because they study the wrong things. This vault contains the exact NTA patterns.<br><br>
+                The 99% fail because they study the wrong things. This vault contains the exact patterns.<br><br>
                 <strong>Rules:</strong><br>
-                1. +4 for correct, -1 for incorrect (0 for numerical errors).<br>
+                1. Standard Marking scheme applied.<br>
                 2. No lifelines. You only get hints if wrong.<br>
                 3. The clock does not stop.
             </p>
         </div>
     </div>
 
-    <!-- 4. NTA CLONE INTERFACE -->
     <div id="nta-screen" class="hidden nta-layout transition-element screen-layer">
         <div class="nta-header">
-            <div class="nta-title">JEE MAIN 2026 - RANKER'S VAULT</div>
+            <div class="nta-title">RANKER'S VAULT CBT</div>
             <div class="nta-timer">Time Left : <span id="time-left">00:00:00</span></div>
         </div>
         <div class="nta-body">
@@ -305,7 +286,6 @@
         </div>
     </div>
 
-    <!-- 5. ADVANCED ANALYSIS SCREEN -->
     <div id="analysis-screen" class="hidden main-container transition-element screen-layer flex-center-top">
         <div style="margin-top: 40px; width: 100%;">
             <h1 class="gold-text heavenly-title" style="font-size: 36px;">Performance Analysis</h1>
@@ -333,15 +313,13 @@
         </div>
     </div>
 
-    <!-- 6. SOLUTIONS & REVIEW SCREEN -->
     <div id="review-screen" class="hidden main-container transition-element screen-layer flex-center-top">
         <h1 class="gold-text heavenly-title" style="font-size: 32px; margin-bottom: 20px; margin-top: 40px;">Review Mistakes</h1>
         <div id="review-content" style="width: 100%; text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); max-height: 70vh; overflow-y: auto;"></div>
         <button class="glow-gold-btn" style="margin-top: 30px; width: 200px;" onclick="closeReviewScreen()">⬅ Back to Analysis</button>
     </div>
 
-   <!-- 7. AI FOUNDER BOT -->
-    <div id="ai-bot-container">
+   <div id="ai-bot-container">
         <button id="bot-toggle-btn" onclick="toggleBot()">🤖</button>
         <div id="bot-window" class="hidden popup-anim">
             <div class="bot-header">
@@ -364,7 +342,6 @@
         </div>
     </div>
 
-    <!-- Firebase CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     
