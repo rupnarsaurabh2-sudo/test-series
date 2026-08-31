@@ -3,60 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>God Mode | Ranker's Vault</title>
+    <title>GOD MODE | Founder Terminal</title>
+    <!-- Firebase CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
-        body { background: #010a04; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0;}
-        .founder-container { max-width: 1000px; margin: 50px auto; padding: 20px; }
-        .admin-login-box { background: rgba(2, 17, 8, 0.95); border: 2px solid #d4af37; border-radius: 12px; padding: 40px; width: 100%; max-width: 400px; margin: 100px auto; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
-        .admin-input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #d4af37; color: #d4af37; border-radius: 6px; outline: none; }
-        .admin-btn { background: linear-gradient(135deg, #d4af37, #8b6508); color: #000; border: none; padding: 12px 20px; width: 100%; font-weight: bold; font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d4af37; padding-bottom: 15px; margin-bottom: 30px; }
-        .control-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
-        .control-panel { background: rgba(255,255,255,0.05); border: 1px solid rgba(212, 175, 55, 0.3); padding: 20px; border-radius: 12px; }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .data-table th, .data-table td { border: 1px solid rgba(212,175,55,0.3); padding: 10px; text-align: left; }
-        .data-table th { background: rgba(212,175,55,0.1); color: #d4af37; }
+        body { background: radial-gradient(circle at top center, #1a0b2e 0%, #090212 50%, #000000 100%); color: #e2e8f0; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
+        .gold-text { color: #d4af37; }
+        .glow-text { text-shadow: 0 0 10px rgba(212, 175, 55, 0.8); }
+        .glass-panel { background: rgba(0,0,0,0.6); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 25px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        th { color: #d4af37; font-weight: bold; background: rgba(0,0,0,0.4); text-transform: uppercase; font-size: 13px; letter-spacing: 1px;}
+        td { color: #cbd5e1; font-size: 15px; }
+        tr:hover { background: rgba(212,175,55,0.05); }
+        .btn { background: linear-gradient(135deg, #d4af37, #aa7c11); color: #000; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(212,175,55,0.3); padding-bottom: 15px; margin-bottom: 25px; }
+        
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .pass-input { padding: 15px; margin: 20px; border-radius: 8px; border: 2px solid #d4af37; background: #111; color: #fff; width: 300px; font-size: 18px; text-align: center; outline: none; }
+        .pass-input:focus { box-shadow: 0 0 15px rgba(212,175,55,0.3); }
+        select { padding: 12px; background: #111; color: #d4af37; border: 1px solid #d4af37; border-radius: 6px; outline: none; font-size: 15px; cursor: pointer; }
+
+        /* LIVE CONTROL SWITCHES */
+        .toggle-btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; width: 85px; transition: 0.3s; margin-bottom: 10px; }
+        .toggle-on { background: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
+        .toggle-off { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.4); }
+        .control-grid { display: flex; flex-wrap: wrap; gap: 15px; max-height: 250px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .control-item { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; width: 100px; }
     </style>
 </head>
 <body>
 
-    <div id="admin-login" class="admin-login-box">
-        <h2 style="color: #d4af37; margin-bottom: 20px;">GOD MODE</h2>
-        <input type="text" id="admin-id" class="admin-input" placeholder="Founder ID">
-        <input type="password" id="admin-pass" class="admin-input" placeholder="Passkey">
-        <button class="admin-btn" onclick="verifyAdmin()">Initialize Terminal</button>
-        <p id="error-msg" style="color: #ef4444; margin-top: 10px; display: none;">Access Denied.</p>
+    <!-- SECURITY LOCK -->
+    <div id="login-overlay">
+        <h1 class="gold-text glow-text" style="font-size: 40px; margin-bottom: 10px;">SYSTEM LOCKED</h1>
+        <p style="color: #64748b; margin-bottom: 20px;">Founder Authentication Required</p>
+        <input type="password" id="admin-pass" class="pass-input" placeholder="Enter Master Key">
+        <button class="btn" onclick="checkPass()">Initialize Terminal ⚡</button>
     </div>
 
-    <div id="founder-dashboard" class="founder-container" style="display: none;">
-        <div class="dashboard-header">
-            <div>
-                <h1 style="color: #d4af37; font-size: 32px;">Founder Terminal: Saurav Sugreev Rupnar</h1>
-                <p id="db-status" style="color: #10b981;">🟢 Firebase Connected</p>
-            </div>
-            <button class="admin-btn" style="width: auto; margin-top: 0;" onclick="location.reload()">Lock Terminal</button>
+    <!-- GOD MODE DASHBOARD -->
+    <div id="admin-dashboard" style="display:none; max-width: 1200px; margin: 0 auto;">
+        <div class="header">
+            <h1 class="gold-text glow-text" style="margin: 0;">👑 GOD MODE | Founder Terminal</h1>
+            <button class="btn" style="background: transparent; border: 1px solid #ef4444; color: #ef4444;" onclick="location.reload()">Lock System</button>
         </div>
 
-        <div class="control-grid">
-            <div class="control-panel">
-                <h2 style="color: #d4af37; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px;">Live Leaderboard Radar</h2>
-                <select id="leaderboard-select" class="admin-input" style="background: rgba(0,0,0,0.5);" onchange="loadLeaderboard()">
-                    <option value="">Select Test to View</option>
-                    <option value="day_1">Day 1</option>
-                    <option value="day_2">Day 2</option>
-                    <option value="day_3">Day 3</option>
-                    <option value="full_test_1">Full Test 1</option>
-                </select>
-                <table class="data-table" id="leaderboard-table">
-                    <tr><th>Rank</th><th>Student Name</th><th>Score</th><th>Time</th></tr>
-                </table>
-            </div>
+        <!-- NEW: TEST CONTROL ROOM (LIVE ON/OFF) -->
+        <div class="glass-panel">
+            <h2 class="gold-text" style="margin-top: 0;">⚙️ Test Control Room (Live ON/OFF)</h2>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 10px;">Turn tests ON (Green) to make them live for students, or OFF (Red) to lock them.</p>
+            
+            <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">Daily 75 PYQs</h3>
+            <div class="control-grid" id="daily-controls"></div>
+
+            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">10 Full Length Tests</h3>
+            <div class="control-grid" id="full-test-controls"></div>
+        </div>
+
+        <!-- USERS DATABASE -->
+        <div class="glass-panel">
+            <h2 class="gold-text" style="margin-top: 0;">👥 Registered Scholars Database</h2>
+            <table>
+                <thead><tr><th>Username</th><th>Full Name</th><th>Joined On</th></tr></thead>
+                <tbody id="users-table"><tr><td colspan="3">Syncing with Firebase...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- LEADERBOARD & PERFORMANCE -->
+        <div class="glass-panel">
+            <h2 class="gold-text" style="margin-top: 0;">🏆 Central Leaderboard Engine</h2>
+            <select id="test-selector" onchange="loadLeaderboard()" style="margin-bottom: 20px;">
+                <option value="">Fetch Test Data...</option>
+            </select>
+            <table>
+                <thead><tr><th>Rank</th><th>Student</th><th>Score</th><th>Time Taken</th><th>Timestamp</th></tr></thead>
+                <tbody id="leaderboard-table"><tr><td colspan="5">Select a test module to view live rankings.</td></tr></tbody>
+            </table>
         </div>
     </div>
 
     <script>
+        let liveControls = {};
+
+        function checkPass() {
+            if(document.getElementById('admin-pass').value === 'LocalFix@2026') { 
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+                initGodMode();
+            } else { alert('ACCESS DENIED: Incorrect Master Key.'); }
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
             authDomain: "rankersvault-5e76f.firebaseapp.com",
@@ -64,37 +103,96 @@
             storageBucket: "rankersvault-5e76f.firebasestorage.app",
             messagingSenderId: "56527682160",
             appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
-            databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com" 
+            databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
         };
-        firebase.initializeApp(firebaseConfig);
+        
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        function verifyAdmin() {
-            if(document.getElementById('admin-id').value === "ssr911715" && document.getElementById('admin-pass').value === "ssr191715") {
-                document.getElementById('admin-login').style.display = "none";
-                document.getElementById('founder-dashboard').style.display = "block";
-            } else {
-                document.getElementById('error-msg').style.display = "block";
+        function initGodMode() {
+            loadTestControls();
+            loadUsers();
+            loadTestList();
+        }
+
+        // --- NEW: FETCH & RENDER ON/OFF SWITCHES ---
+        function loadTestControls() {
+            db.ref('test_controls').on('value', (snapshot) => {
+                liveControls = snapshot.val() || {};
+                renderControlGrid('daily-controls', 'day_', 75, 'Day');
+                renderControlGrid('full-test-controls', 'full_test_', 10, 'Test');
+            });
+        }
+
+        function renderControlGrid(containerId, prefix, count, label) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for(let i=1; i<=count; i++) {
+                let testId = prefix + i;
+                let isLive = liveControls[testId] === true;
+                let btnClass = isLive ? 'toggle-on' : 'toggle-off';
+                let btnText = isLive ? 'ON' : 'OFF';
+
+                container.innerHTML += `
+                    <div class="control-item">
+                        <span style="color: #cbd5e1; font-size: 13px; margin-bottom: 5px; font-weight: bold;">${label} ${i}</span>
+                        <button class="toggle-btn ${btnClass}" onclick="toggleTestStatus('${testId}', ${!isLive})">${btnText}</button>
+                    </div>
+                `;
             }
         }
 
-        function loadLeaderboard() {
-            const testId = document.getElementById('leaderboard-select').value;
-            if(!testId) return;
-            
-            db.ref('leaderboards/' + testId).on('value', (snapshot) => {
-                const table = document.getElementById('leaderboard-table');
-                table.innerHTML = '<tr><th>Rank</th><th>Student Name</th><th>Score</th><th>Time</th></tr>';
-                
-                let data = snapshot.val();
-                if(data) {
-                    let sortedData = Object.values(data).sort((a, b) => b.score - a.score);
-                    sortedData.forEach((entry, idx) => {
-                        table.innerHTML += `<tr><td>${idx+1}</td><td>${entry.name}</td><td>${entry.score}</td><td>${entry.time}</td></tr>`;
+        function toggleTestStatus(testId, newState) {
+            db.ref('test_controls/' + testId).set(newState);
+        }
+
+        function loadUsers() {
+            db.ref('users').on('value', (snapshot) => {
+                const users = snapshot.val();
+                const tbody = document.getElementById('users-table');
+                tbody.innerHTML = '';
+                if(users) {
+                    Object.keys(users).reverse().forEach(username => {
+                        let u = users[username];
+                        let date = new Date(u.joinDate).toLocaleString('en-IN');
+                        tbody.innerHTML += `<tr><td style="font-weight:bold;">@${u.username}</td><td>${u.fullName}</td><td>${date}</td></tr>`;
                     });
-                } else {
-                    table.innerHTML += `<tr><td colspan="4" style="text-align:center;">No data yet</td></tr>`;
+                } else { tbody.innerHTML = '<tr><td colspan="3">No scholars registered yet.</td></tr>'; }
+            });
+        }
+
+        function loadTestList() {
+            db.ref('leaderboards').on('value', (snapshot) => {
+                const tests = snapshot.val();
+                const selector = document.getElementById('test-selector');
+                selector.innerHTML = '<option value="">-- Select Test Module --</option>';
+                if(tests) {
+                    for(let testId in tests) {
+                        let displayName = testId.replace('_', ' ').toUpperCase();
+                        selector.innerHTML += `<option value="${testId}">${displayName}</option>`;
+                    }
                 }
+            });
+        }
+
+        function loadLeaderboard() {
+            const testId = document.getElementById('test-selector').value;
+            const tbody = document.getElementById('leaderboard-table');
+            if(!testId) { tbody.innerHTML = '<tr><td colspan="5">Select a test module to view live rankings.</td></tr>'; return; }
+            
+            db.ref('leaderboards/' + testId).orderByChild('score').on('value', (snapshot) => {
+                tbody.innerHTML = '';
+                let records = [];
+                snapshot.forEach(child => { records.push(child.val()); });
+                records.reverse(); 
+                
+                if(records.length > 0) {
+                    records.forEach((r, index) => {
+                        let date = new Date(r.timestamp).toLocaleString('en-IN');
+                        let rankColor = index === 0 ? '#d4af37' : (index === 1 ? '#94a3b8' : (index === 2 ? '#b45309' : '#e2e8f0'));
+                        tbody.innerHTML += `<tr><td style="color:${rankColor}; font-size:18px; font-weight:bold;">#${index+1}</td><td>${r.name} <br><span style="font-size:12px; color:#64748b;">@${r.username}</span></td><td style="color:#10b981; font-weight:bold; font-size:18px;">${r.score}</td><td style="color:#38bdf8;">${r.time}</td><td style="font-size:13px; color:#94a3b8;">${date}</td></tr>`;
+                    });
+                } else { tbody.innerHTML = '<tr><td colspan="5">No data logged for this test yet.</td></tr>'; }
             });
         }
     </script>
