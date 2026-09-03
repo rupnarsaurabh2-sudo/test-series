@@ -160,6 +160,7 @@ async function startRazorpayPayment(examType) {
             "name": "Ranker's Vault Pro",
             "description": `${examType.toUpperCase()} Test Series Unlock`,
             "order_id": orderData.id,
+            "config": { "display": { "sequence": ["block.upi", "block.cards", "block.banks", "block.wallets"] } },
             "handler": function (response){
                 db.ref('users/' + currentUsername + '/purchased/' + examType).set(true)
                 .then(() => {
