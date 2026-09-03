@@ -160,7 +160,27 @@ async function startRazorpayPayment(examType) {
             "name": "Ranker's Vault Pro",
             "description": `${examType.toUpperCase()} Test Series Unlock`,
             "order_id": orderData.id,
-            "config": { "display": { "sequence": ["block.upi", "block.cards", "block.banks", "block.wallets"] } },
+            
+            // 👇 UPI & QR CODE FORCE CONFIGURATION 👇
+            "config": {
+                "display": {
+                    "blocks": {
+                        "upi_block": {
+                            "name": "Pay via Scan QR / UPI",
+                            "instruments": [
+                                {
+                                    "method": "upi"
+                                }
+                            ]
+                        }
+                    },
+                    "sequence": ["block.upi_block"],
+                    "preferences": {
+                        "show_default_blocks": true
+                    }
+                }
+            },
+            
             "handler": function (response){
                 db.ref('users/' + currentUsername + '/purchased/' + examType).set(true)
                 .then(() => {
