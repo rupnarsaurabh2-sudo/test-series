@@ -40,10 +40,10 @@ const db = typeof firebase !== 'undefined' ? firebase.database() : null;
 
 let currentUser = "Scholar";
 let currentUsername = "scholar";
-let activeExamTarget = "main";
+let activeExamTarget = "main"; // Default is JEE Main
 
 // ========================================================
-// 3. AUTHENTICATION & LOGIN
+// 3. AUTHENTICATION & LOGIN LOGIC
 // ========================================================
 function checkAutoLogin() {
     let savedUser = localStorage.getItem("vault_username");
@@ -140,8 +140,18 @@ async function startRazorpayPayment(examType) {
             body: JSON.stringify({ amount: 9900, currency: "INR" }) 
         });
 
-        if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+        if (!response.ok) { 
+            console.error("Backend Error Code:", response.status);
+            alert("Backend API Error! Vercel me backend properly deploy nahi hua hai. GitHub par api/createOrder.js aur package.json check kar.");
+            return; 
+        }
+        
         const orderData = await response.json();
+
+        if (!orderData.id) {
+            alert("Razorpay Error: API Key ya Secret galat hai backend me!");
+            return;
+        }
 
         var options = {
             "key": "rzp_test_TXaJFc0u3LxNqI", 
@@ -167,12 +177,14 @@ async function startRazorpayPayment(examType) {
         };
         
         var rzp = new Razorpay(options);
-        rzp.on('payment.failed', function (response){ alert("Payment Failed: " + response.error.description); });
+        rzp.on('payment.failed', function (response){ 
+             alert("Payment Failed! Reason: " + response.error.description); 
+        });
         rzp.open();
         
     } catch (error) {
-        console.error("Payment error:", error);
-        alert("Payment setup error. Ensure you are running this on Vercel.");
+        console.error("Payment code error:", error);
+        alert("Payment Gateway fetch fail! Check console.");
     }
 }
 
@@ -227,9 +239,6 @@ function generateGrids() {
     }
 }
 
-// ========================================================
-// BAAKI TERA PURANA TEST ENGINE CODE (SAME TO SAME)
-// ========================================================
 function createLeaves() {
     const container = document.getElementById('leaf-container');
     const leafShapes = ['🍁', '🍂', '✨', '🍃'];
@@ -304,20 +313,35 @@ function showAllTheBest(testId, timeInMins) {
 function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
 function confirmStartTest() { closeAllBestModal(); startTest(pendingTestId, pendingTestTime); }
 
+// ========================================================
+// 6. TEST ENGINE & DATA FETCHING
+// ========================================================
 async function fetchQuestions(testId) {
-    let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
+    let fileName = '';
+    
+    if (activeExamTarget === 'main') {
+        fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
+    } else if (activeExamTarget === 'advanced') {
+        fileName = 'data/advanced_full_tests.json';
+    } else if (activeExamTarget === 'neet') {
+        fileName = 'data/neet_full_tests.json';
+    } else if (activeExamTarget === 'mhtcet') {
+        fileName = 'data/mhtcet_full_tests.json';
+    }
+
     try {
         const response = await fetch(fileName);
         if (!response.ok) throw new Error("HTTP Status " + response.status);
         const database = await response.json();
         
         if (!database[testId]) {
-            alert(`Error: Test '${testId}' is missing in your JSON file.`);
+            alert(`Error: Test '${testId}' is missing in your JSON file (${fileName}).`);
             return null;
         }
         return database[testId];
     } catch (e) {
-        alert(`Data fetch failed! File: ${fileName}. Please check deployment.`);
+        console.error("JSON Error:", e);
+        alert(`Bhai, test load nahi hua! Shayad tune ${fileName} abhi tak GitHub me daali nahi hai.`);
         return null; 
     }
 }
@@ -489,6 +513,9 @@ function calculateAndShowResult() {
     }
 }
 
+// ========================================================
+// 7. REVIEW ENGINE & AI BOT
+// ========================================================
 function openReviewScreen() {
     switchScreen('analysis-screen', 'review-screen');
     const container = document.getElementById('review-content');
