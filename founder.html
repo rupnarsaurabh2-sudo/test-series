@@ -56,20 +56,20 @@
             <h2 class="gold-text" style="margin-top: 0;">⚙️ Test Control Room (Live ON/OFF)</h2>
             <p style="color: #64748b; font-size: 14px; margin-bottom: 10px;">Turn tests ON (Green) to make them live for students, or OFF (Red) to lock them.</p>
             
-            <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">Daily 75 PYQs</h3>
+            <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">JEE Mains - Daily 75 PYQs</h3>
             <div class="control-grid" id="daily-controls"></div>
 
-            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">10 Full Length Tests</h3>
+            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Mains - 10 Full Length Tests</h3>
             <div class="control-grid" id="full-test-controls"></div>
             
             <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Advanced - 10 Tests</h3>
-          <div  class="control-grid" id="adv-test-controls"></div>
+            <div class="control-grid" id="adv-test-controls"></div>
 
-<h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">NEET UG - 10 Tests</h3>
-<div class="control-grid" id="neet-test-controls"></div>
+            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">NEET UG - 10 Tests</h3>
+            <div class="control-grid" id="neet-test-controls"></div>
 
-<h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">MHT CET - 10 Tests</h3>
-<div class="control-grid" id="cet-test-controls"></div>
+            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">MHT CET - 10 Tests</h3>
+            <div class="control-grid" id="cet-test-controls"></div>
         </div>
 
         <!-- USERS DATABASE -->
@@ -124,12 +124,14 @@
             loadTestList();
         }
 
-        // --- NEW: FETCH & RENDER ON/OFF SWITCHES ---
         function loadTestControls() {
             db.ref('test_controls').on('value', (snapshot) => {
                 liveControls = snapshot.val() || {};
                 renderControlGrid('daily-controls', 'day_', 75, 'Day');
                 renderControlGrid('full-test-controls', 'full_test_', 10, 'Test');
+                renderControlGrid('adv-test-controls', 'advanced_test_', 10, 'Adv Test');
+                renderControlGrid('neet-test-controls', 'neet_test_', 10, 'NEET Test');
+                renderControlGrid('cet-test-controls', 'mhtcet_test_', 10, 'CET Test');
             });
         }
 
@@ -177,7 +179,7 @@
                 selector.innerHTML = '<option value="">-- Select Test Module --</option>';
                 if(tests) {
                     for(let testId in tests) {
-                        let displayName = testId.replace('_', ' ').toUpperCase();
+                        let displayName = testId.replace(/_/g, ' ').toUpperCase();
                         selector.innerHTML += `<option value="${testId}">${displayName}</option>`;
                     }
                 }
