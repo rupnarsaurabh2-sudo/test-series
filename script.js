@@ -40,12 +40,11 @@ const db = typeof firebase !== 'undefined' ? firebase.database() : null;
 
 let currentUser = "Scholar";
 let currentUsername = "scholar";
-let activeExamTarget = "main"; // Default is JEE Main
+let activeExamTarget = "main";
 
 // ========================================================
-// 3. AUTHENTICATION, AUTO-LOGIN & SIDEBAR LOGIC
+// 3. AUTHENTICATION & LOGIN
 // ========================================================
-
 function checkAutoLogin() {
     let savedUser = localStorage.getItem("vault_username");
     if(savedUser) {
@@ -92,31 +91,26 @@ function updateUserUI() {
 
 function toggleSidebar() { document.getElementById('side-menu').classList.toggle('hidden'); }
 
-// --- DASHBOARD & PAYMENT LOGIC ---
+// ========================================================
+// 4. RAZORPAY PAYMENT & DASHBOARD LOGIC
+// ========================================================
 function openDashboard(examType) {
     activeExamTarget = examType;
     
     if (examType === 'main') {
-        // JEE Main is free by default
         showDashboardUI(examType);
         return;
     }
 
-    // Check if user has purchased the selected exam
     if(db) {
         db.ref('users/' + currentUsername + '/purchased/' + examType).once('value', (snapshot) => {
             let hasPurchased = snapshot.val();
-            
             if (hasPurchased) {
-                // User has paid, show dashboard
                 showDashboardUI(examType);
             } else {
-                // Not paid, trigger Razorpay
                 startRazorpayPayment(examType);
             }
         });
-    } else {
-        alert("Database connection error. Please try again.");
     }
 }
 
@@ -133,68 +127,58 @@ function showDashboardUI(examType) {
     
     switchScreen('exam-selection-screen', 'dashboard-screen');
     document.getElementById('side-menu').classList.add('hidden');
-    generateGrids(); // Re-render grids based on exam type if needed
+    generateGrids();
 }
 
 async function startRazorpayPayment(examType) {
     alert(`Initiating ₹99 payment for ${examType.toUpperCase()} Test Series...`);
     
     try {
-        // 1. Fetch Order ID from Vercel Backend
         const response = await fetch('/api/createOrder', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: 9900, currency: "INR" }) // ₹99
+            body: JSON.stringify({ amount: 9900, currency: "INR" }) 
         });
 
         if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
         const orderData = await response.json();
 
-        // 2. Open Razorpay Popup
         var options = {
-            "key": "rzp_test_YOUR_KEY_ID_HERE", // 🔥 REPLACE WITH YOUR LIVE/TEST KEY ID
+            "key": "rzp_test_TXaJFc0u3LxNqI", 
             "amount": orderData.amount, 
             "currency": orderData.currency,
             "name": "Ranker's Vault Pro",
             "description": `${examType.toUpperCase()} Test Series Unlock`,
             "order_id": orderData.id,
             "handler": function (response){
-                // 3. Payment Success - Update Firebase
                 db.ref('users/' + currentUsername + '/purchased/' + examType).set(true)
                 .then(() => {
                     alert("Payment Successful! Welcome to the Pro Vault.");
                     showDashboardUI(examType); 
                 })
-                .catch((error) => {
-                     console.error("Firebase update failed:", error);
-                     alert("Payment successful but failed to update database. Contact admin.");
-                });
+                .catch((error) => console.error("Firebase update failed:", error));
             },
             "prefill": {
                 "name": currentUser,
                 "email": currentUsername + "@rankersvault.com", 
-                "contact": "9999999999" 
+                "contact": "9000000000" 
             },
             "theme": { "color": "#d4af37" }
         };
         
         var rzp = new Razorpay(options);
-        rzp.on('payment.failed', function (response){
-                console.error(response.error.description);
-                alert("Payment Failed: " + response.error.description);
-        });
+        rzp.on('payment.failed', function (response){ alert("Payment Failed: " + response.error.description); });
         rzp.open();
         
     } catch (error) {
-        console.error("Error initiating payment:", error);
-        alert("Payment setup error. Ensure you are running this on Vercel and API is active.");
+        console.error("Payment error:", error);
+        alert("Payment setup error. Ensure you are running this on Vercel.");
     }
 }
 
 // ========================================================
-// 4. UI & DYNAMIC GRIDS (LIVE LOCK/UNLOCK)
+// 5. UI & DYNAMIC GRIDS (LIVE LOCK/UNLOCK)
 // ========================================================
-
 function listenToTestControls() {
     if(db) {
         db.ref('test_controls').on('value', (snapshot) => {
@@ -225,12 +209,10 @@ function generateGrids() {
     const testGrid = document.getElementById('tests-grid');
     if(testGrid) {
         testGrid.innerHTML = '';
-        // Abhi ke liye generic loop hai. Advanced ya NEET ke liye prefix change kar sakte hain
         let prefix = activeExamTarget === 'main' ? 'full_test_' : (activeExamTarget + '_test_');
         
         for(let i=1; i<=10; i++) {
             let testKey = prefix + i;
-            // Fallback: If specific exam toggle is not found, use the global full_test
             let isUnlocked = testControls[testKey] === true || testControls[`full_test_${i}`] === true;
             
             let btn = document.createElement('button');
@@ -245,6 +227,9 @@ function generateGrids() {
     }
 }
 
+// ========================================================
+// BAAKI TERA PURANA TEST ENGINE CODE (SAME TO SAME)
+// ========================================================
 function createLeaves() {
     const container = document.getElementById('leaf-container');
     const leafShapes = ['🍁', '🍂', '✨', '🍃'];
@@ -265,7 +250,6 @@ function switchScreen(hideId, showId) {
     document.getElementById(hideId).classList.remove('active-screen');
     document.getElementById(showId).classList.remove('hidden');
     document.getElementById(showId).classList.add('active-screen');
-
     if(showId !== screenHistory[screenHistory.length - 1]) screenHistory.push(showId);
     updateSystemUI(showId);
     if(showId === 'day-selection-screen' || showId === 'test-selection-screen') generateGrids();
@@ -318,14 +302,7 @@ function showAllTheBest(testId, timeInMins) {
     document.getElementById('all-best-modal').classList.remove('hidden');
 }
 function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
-function confirmStartTest() {
-    closeAllBestModal();
-    startTest(pendingTestId, pendingTestTime);
-}
-
-// ========================================================
-// 5. TEST ENGINE & FIREBASE UPLOAD
-// ========================================================
+function confirmStartTest() { closeAllBestModal(); startTest(pendingTestId, pendingTestTime); }
 
 async function fetchQuestions(testId) {
     let fileName = testId.includes('day') ? 'data/jee_daily.json' : 'data/jee_full_tests.json';
@@ -335,13 +312,12 @@ async function fetchQuestions(testId) {
         const database = await response.json();
         
         if (!database[testId]) {
-            alert(`Error: Test '${testId}' is missing in your JSON file. Please check ${fileName}.`);
+            alert(`Error: Test '${testId}' is missing in your JSON file.`);
             return null;
         }
         return database[testId];
     } catch (e) {
-        console.error("JSON Error:", e);
-        alert(`Data fetch failed! File: ${fileName}. Please check Vercel deployment.`);
+        alert(`Data fetch failed! File: ${fileName}. Please check deployment.`);
         return null; 
     }
 }
@@ -513,9 +489,6 @@ function calculateAndShowResult() {
     }
 }
 
-// ========================================================
-// 6. VIEW SOLUTIONS (Review Engine)
-// ========================================================
 function openReviewScreen() {
     switchScreen('analysis-screen', 'review-screen');
     const container = document.getElementById('review-content');
@@ -548,9 +521,6 @@ function openReviewScreen() {
 }
 function closeReviewScreen() { switchScreen('review-screen', 'analysis-screen'); }
 
-// ========================================================
-// 7. AI FOUNDER BOT LOGIC
-// ========================================================
 function toggleBot() { document.getElementById('bot-window').classList.toggle('hidden'); }
 
 const botResponses = {
