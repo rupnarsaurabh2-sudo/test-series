@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GOD MODE | Founder Terminal</title>
-    <!-- Firebase CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
@@ -26,7 +25,6 @@
         .pass-input:focus { box-shadow: 0 0 15px rgba(212,175,55,0.3); }
         select { padding: 12px; background: #111; color: #d4af37; border: 1px solid #d4af37; border-radius: 6px; outline: none; font-size: 15px; cursor: pointer; }
 
-        /* LIVE CONTROL SWITCHES */
         .toggle-btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; width: 85px; transition: 0.3s; margin-bottom: 10px; }
         .toggle-on { background: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .toggle-off { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.4); }
@@ -35,8 +33,6 @@
     </style>
 </head>
 <body>
-
-    <!-- SECURITY LOCK -->
     <div id="login-overlay">
         <h1 class="gold-text glow-text" style="font-size: 40px; margin-bottom: 10px;">SYSTEM LOCKED</h1>
         <p style="color: #64748b; margin-bottom: 20px;">Founder Authentication Required</p>
@@ -44,21 +40,33 @@
         <button class="btn" onclick="checkPass()">Initialize Terminal ⚡</button>
     </div>
 
-    <!-- GOD MODE DASHBOARD -->
     <div id="admin-dashboard" style="display:none; max-width: 1200px; margin: 0 auto;">
         <div class="header">
             <h1 class="gold-text glow-text" style="margin: 0;">👑 GOD MODE | Founder Terminal</h1>
             <button class="btn" style="background: transparent; border: 1px solid #ef4444; color: #ef4444;" onclick="location.reload()">Lock System</button>
         </div>
 
-        <!-- NEW: TEST CONTROL ROOM (LIVE ON/OFF) -->
-        <div class="glass-panel">
-            <h2 class="gold-text" style="margin-top: 0;">⚙️ Test Control Room (Live ON/OFF)</h2>
-            <p style="color: #64748b; font-size: 14px; margin-bottom: 10px;">Turn tests ON (Green) to make them live for students, or OFF (Red) to lock them.</p>
+        <!-- NEW: MANUAL USER APPROVAL BYPASS -->
+        <div class="glass-panel" style="border-color: #10b981;">
+            <h2 class="gold-text" style="margin-top: 0; color:#10b981;">🗝️ Manual Access (Bypass KYC)</h2>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Agar bacche ne direct QR pe paisa bheja hai, toh uska username yahan daal kar unlock kar de.</p>
             
-            <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">JEE Mains - Daily 75 PYQs</h3>
-            <div class="control-grid" id="daily-controls"></div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <input type="text" id="manual-user" class="pass-input" placeholder="Username (e.g. saurav)" style="margin: 0; width: 250px; text-align: left; font-size: 15px;">
+                <select id="manual-plan">
+                    <option value="main">JEE Main Pack</option>
+                    <option value="advanced">JEE Advanced Pack</option>
+                    <option value="neet">NEET UG Pack</option>
+                    <option value="mhtcet">MHT CET Pack</option>
+                    <option value="all">ALL ACCESS PRO (299)</option>
+                </select>
+                <button class="btn" onclick="grantManualAccess()" style="background: #10b981; color: #fff;">Grant Premium Access</button>
+            </div>
+        </div>
 
+        <div class="glass-panel">
+            <h2 class="gold-text" style="margin-top: 0;">⚙️ Global Test Locks (Live ON/OFF)</h2>
+            
             <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Mains - 10 Full Length Tests</h3>
             <div class="control-grid" id="full-test-controls"></div>
             
@@ -72,7 +80,6 @@
             <div class="control-grid" id="cet-test-controls"></div>
         </div>
 
-        <!-- USERS DATABASE -->
         <div class="glass-panel">
             <h2 class="gold-text" style="margin-top: 0;">👥 Registered Scholars Database</h2>
             <table>
@@ -81,7 +88,6 @@
             </table>
         </div>
 
-        <!-- LEADERBOARD & PERFORMANCE -->
         <div class="glass-panel">
             <h2 class="gold-text" style="margin-top: 0;">🏆 Central Leaderboard Engine</h2>
             <select id="test-selector" onchange="loadLeaderboard()" style="margin-bottom: 20px;">
@@ -124,10 +130,21 @@
             loadTestList();
         }
 
+        function grantManualAccess() {
+            let user = document.getElementById('manual-user').value.trim().toLowerCase();
+            let plan = document.getElementById('manual-plan').value;
+            if(!user) return alert("Please enter a username!");
+            
+            if(confirm(`Are you sure you want to unlock ${plan.toUpperCase()} for @${user}?`)) {
+                db.ref('users/' + user + '/purchased/' + plan).set(true)
+                .then(() => alert(`Success! ${plan.toUpperCase()} unlocked for @${user}.`))
+                .catch(e => alert("Error unlocking: " + e.message));
+            }
+        }
+
         function loadTestControls() {
             db.ref('test_controls').on('value', (snapshot) => {
                 liveControls = snapshot.val() || {};
-                renderControlGrid('daily-controls', 'day_', 75, 'Day');
                 renderControlGrid('full-test-controls', 'full_test_', 10, 'Test');
                 renderControlGrid('adv-test-controls', 'advanced_test_', 10, 'Adv Test');
                 renderControlGrid('neet-test-controls', 'neet_test_', 10, 'NEET Test');
@@ -165,8 +182,9 @@
                 if(users) {
                     Object.keys(users).reverse().forEach(username => {
                         let u = users[username];
-                        let date = new Date(u.joinDate).toLocaleString('en-IN');
-                        tbody.innerHTML += `<tr><td style="font-weight:bold;">@${u.username}</td><td>${u.fullName}</td><td>${date}</td></tr>`;
+                        let date = u.joinDate ? new Date(u.joinDate).toLocaleString('en-IN') : 'N/A';
+                        let fullName = u.fullName || u.username;
+                        tbody.innerHTML += `<tr><td style="font-weight:bold;">@${u.username}</td><td>${fullName}</td><td>${date}</td></tr>`;
                     });
                 } else { tbody.innerHTML = '<tr><td colspan="3">No scholars registered yet.</td></tr>'; }
             });
