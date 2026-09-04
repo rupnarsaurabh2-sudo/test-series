@@ -12,8 +12,8 @@ let pendingTestId = "";
 let pendingTestTime = 0;
 let screenHistory = ['landing-screen']; 
 
-let currentUserEmail = "";
-let currentUid = "";
+let currentUser = "Scholar";
+let currentUsername = "scholar";
 let activeExamTarget = "main"; 
 
 const firebaseConfig = {
@@ -25,164 +25,116 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.database();
-const auth = firebase.auth();
 
 window.onload = function() {
-    createGoldenRain(); // Naya backend visual effect
-    listenToAuthChanges(); 
+    createLeaves();
+    checkAutoLogin();
     listenToTestControls(); 
 };
 
-// ========================================================
-// 1. VISUAL EFFECTS (GOLDEN RAIN)
-// ========================================================
-function createGoldenRain() {
-    const container = document.getElementById('leaf-container');
-    if(!container) return;
-    for(let i=0; i<35; i++) {
-        let drop = document.createElement('div');
-        drop.className = 'gold-drop';
-        drop.style.left = Math.random() * 100 + 'vw';
-        drop.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
-        drop.style.animationDelay = (Math.random() * 3) + 's';
-        container.appendChild(drop);
+function checkAutoLogin() {
+    let savedUser = localStorage.getItem("vault_username");
+    if(savedUser) {
+        currentUser = savedUser;
+        currentUsername = savedUser;
+        updateUserUI();
+        fetchUserPurchases();
+        switchScreen('landing-screen', 'exam-selection-screen');
     }
 }
 
-// ========================================================
-// 2. BULLETPROOF AUTHENTICATION
-// ========================================================
-function listenToAuthChanges() {
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            currentUid = user.uid;
-            currentUserEmail = user.email;
-            let displayName = user.email.split('@')[0].toUpperCase();
-            
-            document.getElementById('student-name').innerText = displayName;
-            document.getElementById('dash-student-name').innerText = displayName;
-            if(document.getElementById('sidebar-name')) document.getElementById('sidebar-name').innerText = displayName;
-            if(document.getElementById('sidebar-username')) document.getElementById('sidebar-username').innerText = currentUserEmail;
-
-            fetchUserPurchases();
-            closeAuthModal();
-            
-            if(document.getElementById('landing-screen').classList.contains('active-screen')) {
-                switchScreen('landing-screen', 'exam-selection-screen');
-            }
-        } else {
-            currentUid = ""; currentUserEmail = ""; userPurchases = {};
-            let active = document.querySelector('.active-screen');
-            if(active && active.id !== 'landing-screen') switchScreen(active.id, 'landing-screen');
-        }
-    });
-}
-
-function openAuthModal() { 
-    document.getElementById('auth-error').style.display = 'none';
-    document.getElementById('auth-modal').classList.remove('hidden'); 
-}
+function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
 function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
 
-function showError(msg) {
-    let errBox = document.getElementById('auth-error');
-    errBox.innerText = msg;
-    errBox.style.display = 'block';
+function submitAuth() {
+    let username = document.getElementById('reg-username').value;
+    if (!username || username.trim() === "") { alert("Please enter a username."); return; }
+    currentUser = username;
+    currentUsername = username.toLowerCase().replace(/\s+/g, '');
+    localStorage.setItem("vault_username", currentUsername);
+    updateUserUI();
+
+    if(db) {
+        db.ref('users/' + currentUsername).update({ username: currentUsername, lastLogin: Date.now() });
+        fetchUserPurchases();
+    }
+    closeAuthModal();
+    switchScreen('landing-screen', 'exam-selection-screen'); 
 }
 
-function submitSignUp() {
-    let email = document.getElementById('auth-email').value.trim();
-    let pass = document.getElementById('auth-pass').value;
-    if (!email || !pass) { showError("⚠️ Email and Password required!"); return; }
-    
-    document.getElementById('auth-error').style.display = 'none'; // clear old error
-    
-    auth.createUserWithEmailAndPassword(email, pass)
-        .then((userCredential) => {
-            db.ref('users/' + userCredential.user.uid + '/profile').set({ email: email, joinDate: Date.now() });
-        })
-        .catch((error) => showError("❌ Sign Up Error: " + error.message));
+function performLogout() { localStorage.removeItem("vault_username"); location.reload(); }
+
+function updateUserUI() {
+    document.getElementById('student-name').innerText = currentUsername;
+    document.getElementById('dash-student-name').innerText = currentUsername;
+    if(document.getElementById('sidebar-name')) document.getElementById('sidebar-name').innerText = currentUsername;
+    if(document.getElementById('sidebar-username')) document.getElementById('sidebar-username').innerText = "@" + currentUsername;
 }
 
-function submitLogin() {
-    let email = document.getElementById('auth-email').value.trim();
-    let pass = document.getElementById('auth-pass').value;
-    if (!email || !pass) { showError("⚠️ Email and Password required!"); return; }
-    
-    document.getElementById('auth-error').style.display = 'none'; // clear old error
-
-    auth.signInWithEmailAndPassword(email, pass)
-        .catch((error) => showError("❌ Login Error: " + error.message));
-}
-
-function performLogout() { auth.signOut().catch((error) => alert(error.message)); }
-
-// ========================================================
-// 3. DASHBOARD & DATA FETCHING
-// ========================================================
 function fetchUserPurchases() {
-    if(!currentUid) return;
-    db.ref('users/' + currentUid + '/purchased').on('value', snap => {
+    if(!db) return;
+    db.ref('users/' + currentUsername + '/purchased').on('value', snap => {
         userPurchases = snap.val() || {};
-        let isPro = userPurchases['all'] || userPurchases['main'] || userPurchases['advanced'] || userPurchases['neet'] || userPurchases['mhtcet'];
-        let tgBanner = document.getElementById('pro-benefits-section');
-        
-        if(tgBanner) {
-            if(isPro) { tgBanner.classList.remove('hidden'); updateCertificateData(); } 
-            else { tgBanner.classList.add('hidden'); }
-        }
         if(document.getElementById('test-selection-screen').classList.contains('active-screen')){ generateGrids(); }
     });
 }
 
-function updateCertificateData() {
-    let name = currentUserEmail.split('@')[0].toUpperCase();
-    document.getElementById('cert-name').innerText = name;
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    let d = new Date();
-    document.getElementById('cert-month').innerText = monthNames[d.getMonth()] + " " + d.getFullYear();
-    
-    if(db && currentUid) {
-        db.ref('users').once('value').then(usersSnap => {
-            let totalStudents = 500 + usersSnap.numChildren();
-            db.ref('users/' + currentUid + '/history').once('value').then(histSnap => {
-                let history = histSnap.val();
-                let maxScore = 0; let userRank = totalStudents; let perfTag = "GOOD";
-                if (history) {
-                    Object.values(history).forEach(test => { if (test.score > maxScore) maxScore = test.score; });
-                    if (maxScore > 200) { userRank = Math.floor(Math.random()*20)+1; perfTag = "BEST"; } 
-                    else if (maxScore > 100) { userRank = Math.floor(Math.random()*100)+50; perfTag = "BETTER"; } 
-                    else if (maxScore > 0) { userRank = Math.floor(Math.random()*200)+150; perfTag = "GOOD"; }
-                } else { userRank = totalStudents - 10; }
-                document.getElementById('cert-rank').innerText = `${userRank} / ${totalStudents}`;
-                document.getElementById('cert-perf').innerText = perfTag;
-            });
-        });
-    }
-}
-
 function openDashboard(examType) {
     activeExamTarget = examType;
-    let titleMap = { 'main': 'JEE MAIN', 'advanced': 'JEE ADVANCED', 'neet': 'NEET UG', 'mhtcet': 'MHT CET' };
-    document.getElementById('dashboard-header-title').innerText = titleMap[examType] + " VAULT";
-    document.getElementById('dash-target-title').innerText = `TARGET: ${titleMap[examType]} | SECURE`;
+    let titleMap = { 'main': 'JEE MAIN VAULT', 'advanced': 'JEE ADVANCED VAULT', 'neet': 'NEET UG VAULT', 'mhtcet': 'MHT CET VAULT' };
+    document.getElementById('dashboard-header-title').innerText = titleMap[examType];
+    document.getElementById('dash-target-title').innerText = `Target: ${titleMap[examType]} | System Ready`;
     
     if(examType === 'main') document.getElementById('daily-challenge-card').classList.remove('hidden');
     else document.getElementById('daily-challenge-card').classList.add('hidden');
+
+    let nPhy = document.getElementById('notes-phy-title');
+    let nChem = document.getElementById('notes-chem-title');
+    let nMathBio = document.getElementById('notes-mathbio-title');
+    let ntaTabMathBio = document.getElementById('nta-tab-mathbio');
+
+    if(examType === 'main' || examType === 'mhtcet') {
+        nPhy.innerText = 'Physics Notes'; nChem.innerText = 'Chemistry Notes';
+        nMathBio.innerText = 'Mathematics Notes'; ntaTabMathBio.innerText = 'Mathematics'; 
+    } else if (examType === 'advanced') {
+        nPhy.innerText = 'Adv. Physics Notes'; nChem.innerText = 'Adv. Chemistry Notes';
+        nMathBio.innerText = 'Adv. Mathematics Notes'; ntaTabMathBio.innerText = 'Mathematics'; 
+    } else if (examType === 'neet') {
+        nPhy.innerText = 'Physics Notes'; nChem.innerText = 'Chemistry Notes';
+        nMathBio.innerText = 'Biology Notes'; ntaTabMathBio.innerText = 'Biology'; 
+    }
     
     switchScreen('exam-selection-screen', 'dashboard-screen');
     document.getElementById('side-menu').classList.add('hidden');
     generateGrids();
 }
 
-function triggerPayment(amount, planType) {
-    if(!currentUid) { alert("Please login first!"); return; }
+function openPremiumModal() {
+    document.getElementById('modal-target-name').innerText = activeExamTarget.toUpperCase() + " Pack";
+    document.getElementById('premium-modal').classList.remove('hidden');
+}
+function closePremiumModal() { document.getElementById('premium-modal').classList.add('hidden'); }
+
+async function triggerPayment(amountInPaise, planType) {
     closePremiumModal();
-    alert(`Initiating ₹${amount/100} payment for ${planType.toUpperCase()}...`);
-    db.ref('users/' + currentUid + '/purchased/' + planType).set(true).then(() => {
-        alert("Payment Successful! Welcome to Pro Vault.");
-        generateGrids(); 
-    }).catch(e => alert(e));
+    alert(`Initiating ₹${amountInPaise/100} payment...`);
+    try {
+        const response = await fetch('/api/createOrder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: amountInPaise, currency: "INR" }) });
+        if (!response.ok) { alert("Backend API Error!"); return; }
+        const orderData = await response.json();
+        var options = {
+            "key": "rzp_test_TXaJFc0u3LxNqI", "amount": orderData.amount, "currency": orderData.currency,
+            "name": "Ranker's Vault Pro", "description": "Pro Unlock", "order_id": orderData.id,
+            "config": { "display": { "blocks": { "upi_block": { "name": "Pay via QR / UPI", "instruments": [ {"method": "upi"} ] } }, "sequence": ["block.upi_block"], "preferences": { "show_default_blocks": true } } },
+            "handler": function (response){
+                db.ref('users/' + currentUsername + '/purchased/' + planType).set(true)
+                .then(() => { alert("Payment Successful!"); generateGrids(); }).catch(e => console.error(e));
+            },
+            "prefill": { "name": currentUser, "email": currentUsername + "@rankersvault.com", "contact": "9000000000" },
+            "theme": { "color": "#10b981" }
+        };
+        var rzp = new Razorpay(options); rzp.on('payment.failed', function (r){ alert("Failed! " + r.error.description); }); rzp.open();
+    } catch (error) { console.error(error); }
 }
 
 function listenToTestControls() {
@@ -194,14 +146,10 @@ function generateGrids() {
     if(dayGrid && activeExamTarget === 'main') {
         dayGrid.innerHTML = '';
         for(let i=1; i<=75; i++) {
-            let isGloballyLive = testControls[`day_${i}`] === true; 
+            let isLive = testControls[`day_${i}`] === true; 
             let btn = document.createElement('button');
-            btn.className = isGloballyLive ? 'day-unlocked' : 'day-locked';
-            btn.innerText = isGloballyLive ? `Day ${i}` : `Day ${i} 🔒`;
-            btn.onclick = () => {
-                if(isGloballyLive) showAllTheBest(`day_${i}`, 15);
-                else alert("Relax bro! This Daily PYQ is locked by the Founder.");
-            };
+            btn.className = isLive ? 'day-unlocked' : 'day-locked'; btn.innerText = isLive ? `Day ${i}` : `Day ${i} 🔒`;
+            btn.onclick = () => { if(isLive) showAllTheBest(`day_${i}`, 15); else alert("Locked by Founder."); };
             dayGrid.appendChild(btn);
         }
     }
@@ -209,26 +157,31 @@ function generateGrids() {
     if(!testGrid) return;
     testGrid.innerHTML = '';
     let prefix = activeExamTarget === 'main' ? 'full_test_' : (activeExamTarget + '_test_');
-    let hasPro = userPurchases['all'] === true; let hasTarget = userPurchases[activeExamTarget] === true; let isPremiumUser = hasPro || hasTarget;
+    let hasPro = userPurchases['all'] === true; let hasTarget = userPurchases[activeExamTarget] === true; let isPremium = hasPro || hasTarget;
 
     for(let i=1; i<=10; i++) {
-        let testKey = prefix + i; let isGloballyLive = testControls[testKey] === true || testControls[`full_test_${i}`] === true; let isDemoTest = (i === 1); 
-        let canAccess = false;
-        if(isGloballyLive) { if(isDemoTest || isPremiumUser) canAccess = true; }
-
+        let testKey = prefix + i; let isLive = testControls[testKey] === true || testControls[`full_test_${i}`] === true; let isDemo = (i === 1); 
+        let canAccess = false; if(isLive) { if(isDemo || isPremium) canAccess = true; }
         let btn = document.createElement('button');
-        btn.className = canAccess ? 'day-unlocked' : 'day-locked';
-        btn.innerText = canAccess ? `Test ${i}` : `Test ${i} 🔒`;
+        btn.className = canAccess ? 'day-unlocked' : 'day-locked'; btn.innerText = canAccess ? `Test ${i}` : `Test ${i} 🔒`;
         btn.onclick = () => {
-            if(!isGloballyLive) alert("Relax bro! This test is currently locked by the Founder.");
-            else if(!canAccess) document.getElementById('premium-modal').classList.remove('hidden');
-            else showAllTheBest(testKey, 150);
+            if(!isLive) alert("Locked by Founder."); else if(!canAccess) openPremiumModal(); else showAllTheBest(testKey, 150);
         };
         testGrid.appendChild(btn);
     }
 }
 
-// System Navigations
+// GUI and Navigations
+function createLeaves() {
+    const container = document.getElementById('leaf-container');
+    const leafShapes = ['🍁', '🍂', '✨', '🍃'];
+    for(let i=0; i<20; i++) {
+        let leaf = document.createElement('div'); leaf.className = 'leaf'; leaf.innerText = leafShapes[Math.floor(Math.random() * leafShapes.length)];
+        leaf.style.left = Math.random() * 100 + 'vw'; leaf.style.animationDuration = (Math.random() * 6 + 7) + 's, ' + (Math.random() * 3 + 2) + 's';
+        leaf.style.animationDelay = (Math.random() * 5) + 's, ' + (Math.random() * 2) + 's'; leaf.style.fontSize = (Math.random() * 12 + 14) + 'px';
+        container.appendChild(leaf);
+    }
+}
 function switchScreen(hideId, showId) {
     document.getElementById(hideId).classList.add('hidden'); document.getElementById(hideId).classList.remove('active-screen');
     document.getElementById(showId).classList.remove('hidden'); document.getElementById(showId).classList.add('active-screen');
@@ -245,16 +198,18 @@ function goBack() {
 }
 function updateSystemUI(activeScreenId) {
     const noBackScreens = ['landing-screen', 'exam-selection-screen', 'nta-screen', 'analysis-screen'];
-    if(noBackScreens.includes(activeScreenId)) document.getElementById('universal-back').classList.add('hidden');
-    else document.getElementById('universal-back').classList.remove('hidden');
-    if(activeScreenId === 'nta-screen') { document.body.className = 'theme-nta'; document.getElementById('leaf-container').classList.add('hidden'); } 
-    else { document.body.className = 'theme-premium'; document.getElementById('leaf-container').classList.remove('hidden'); }
+    if(noBackScreens.includes(activeScreenId)) document.getElementById('universal-back').classList.add('hidden'); else document.getElementById('universal-back').classList.remove('hidden');
+    if(activeScreenId === 'nta-screen') { document.body.className = 'theme-nta'; document.getElementById('floating-dock').classList.add('hidden'); document.getElementById('leaf-container').classList.add('hidden'); document.getElementById('science-bg').classList.add('hidden'); } 
+    else { document.body.className = 'theme-premium'; document.getElementById('floating-dock').classList.remove('hidden'); document.getElementById('leaf-container').classList.remove('hidden'); document.getElementById('science-bg').classList.remove('hidden'); }
 }
 function toggleSidebar() { document.getElementById('side-menu').classList.toggle('hidden'); }
-function closePremiumModal() { document.getElementById('premium-modal').classList.add('hidden'); }
 function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-screen'); }
 function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
-function showAllTheBest(testId, timeInMins) { pendingTestId = testId; pendingTestTime = timeInMins; startTest(pendingTestId, pendingTestTime); }
+function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
+function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
+function showAllTheBest(testId, timeInMins) { pendingTestId = testId; pendingTestTime = timeInMins; document.getElementById('all-best-modal').classList.remove('hidden'); }
+function closeAllBestModal() { document.getElementById('all-best-modal').classList.add('hidden'); }
+function confirmStartTest() { closeAllBestModal(); startTest(pendingTestId, pendingTestTime); }
 
 async function fetchQuestions(testId) {
     let fileName = '';
@@ -262,10 +217,7 @@ async function fetchQuestions(testId) {
     else if (activeExamTarget === 'advanced') fileName = 'data/advanced_full_tests.json';
     else if (activeExamTarget === 'neet') fileName = 'data/neet_full_tests.json';
     else if (activeExamTarget === 'mhtcet') fileName = 'data/mhtcet_full_tests.json';
-    try {
-        const response = await fetch(fileName); const database = await response.json();
-        if (!database[testId]) { alert(`Error: Test missing.`); return null; } return database[testId];
-    } catch (e) { alert(`Test load failed! Check JSON data files.`); return null; }
+    try { const response = await fetch(fileName); const database = await response.json(); if (!database[testId]) return null; return database[testId]; } catch (e) { return null; }
 }
 
 async function startTest(testId, timeInMins) {
@@ -314,13 +266,10 @@ function clearResponse() { testState[questions[currentSubject][currentQIndex].id
 function submitTestEarly() { if(confirm("Submit the test now?")) { clearInterval(timerInterval); calculateAndShowResult(); } }
 
 function calculateAndShowResult() {
-    let totalPositive = 0, totalNegative = 0, totalQs = 0;
-    Object.keys(questions).forEach(sub => { questions[sub].forEach(q => { totalQs++; let state = testState[q.id]; if(state.selectedOpt !== null) { if(state.selectedOpt === q.ans) { totalPositive += 4; } else if (q.type === 'mcq') { totalNegative += 1; } } }); });
+    let totalPositive = 0, totalNegative = 0;
+    Object.keys(questions).forEach(sub => { questions[sub].forEach(q => { let state = testState[q.id]; if(state.selectedOpt !== null) { if(state.selectedOpt === q.ans) { totalPositive += 4; } else if (q.type === 'mcq') { totalNegative += 1; } } }); });
     let finalScore = totalPositive - totalNegative;
-    document.getElementById('final-score').innerText = `${finalScore} / ${totalQs * 4}`;
+    document.getElementById('final-score').innerText = `${finalScore}`;
     document.getElementById('time-taken').innerText = `${Math.floor(timeSpent / 60)}m ${timeSpent % 60}s`;
     switchScreen('nta-screen', 'analysis-screen');
-    if (pendingTestId && db && currentUid) {
-        db.ref('users/' + currentUid + '/history/' + pendingTestId).set({ score: finalScore, timestamp: Date.now() }).then(() => updateCertificateData());
-    }
 }
