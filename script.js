@@ -6,7 +6,7 @@ let totalTime;
 let timeSpent = 0;
 let testState = {}; 
 let testControls = {}; 
-let userPurchases = {}; // Naya variable
+let userPurchases = {}; 
 
 let pendingTestId = "";
 let pendingTestTime = 0;
@@ -95,7 +95,7 @@ function fetchUserPurchases() {
     });
 }
 
-// ---------------- DASHBOARD & FREEMIUM LOGIC ----------------
+// ---------------- DYNAMIC UI (75 DAYS & NOTES) ----------------
 function openDashboard(examType) {
     activeExamTarget = examType;
     let titleMap = {
@@ -104,8 +104,47 @@ function openDashboard(examType) {
         'neet': 'NEET UG VAULT',
         'mhtcet': 'MHT CET VAULT'
     };
-    document.getElementById('dashboard-header-title').innerText = titleMap[examType] || 'PRO VAULT';
+    
+    document.getElementById('dashboard-header-title').innerText = titleMap[examType];
     document.getElementById('dash-target-title').innerText = `Target: ${titleMap[examType]} | System Ready`;
+    
+    // 1. Daily Challenge Visibility (Only for Main)
+    if(examType === 'main') {
+        document.getElementById('daily-challenge-card').classList.remove('hidden');
+    } else {
+        document.getElementById('daily-challenge-card').classList.add('hidden');
+    }
+
+    // 2. Dynamic Notes (PCM vs PCB vs ADV PCM)
+    let nPhy = document.getElementById('notes-phy-title');
+    let nChem = document.getElementById('notes-chem-title');
+    let nMathBio = document.getElementById('notes-mathbio-title');
+    let dMathBio = document.getElementById('notes-mathbio-desc');
+    let ntaTabMathBio = document.getElementById('nta-tab-mathbio');
+    let analysisLabel = document.getElementById('analysis-mathbio-label');
+
+    if(examType === 'main' || examType === 'mhtcet') {
+        nPhy.innerText = 'Physics Notes';
+        nChem.innerText = 'Chemistry Notes';
+        nMathBio.innerText = 'Mathematics Notes';
+        dMathBio.innerText = 'Calculus, Algebra & Coordinate Geometry.';
+        ntaTabMathBio.innerText = 'Mathematics';
+        analysisLabel.innerText = 'Maths';
+    } else if (examType === 'advanced') {
+        nPhy.innerText = 'Adv. Physics Notes';
+        nChem.innerText = 'Adv. Chemistry Notes';
+        nMathBio.innerText = 'Adv. Mathematics Notes';
+        dMathBio.innerText = 'High Level Calculus, Algebra & Geometry.';
+        ntaTabMathBio.innerText = 'Mathematics';
+        analysisLabel.innerText = 'Maths';
+    } else if (examType === 'neet') {
+        nPhy.innerText = 'Physics Notes';
+        nChem.innerText = 'Chemistry Notes';
+        nMathBio.innerText = 'Biology Notes';
+        dMathBio.innerText = 'Botany & Zoology Premium Modules.';
+        ntaTabMathBio.innerText = 'Biology';
+        analysisLabel.innerText = 'Biology';
+    }
     
     switchScreen('exam-selection-screen', 'dashboard-screen');
     document.getElementById('side-menu').classList.add('hidden');
@@ -133,10 +172,7 @@ async function startRazorpayPayment(amountInPaise, planType) {
             body: JSON.stringify({ amount: amountInPaise, currency: "INR" }) 
         });
 
-        if (!response.ok) { 
-            alert("Backend API Error! Check Vercel deployment.");
-            return; 
-        }
+        if (!response.ok) { alert("Backend API Error! Check Vercel deployment."); return; }
         
         const orderData = await response.json();
         if (!orderData.id) { alert("Razorpay Error: Secret missing backend me!"); return; }
@@ -177,7 +213,7 @@ async function startRazorpayPayment(amountInPaise, planType) {
     }
 }
 
-// ---------------- GRIDS (Demo Unlocking Logic) ----------------
+// ---------------- GRIDS (75 Days & Pro Tests Unlocking Logic) ----------------
 function listenToTestControls() {
     if(db) {
         db.ref('test_controls').on('value', (snapshot) => {
@@ -188,25 +224,40 @@ function listenToTestControls() {
 }
 
 function generateGrids() {
+    // 1. Daily 75 Grid (Only relevant for Main)
+    const dayGrid = document.getElementById('days-grid');
+    if(dayGrid && activeExamTarget === 'main') {
+        dayGrid.innerHTML = '';
+        for(let i=1; i<=75; i++) {
+            let isGloballyLive = testControls[`day_${i}`] === true; 
+            let btn = document.createElement('button');
+            btn.className = isGloballyLive ? 'day-unlocked' : 'day-locked';
+            btn.innerText = isGloballyLive ? `Day ${i}` : `Day ${i} 🔒`;
+            btn.onclick = () => {
+                if(isGloballyLive) showAllTheBest(`day_${i}`, 15);
+                else alert("Relax bro! This Daily PYQ is locked by the Founder.");
+            };
+            dayGrid.appendChild(btn);
+        }
+    }
+
+    // 2. Pro Tests Grid
     const testGrid = document.getElementById('tests-grid');
     if(!testGrid) return;
     
     testGrid.innerHTML = '';
     let prefix = activeExamTarget === 'main' ? 'full_test_' : (activeExamTarget + '_test_');
     
-    // Check if user has premium for 'all' or this specific 'activeExamTarget'
+    document.getElementById('grid-exam-title').innerText = `10 Full Length Tests (${activeExamTarget.toUpperCase()})`;
+
     let hasPro = userPurchases['all'] === true;
     let hasTarget = userPurchases[activeExamTarget] === true;
     let isPremiumUser = hasPro || hasTarget;
 
     for(let i=1; i<=10; i++) {
         let testKey = prefix + i;
-        
-        // 1. Is it globally ON by Founder?
         let isGloballyLive = testControls[testKey] === true || testControls[`full_test_${i}`] === true;
-        
-        // 2. Test 1 is Free Demo
-        let isDemoTest = (i === 1);
+        let isDemoTest = (i === 1); // Test 1 free
         
         let canAccess = false;
         if(isGloballyLive) {
@@ -253,7 +304,7 @@ function switchScreen(hideId, showId) {
     document.getElementById(showId).classList.add('active-screen');
     if(showId !== screenHistory[screenHistory.length - 1]) screenHistory.push(showId);
     updateSystemUI(showId);
-    if(showId === 'test-selection-screen') generateGrids();
+    if(showId === 'test-selection-screen' || showId === 'day-selection-screen') generateGrids();
 }
 
 function goBack() {
@@ -292,6 +343,7 @@ function updateSystemUI(activeScreenId) {
     }
 }
 
+function openDaySelection() { switchScreen('dashboard-screen', 'day-selection-screen'); }
 function openTestSelection() { switchScreen('dashboard-screen', 'test-selection-screen'); }
 function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
 function closeInfoModal() { document.getElementById('info-modal').classList.add('hidden'); }
@@ -319,7 +371,7 @@ async function fetchQuestions(testId) {
         return database[testId];
     } catch (e) {
         console.error("JSON Error:", e);
-        alert(`Bhai, test load nahi hua! ${fileName} GitHub me missing hai.`);
+        alert(`Bhai, test load nahi hua! Shayad tune ${fileName} abhi tak GitHub me add nahi kiya hai.`);
         return null; 
     }
 }
@@ -352,10 +404,18 @@ function startTimer() {
 }
 
 function switchSubject(subName) {
+    // If user clicks a subject but it's not in the JSON (e.g. click Maths in NEET), ignore
     if(!questions[subName]) return; 
+    
     currentSubject = subName;
     currentQIndex = 0;
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === subName));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText === subName);
+        // Hide tabs that don't exist in the JSON
+        if(!questions[btn.innerText]) btn.style.display = 'none';
+        else btn.style.display = 'inline-block';
+    });
+    
     document.getElementById('current-subject-name').innerText = subName;
     buildPalette();
     loadQuestion(0);
@@ -459,10 +519,10 @@ function calculateAndShowResult() {
     else { document.getElementById('safe-zone-banner').classList.add('hidden'); }
 
     setTimeout(() => {
-        ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
+        ['Physics', 'Chemistry', 'Mathematics', 'Biology'].forEach(sub => {
             if(stats[sub]) {
                 let pct = stats[sub].t > 0 ? Math.round((stats[sub].p / stats[sub].t) * 100) : 0;
-                let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : 'phy');
+                let shortSub = sub === 'Mathematics' ? 'math' : (sub === 'Chemistry' ? 'chem' : (sub === 'Physics' ? 'phy' : 'math'));
                 let bar = document.getElementById(`bar-${shortSub}`);
                 let pctText = document.getElementById(`pct-${shortSub}`);
                 if(bar) bar.style.width = `${pct}%`;
