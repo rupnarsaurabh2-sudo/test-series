@@ -7,52 +7,50 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
-        body { background: radial-gradient(circle at top center, #1a0b2e 0%, #090212 50%, #000000 100%); color: #e2e8f0; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
+        body { background: #050505; color: #e2e8f0; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); }
         .gold-text { color: #d4af37; }
-        .glow-text { text-shadow: 0 0 10px rgba(212, 175, 55, 0.8); }
-        .glass-panel { background: rgba(0,0,0,0.6); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 25px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .glow-text { text-shadow: 0 0 15px rgba(212, 175, 55, 0.8); }
+        .glass-panel { background: rgba(20,20,20,0.8); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);}
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
-        th { color: #d4af37; font-weight: bold; background: rgba(0,0,0,0.4); text-transform: uppercase; font-size: 13px; letter-spacing: 1px;}
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        th { color: #d4af37; font-weight: bold; background: rgba(0,0,0,0.6); text-transform: uppercase; font-size: 13px; letter-spacing: 1px;}
         td { color: #cbd5e1; font-size: 15px; }
         tr:hover { background: rgba(212,175,55,0.05); }
         .btn { background: linear-gradient(135deg, #d4af37, #aa7c11); color: #000; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(212,175,55,0.3); padding-bottom: 15px; margin-bottom: 25px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 15px; margin-bottom: 25px; }
         
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
-        .pass-input { padding: 15px; margin: 20px; border-radius: 8px; border: 2px solid #d4af37; background: #111; color: #fff; width: 300px; font-size: 18px; text-align: center; outline: none; }
-        .pass-input:focus { box-shadow: 0 0 15px rgba(212,175,55,0.3); }
+        .pass-input { padding: 15px; margin: 20px; border-radius: 8px; border: 1px solid #d4af37; background: #111; color: #fff; width: 300px; font-size: 16px; outline: none; }
         select { padding: 12px; background: #111; color: #d4af37; border: 1px solid #d4af37; border-radius: 6px; outline: none; font-size: 15px; cursor: pointer; }
 
         .toggle-btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; width: 85px; transition: 0.3s; margin-bottom: 10px; }
         .toggle-on { background: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .toggle-off { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.4); }
-        .control-grid { display: flex; flex-wrap: wrap; gap: 15px; max-height: 250px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-        .control-item { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; width: 100px; }
+        .control-grid { display: flex; flex-wrap: wrap; gap: 15px; max-height: 250px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .control-item { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; width: 100px; }
     </style>
 </head>
 <body>
     <div id="login-overlay">
-        <h1 class="gold-text glow-text" style="font-size: 40px; margin-bottom: 10px;">SYSTEM LOCKED</h1>
-        <p style="color: #64748b; margin-bottom: 20px;">Founder Authentication Required</p>
-        <input type="password" id="admin-pass" class="pass-input" placeholder="Enter Master Key">
-        <button class="btn" onclick="checkPass()">Initialize Terminal ⚡</button>
+        <h1 class="gold-text glow-text" style="font-size: 40px; margin-bottom: 10px;">FOUNDER TERMINAL</h1>
+        <p style="color: #64748b; margin-bottom: 20px;">Restricted Access Layer</p>
+        <input type="password" id="admin-pass" class="pass-input" placeholder="Enter Master Key" style="text-align: center;">
+        <button class="btn" onclick="checkPass()">Initialize ⚡</button>
     </div>
 
     <div id="admin-dashboard" style="display:none; max-width: 1200px; margin: 0 auto;">
         <div class="header">
-            <h1 class="gold-text glow-text" style="margin: 0;">👑 GOD MODE | Founder Terminal</h1>
+            <h1 class="gold-text glow-text" style="margin: 0;">👑 GOD MODE</h1>
             <button class="btn" style="background: transparent; border: 1px solid #ef4444; color: #ef4444;" onclick="location.reload()">Lock System</button>
         </div>
 
-        <!-- MANUAL USER APPROVAL BYPASS -->
-        <div class="glass-panel" style="border-color: #10b981;">
-            <h2 class="gold-text" style="margin-top: 0; color:#10b981;">🗝️ Manual Access (Bypass KYC)</h2>
-            <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Agar bacche ne direct QR pe paisa bheja hai, toh uska username yahan daal kar unlock kar de.</p>
+        <div class="glass-panel" style="border-color: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.1);">
+            <h2 style="margin-top: 0; color:#10b981;">🗝️ Grant Free Access (Email Search)</h2>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Kisi bhi gareeb ya deserving bacche ki Email ID daal kar use direct Pro Access de.</p>
             
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <input type="text" id="manual-user" class="pass-input" placeholder="Username (e.g. saurav)" style="margin: 0; width: 250px; text-align: left; font-size: 15px;">
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <input type="email" id="manual-email" class="pass-input" placeholder="Student's Email (e.g. rahul@gmail.com)" style="margin: 0; width: 300px;">
                 <select id="manual-plan">
                     <option value="main">JEE Main Pack</option>
                     <option value="advanced">JEE Advanced Pack</option>
@@ -60,121 +58,109 @@
                     <option value="mhtcet">MHT CET Pack</option>
                     <option value="all">ALL ACCESS PRO (299)</option>
                 </select>
-                <button class="btn" onclick="grantManualAccess()" style="background: #10b981; color: #fff;">Grant Premium Access</button>
+                <button class="btn" onclick="grantManualAccess()" style="background: #10b981; color: #fff;">Grant Access</button>
             </div>
         </div>
 
         <div class="glass-panel">
-            <h2 class="gold-text" style="margin-top: 0;">⚙️ Global Test Locks (Live ON/OFF)</h2>
-
-            <!-- RESTORED: 75 DAYS CONTROLS -->
-            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Mains - Daily 75 PYQs</h3>
+            <h2 class="gold-text" style="margin-top: 0;">⚙️ Global Test Control Center</h2>
+            <h3 style="color: #fff; font-size: 14px; margin-top: 20px;">JEE Mains - Daily 75 PYQs</h3>
             <div class="control-grid" id="daily-controls"></div>
-            
-            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Mains - 10 Full Length Tests</h3>
+            <h3 style="color: #fff; font-size: 14px; margin-top: 20px;">JEE Mains - Full Tests</h3>
             <div class="control-grid" id="full-test-controls"></div>
-            
-            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Advanced - 10 Tests</h3>
+            <h3 style="color: #fff; font-size: 14px; margin-top: 20px;">JEE Advanced - Full Tests</h3>
             <div class="control-grid" id="adv-test-controls"></div>
-
-            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">NEET UG - 10 Tests</h3>
+            <h3 style="color: #fff; font-size: 14px; margin-top: 20px;">NEET UG - Full Tests</h3>
             <div class="control-grid" id="neet-test-controls"></div>
-
-            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">MHT CET - 10 Tests</h3>
+            <h3 style="color: #fff; font-size: 14px; margin-top: 20px;">MHT CET - Full Tests</h3>
             <div class="control-grid" id="cet-test-controls"></div>
         </div>
 
         <div class="glass-panel">
-            <h2 class="gold-text" style="margin-top: 0;">👥 Registered Scholars Database</h2>
+            <h2 class="gold-text" style="margin-top: 0;">👥 Registered Scholars</h2>
             <table>
-                <thead><tr><th>Username</th><th>Full Name</th><th>Joined On</th></tr></thead>
-                <tbody id="users-table"><tr><td colspan="3">Syncing with Firebase...</td></tr></tbody>
-            </table>
-        </div>
-
-        <div class="glass-panel">
-            <h2 class="gold-text" style="margin-top: 0;">🏆 Central Leaderboard Engine</h2>
-            <select id="test-selector" onchange="loadLeaderboard()" style="margin-bottom: 20px;">
-                <option value="">Fetch Test Data...</option>
-            </select>
-            <table>
-                <thead><tr><th>Rank</th><th>Student</th><th>Score</th><th>Time Taken</th><th>Timestamp</th></tr></thead>
-                <tbody id="leaderboard-table"><tr><td colspan="5">Select a test module to view live rankings.</td></tr></tbody>
+                <thead><tr><th>Email ID</th><th>Join Date</th></tr></thead>
+                <tbody id="users-table"><tr><td colspan="2">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        let liveControls = {};
-
         function checkPass() {
             if(document.getElementById('admin-pass').value === 'LocalFix@2026') { 
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
                 initGodMode();
-            } else { alert('ACCESS DENIED: Incorrect Master Key.'); }
+            } else { alert('ACCESS DENIED!'); }
         }
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-CNz9PBUbIn0jflol8LJc1f_ZErwVyiU",
             authDomain: "rankersvault-5e76f.firebaseapp.com",
             projectId: "rankersvault-5e76f",
-            storageBucket: "rankersvault-5e76f.firebasestorage.app",
-            messagingSenderId: "56527682160",
-            appId: "1:56527682160:web:a88fdbea88af7d30b1d2b5",
             databaseURL: "https://rankersvault-5e76f-default-rtdb.firebaseio.com"
         };
-        
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
         function initGodMode() {
             loadTestControls();
             loadUsers();
-            loadTestList();
         }
 
         function grantManualAccess() {
-            let user = document.getElementById('manual-user').value.trim().toLowerCase();
+            let emailToFind = document.getElementById('manual-email').value.trim().toLowerCase();
             let plan = document.getElementById('manual-plan').value;
-            if(!user) return alert("Please enter a username!");
+            if(!emailToFind) return alert("Please enter an Email ID!");
             
-            if(confirm(`Are you sure you want to unlock ${plan.toUpperCase()} for @${user}?`)) {
-                db.ref('users/' + user + '/purchased/' + plan).set(true)
-                .then(() => alert(`Success! ${plan.toUpperCase()} unlocked for @${user}.`))
-                .catch(e => alert("Error unlocking: " + e.message));
-            }
+            // Search Database for Email to find the UID
+            db.ref('users').once('value', snap => {
+                let users = snap.val();
+                let targetUid = null;
+                
+                for(let uid in users) {
+                    if(users[uid].profile && users[uid].profile.email.toLowerCase() === emailToFind) {
+                        targetUid = uid;
+                        break;
+                    }
+                }
+                
+                if(targetUid) {
+                    if(confirm(`User found! Grant ${plan.toUpperCase()} to ${emailToFind}?`)) {
+                        db.ref('users/' + targetUid + '/purchased/' + plan).set(true)
+                        .then(() => alert(`Success! Access Granted.`))
+                        .catch(e => alert("Error: " + e.message));
+                    }
+                } else {
+                    alert("No student found with this Email ID!");
+                }
+            });
         }
 
         function loadTestControls() {
             db.ref('test_controls').on('value', (snapshot) => {
-                liveControls = snapshot.val() || {};
-                
-                // RESTORED 75 DAYS FUNCTION CALL HERE
-                renderControlGrid('daily-controls', 'day_', 75, 'Day'); 
-                
-                renderControlGrid('full-test-controls', 'full_test_', 10, 'Test');
-                renderControlGrid('adv-test-controls', 'advanced_test_', 10, 'Adv Test');
-                renderControlGrid('neet-test-controls', 'neet_test_', 10, 'NEET Test');
-                renderControlGrid('cet-test-controls', 'mhtcet_test_', 10, 'CET Test');
+                let liveControls = snapshot.val() || {};
+                renderControlGrid('daily-controls', 'day_', 75, 'Day', liveControls); 
+                renderControlGrid('full-test-controls', 'full_test_', 10, 'Test', liveControls);
+                renderControlGrid('adv-test-controls', 'advanced_test_', 10, 'Adv Test', liveControls);
+                renderControlGrid('neet-test-controls', 'neet_test_', 10, 'NEET Test', liveControls);
+                renderControlGrid('cet-test-controls', 'mhtcet_test_', 10, 'CET Test', liveControls);
             });
         }
 
-        function renderControlGrid(containerId, prefix, count, label) {
+        function renderControlGrid(containerId, prefix, count, label, liveControls) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             for(let i=1; i<=count; i++) {
                 let testId = prefix + i;
                 let isLive = liveControls[testId] === true;
                 let btnClass = isLive ? 'toggle-on' : 'toggle-off';
-                let btnText = isLive ? 'ON' : 'OFF';
-
+                
                 container.innerHTML += `
                     <div class="control-item">
-                        <span style="color: #cbd5e1; font-size: 13px; margin-bottom: 5px; font-weight: bold;">${label} ${i}</span>
-                        <button class="toggle-btn ${btnClass}" onclick="toggleTestStatus('${testId}', ${!isLive})">${btnText}</button>
-                    </div>
-                `;
+                        <span style="color: #cbd5e1; font-size: 12px; margin-bottom: 5px;">${label} ${i}</span>
+                        <button class="toggle-btn ${btnClass}" onclick="toggleTestStatus('${testId}', ${!isLive})">${isLive?'ON':'OFF'}</button>
+                    </div>`;
             }
         }
 
@@ -188,48 +174,14 @@
                 const tbody = document.getElementById('users-table');
                 tbody.innerHTML = '';
                 if(users) {
-                    Object.keys(users).reverse().forEach(username => {
-                        let u = users[username];
-                        let date = u.joinDate ? new Date(u.joinDate).toLocaleString('en-IN') : 'N/A';
-                        let fullName = u.fullName || u.username;
-                        tbody.innerHTML += `<tr><td style="font-weight:bold;">@${u.username}</td><td>${fullName}</td><td>${date}</td></tr>`;
+                    Object.keys(users).forEach(uid => {
+                        let u = users[uid].profile;
+                        if(u && u.email) {
+                            let date = new Date(u.joinDate).toLocaleDateString('en-IN');
+                            tbody.innerHTML += `<tr><td style="color:#d4af37;">${u.email}</td><td>${date}</td></tr>`;
+                        }
                     });
-                } else { tbody.innerHTML = '<tr><td colspan="3">No scholars registered yet.</td></tr>'; }
-            });
-        }
-
-        function loadTestList() {
-            db.ref('leaderboards').on('value', (snapshot) => {
-                const tests = snapshot.val();
-                const selector = document.getElementById('test-selector');
-                selector.innerHTML = '<option value="">-- Select Test Module --</option>';
-                if(tests) {
-                    for(let testId in tests) {
-                        let displayName = testId.replace(/_/g, ' ').toUpperCase();
-                        selector.innerHTML += `<option value="${testId}">${displayName}</option>`;
-                    }
-                }
-            });
-        }
-
-        function loadLeaderboard() {
-            const testId = document.getElementById('test-selector').value;
-            const tbody = document.getElementById('leaderboard-table');
-            if(!testId) { tbody.innerHTML = '<tr><td colspan="5">Select a test module to view live rankings.</td></tr>'; return; }
-            
-            db.ref('leaderboards/' + testId).orderByChild('score').on('value', (snapshot) => {
-                tbody.innerHTML = '';
-                let records = [];
-                snapshot.forEach(child => { records.push(child.val()); });
-                records.reverse(); 
-                
-                if(records.length > 0) {
-                    records.forEach((r, index) => {
-                        let date = new Date(r.timestamp).toLocaleString('en-IN');
-                        let rankColor = index === 0 ? '#d4af37' : (index === 1 ? '#94a3b8' : (index === 2 ? '#b45309' : '#e2e8f0'));
-                        tbody.innerHTML += `<tr><td style="color:${rankColor}; font-size:18px; font-weight:bold;">#${index+1}</td><td>${r.name} <br><span style="font-size:12px; color:#64748b;">@${r.username}</span></td><td style="color:#10b981; font-weight:bold; font-size:18px;">${r.score}</td><td style="color:#38bdf8;">${r.time}</td><td style="font-size:13px; color:#94a3b8;">${date}</td></tr>`;
-                    });
-                } else { tbody.innerHTML = '<tr><td colspan="5">No data logged for this test yet.</td></tr>'; }
+                } else { tbody.innerHTML = '<tr><td colspan="2">No scholars yet.</td></tr>'; }
             });
         }
     </script>
