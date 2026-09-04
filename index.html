@@ -4,75 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RANKER'S VAULT | Pro Ed-Tech</title>
-    <!-- Add Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
-        /* ================= HIGH-END UI/UX GRAPHICS ================= */
-        body { background: #07070a; color: #fff; font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+        body { background: #07070a; color: #fff; font-family: 'Rajdhani', sans-serif; overflow-x: hidden; margin: 0; }
         
-        /* Moving Live Stats Ticker */
-        .live-ticker-box { width: 100%; background: #000; border-bottom: 1px solid #d4af37; overflow: hidden; padding: 5px 0; position: fixed; top: 0; z-index: 1000; }
-        .ticker-text { display: inline-block; white-space: nowrap; animation: marquee 25s linear infinite; color: #10b981; font-size: 14px; font-family: monospace; letter-spacing: 1px; }
-        @keyframes marquee { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        /* 1. THUMPING MOTIVATIONAL SLOGAN */
+        .slogan-banner { width: 100%; background: linear-gradient(90deg, #1a0b00, #331400, #1a0b00); border-bottom: 2px solid #d4af37; padding: 8px 0; position: fixed; top: 0; z-index: 1000; text-align: center; box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+        .pulse-text { color: #ffdf73; font-size: 16px; font-weight: bold; letter-spacing: 1px; display: inline-block; animation: heartBeat 1.5s infinite; text-shadow: 0 0 10px rgba(255, 223, 115, 0.8); }
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.05); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.05); }
+            70% { transform: scale(1); }
+        }
+
+        /* 2. GOLDEN RAIN PARTICLES */
+        #leaf-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -2; overflow: hidden; }
+        .gold-drop { position: absolute; top: -20px; width: 2px; height: 20px; background: linear-gradient(to bottom, transparent, #d4af37, #fff); border-radius: 50%; animation: goldFall linear infinite; box-shadow: 0 0 10px #d4af37, 0 0 20px #ffdf73; }
+        @keyframes goldFall { to { transform: translateY(105vh); } }
 
         /* Premium Nav Bar */
-        .glass-nav { top: 30px; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(212,175,55,0.3); box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        .glass-nav { top: 38px; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(212,175,55,0.3); box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
         .logo { font-family: 'Orbitron', sans-serif; font-size: 22px; letter-spacing: 2px; }
         
-        /* 3D Premium Exam Cards */
+        /* EXAM CARDS & UI COMPONENTS */
         .exam-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; width: 100%; max-width: 1000px; padding: 20px; }
-        .exam-card { 
-            background: linear-gradient(145deg, #111, #1a1a1a); 
-            border: 1px solid #333; 
-            border-radius: 15px; 
-            padding: 30px 20px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            position: relative; 
-            cursor: pointer;
-            overflow: hidden;
-        }
-        .exam-card::before { content: ''; position: absolute; top:0; left:-100%; width:50%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transform: skewX(-20deg); transition: 0.5s; }
-        .exam-card:hover::before { left: 150%; }
-        .exam-card:hover { transform: translateY(-15px) scale(1.03); border-color: #d4af37; box-shadow: 0 15px 35px rgba(212,175,55,0.25); }
+        .exam-card { background: linear-gradient(145deg, #111, #1a1a1a); border: 1px solid #333; border-radius: 15px; padding: 30px 20px; transition: all 0.4s; position: relative; cursor: pointer; overflow: hidden; }
+        .exam-card:hover { transform: translateY(-10px); border-color: #d4af37; box-shadow: 0 15px 35px rgba(212,175,55,0.25); }
         .exam-logo-box img { width: 80px; height: 80px; border-radius: 50%; box-shadow: 0 0 15px rgba(0,0,0,0.8); }
 
-        /* Cinematic Certificate */
-        .certificate-card {
-            background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
-            border: 1px solid #d4af37;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: inset 0 0 30px rgba(212,175,55,0.05), 0 10px 40px rgba(0,0,0,0.8);
-            position: relative;
-            text-align: center;
-        }
+        .certificate-card { background: linear-gradient(135deg, #0f0f0f, #1a1a1a); border: 1px solid #d4af37; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: inset 0 0 30px rgba(212,175,55,0.05), 0 10px 40px rgba(0,0,0,0.8); text-align: center; }
         .cert-name { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 38px; text-shadow: 0 0 10px rgba(255,255,255,0.3); margin: 10px 0; }
         
         .hidden { display: none !important; }
-        .premium-box { border: 1px solid #d4af37; padding: 25px; border-radius: 12px; width: 45%; min-width: 220px; background: rgba(0,0,0,0.8); }
-        .pro-box { border: 1px solid #10b981; background: rgba(16,185,129,0.05); padding: 25px; border-radius: 12px; width: 45%; min-width: 220px; box-shadow: 0 0 20px rgba(16,185,129,0.1); }
-        
-        /* Master Gradient Button */
         .glow-gold-btn { background: linear-gradient(45deg, #d4af37, #ffdf73, #d4af37); background-size: 200% 200%; color: #000; font-weight: bold; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; transition: 0.4s; font-family: 'Rajdhani', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
         .glow-gold-btn:hover { background-position: right center; box-shadow: 0 0 20px rgba(212,175,55,0.6); transform: scale(1.05); }
     </style>
 </head>
 <body>
 
-    <!-- LIVE TICKER -->
-    <div class="live-ticker-box">
-        <div class="ticker-text">
-            🟢 LIVE: 240+ Scholars online right now &nbsp; | &nbsp; 🏆 Chitransh scored 280 in Adv Demo &nbsp; | &nbsp; ⚡ Welcome to the most rigorous NTA Simulator &nbsp; | &nbsp; 🚀 Master the patterns, beat the crowd!
+    <!-- THUMPING HINDI SLOGAN -->
+    <div class="slogan-banner">
+        <div class="pulse-text">
+            🔥 जब तक फोड़ेंगे नहीं, तब तक छोड़ेंगे नहीं! तेरा लक्ष्य तेरी मेहनत का इंतज़ार कर रहा है! 🎯
         </div>
     </div>
 
-    <!-- BACKGROUND GRAPHICS -->
-    <div style="position:fixed; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 40%); z-index:-1; animation: rotate 20s linear infinite;"></div>
+    <!-- GOLDEN RAIN CONTAINER -->
+    <div id="leaf-container"></div>
+    <div style="position:fixed; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 40%); z-index:-3; animation: rotate 20s linear infinite;"></div>
 
-    <button id="universal-back" class="back-btn hidden" onclick="goBack()" style="top: 50px;">⬅ Back</button>
+    <button id="universal-back" class="back-btn hidden" onclick="goBack()" style="top: 60px;">⬅ Back</button>
 
     <!-- SIDEBAR -->
     <div id="side-menu" class="sidebar hidden">
@@ -96,7 +81,7 @@
                 <button class="glow-gold-btn" onclick="openAuthModal()">Initialize System ⚡</button>
             </div>
         </nav>
-        <section class="hero flex-center" style="min-height: 80vh; position: relative;">
+        <section class="hero flex-center" style="min-height: 80vh; position: relative; margin-top: 50px;">
             <div style="position: absolute; width: 400px; height: 400px; background: rgba(212,175,55,0.1); filter: blur(80px); border-radius: 50%; z-index: -1;"></div>
             <div class="quotes-container" style="text-align: center;">
                 <h1 style="font-family: 'Orbitron', sans-serif; font-size: 50px; margin-bottom: 10px; letter-spacing: 3px;">THE <span class="gold-text">ULTIMATE</span> VAULT</h1>
@@ -106,21 +91,23 @@
         </section>
     </div>
 
-    <!-- AUTHENTICATION MODAL -->
+    <!-- AUTHENTICATION MODAL (BULLETPROOF VERSION) -->
     <div id="auth-modal" class="modal hidden">
         <div class="modal-content glass-panel popup-anim" style="background: rgba(10,10,10,0.95); border: 1px solid #d4af37;">
             <span class="close-btn" onclick="closeAuthModal()">&times;</span>
             <h2 class="gold-text" style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px;">SYSTEM AUTHENTICATION</h2>
             <p style="color: #64748b; margin-bottom: 25px; font-size: 14px;">Establish a secure connection to proceed.</p>
-            <input type="email" id="auth-email" class="premium-input" placeholder="Secure Email ID" style="background: #111; color: #fff; border: 1px solid #333; margin-bottom: 15px;">
-            <div style="position: relative; margin-bottom: 25px;">
-                <input type="password" id="auth-pass" class="premium-input" placeholder="Encryption Key (Password)" style="background: #111; color: #fff; border: 1px solid #333;">
+            
+            <input type="email" id="auth-email" class="premium-input" placeholder="Secure Email ID" style="background: #111; color: #fff; border: 1px solid #333; margin-bottom: 15px; width: 100%; box-sizing: border-box;">
+            <div style="position: relative; margin-bottom: 25px; width: 100%;">
+                <input type="password" id="auth-pass" class="premium-input" placeholder="Encryption Key (Password)" style="background: #111; color: #fff; border: 1px solid #333; width: 100%; box-sizing: border-box;">
             </div>
+            
             <div style="display:flex; gap:15px;">
                 <button class="glow-gold-btn" style="flex: 1;" onclick="submitLogin()">Log In</button>
                 <button class="glow-gold-btn" style="flex: 1; background: transparent; border: 1px solid #d4af37; color: #d4af37;" onclick="submitSignUp()">Sign Up</button>
             </div>
-            <p id="auth-error" style="color: #ef4444; font-size: 13px; margin-top: 15px; display: none;"></p>
+            <p id="auth-error" style="color: #ef4444; font-size: 14px; font-weight: bold; margin-top: 15px; display: none; background: rgba(239,68,68,0.1); padding: 10px; border-radius: 5px;"></p>
         </div>
     </div>
 
@@ -132,7 +119,7 @@
                 SELECT BATTLEFIELD
             </div>
         </nav>
-        <div class="main-container flex-center-top" style="margin-top: 80px;">
+        <div class="main-container flex-center-top" style="margin-top: 90px;">
             <h2 class="gold-text" style="font-family: 'Orbitron', sans-serif; font-size: 32px; margin-bottom: 40px; letter-spacing: 2px;">CHOOSE YOUR TARGET</h2>
             <div class="exam-grid">
                 <div class="exam-card active-exam" onclick="openDashboard('main')">
@@ -168,19 +155,16 @@
             </div>
         </nav>
         
-        <div class="main-container flex-center-top" style="margin-top: 80px; max-width: 1000px;">
-            
+        <div class="main-container flex-center-top" style="margin-top: 90px; max-width: 1000px;">
             <div style="text-align: left; width: 100%; margin-bottom: 20px;">
                 <h2 style="color: #fff; font-size: 28px; font-family: 'Orbitron', sans-serif;">GREETINGS, <span id="dash-student-name" class="gold-text">SCHOLAR</span></h2>
                 <p id="dash-target-title" style="color: #10b981; font-size: 15px; letter-spacing: 1px;">TARGET LOCKED</p>
             </div>
             
-            <!-- CINEMATIC PRO CERTIFICATE (Visible if Pro) -->
             <div id="pro-benefits-section" class="hidden" style="width: 100%;">
                 <div class="certificate-card">
                     <div style="color: #d4af37; font-size: 12px; letter-spacing: 5px; margin-bottom: 10px;">★ PRO SCHOLAR IDENTIFICATION ★</div>
-                    <h2 class="cert-name" id="cert-name">SAURAV RUPNAR</h2>
-                    
+                    <h2 class="cert-name" id="cert-name">SCHOLAR</h2>
                     <div style="display: flex; justify-content: center; gap: 40px; margin: 25px 0;">
                         <div style="text-align: center;">
                             <div style="color: #888; font-size: 12px; letter-spacing: 2px;">GLOBAL RANK</div>
@@ -194,20 +178,10 @@
                     </div>
                     <div style="font-size: 11px; color: #555; letter-spacing: 1px;">SECURELY VERIFIED BY RANKER'S VAULT SERVER &nbsp;|&nbsp; <span id="cert-month"></span></div>
                 </div>
-
-                <!-- Telegram Banner -->
-                <div style="background: linear-gradient(90deg, rgba(0, 136, 204, 0.2), transparent); border-left: 4px solid #0088cc; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; margin-bottom: 30px;">
-                    <div>
-                        <h4 style="margin: 0; color: #00aaff; font-family: 'Orbitron', sans-serif;">COMM-LINK ACTIVE</h4>
-                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #aaa;">Access the private Pro Scholars Telegram Network.</p>
-                    </div>
-                    <button class="glow-gold-btn" style="background: #0088cc; color: #fff; padding: 10px 20px; font-size: 14px;" onclick="window.open('https://t.me/YOUR_LINK', '_blank')">CONNECT</button>
-                </div>
             </div>
 
             <!-- MODULES -->
             <div style="width: 100%; display: flex; flex-direction: column; gap: 25px; margin-bottom: 50px;">
-                
                 <div class="exam-card" id="daily-challenge-card" style="display: flex; justify-content: space-between; align-items: center; padding: 25px;">
                     <div>
                         <h3 style="color: #fff; font-family: 'Orbitron', sans-serif; font-size: 20px;">75 DAYS PROTOCOL</h3>
@@ -215,7 +189,6 @@
                     </div>
                     <button class="glow-gold-btn" style="background: transparent; border: 1px solid #d4af37; color: #d4af37;" onclick="openDaySelection()">ACCESS ➔</button>
                 </div>
-
                 <div class="exam-card" style="display: flex; justify-content: space-between; align-items: center; padding: 25px; border-color: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.1);">
                     <div>
                         <h3 style="color: #10b981; font-family: 'Orbitron', sans-serif; font-size: 20px;">FULL COMBAT SIMULATOR</h3>
@@ -224,7 +197,6 @@
                     <button class="glow-gold-btn" onclick="openTestSelection()">INITIATE ➔</button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -234,41 +206,82 @@
             <span class="close-btn" onclick="closePremiumModal()">&times;</span>
             <h2 class="gold-text" style="font-family: 'Orbitron', sans-serif; margin-bottom: 10px;">AUTHORIZATION REQUIRED</h2>
             <p style="color: #888; margin-bottom: 30px; font-size: 14px;">Demo sequence completed. Upgrade security clearance to access remaining modules.</p>
-            
             <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
                 <div style="border: 1px solid #333; background: #111; padding: 25px; border-radius: 10px; width: 45%; min-width: 220px; text-align: center;">
                     <h3 id="modal-target-name" style="color: #fff; font-family: 'Orbitron', sans-serif; font-size: 16px;">TARGET PACK</h3>
                     <h1 style="color: #d4af37; font-size: 40px; margin: 15px 0;">₹99</h1>
-                    <p style="color: #666; font-size: 12px; margin-bottom: 20px;">Unlock specific target module only.</p>
                     <button class="glow-gold-btn full-width" style="background: transparent; border: 1px solid #d4af37; color: #d4af37;" onclick="triggerPayment(9900, activeExamTarget)">PURCHASE</button>
                 </div>
-                <div style="border: 1px solid #10b981; background: rgba(16,185,129,0.05); padding: 25px; border-radius: 10px; width: 45%; min-width: 220px; text-align: center; position: relative;">
-                    <div style="position: absolute; top: -10px; right: 10px; background: #10b981; color: #000; font-size: 10px; font-weight: bold; padding: 3px 10px; border-radius: 10px;">RECOMMENDED</div>
+                <div style="border: 1px solid #10b981; background: rgba(16,185,129,0.05); padding: 25px; border-radius: 10px; width: 45%; min-width: 220px; text-align: center;">
                     <h3 style="color: #10b981; font-family: 'Orbitron', sans-serif; font-size: 16px;">ALL-ACCESS PRO</h3>
                     <h1 style="color: #10b981; font-size: 40px; margin: 15px 0;">₹299</h1>
-                    <p style="color: #666; font-size: 12px; margin-bottom: 20px;">Unlock all modules. Life-time validity.</p>
                     <button class="glow-gold-btn full-width" style="background: linear-gradient(135deg, #10b981, #059669); color: white;" onclick="triggerPayment(29900, 'all')">PURCHASE PRO</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SELECTION GRIDS (Keep standard UI here for consistency) -->
+    <!-- SELECTION GRIDS -->
     <section id="day-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav"><div class="logo">75 DAYS PROTOCOL</div></nav>
-        <div class="main-container flex-center-top" style="margin-top: 80px;">
+        <div class="main-container flex-center-top" style="margin-top: 90px;">
             <div id="days-grid" class="days-grid" style="max-width: 1000px; width: 100%;"></div>
         </div>
     </section>
-
     <section id="test-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav"><div class="logo">COMBAT SIMULATOR</div></nav>
-        <div class="main-container flex-center-top" style="margin-top: 80px;">
+        <div class="main-container flex-center-top" style="margin-top: 90px;">
             <div id="tests-grid" class="days-grid" style="max-width: 1000px; width: 100%;"></div>
         </div>
     </section>
 
-    <!-- FIREBASE AND SCRIPTS -->
+    <!-- NTA CBT INTERFACE / ANALYSIS (No changes needed here, hidden by default) -->
+    <div id="nta-screen" class="hidden nta-layout transition-element screen-layer">
+        <div class="nta-header"><div class="nta-title">RANKER'S VAULT CBT</div><div class="nta-timer">Time Left : <span id="time-left">00:00:00</span></div></div>
+        <div class="nta-body">
+            <div class="nta-left">
+                <div class="nta-tabs">
+                    <button class="tab-btn active" onclick="switchSubject('Physics')">Physics</button>
+                    <button class="tab-btn" onclick="switchSubject('Chemistry')">Chemistry</button>
+                    <button class="tab-btn" id="nta-tab-mathbio" onclick="switchSubject('Mathematics')">Mathematics</button>
+                </div>
+                <div class="question-area">
+                    <div class="q-header"><span>Question <span id="current-q-no">1</span></span><span>Marks: +4 | -1</span></div>
+                    <div id="q-text" class="q-content"></div>
+                    <div id="options-area" class="options-container"></div>
+                    <div id="numerical-area" class="hidden numerical-container"><label>Enter answer:</label><br><input type="number" id="num-answer" step="any"></div>
+                </div>
+                <div class="nta-footer">
+                    <div class="left-btns"><button class="nta-btn white" onclick="markForReview()">Review</button><button class="nta-btn white" onclick="clearResponse()">Clear</button></div>
+                    <div class="right-btns"><button class="nta-btn blue" onclick="saveAndNext()">Save & Next</button><button class="nta-btn green" onclick="submitTestEarly()">Submit</button></div>
+                </div>
+            </div>
+            <div class="nta-right">
+                <div class="profile-box"><div id="student-name">Scholar</div></div>
+                <div class="status-legend">
+                    <div class="legend-item"><div class="badge answered" id="cnt-answered">0</div> Ans</div>
+                    <div class="legend-item"><div class="badge not-answered" id="cnt-not-answered">0</div> Not</div>
+                    <div class="legend-item"><div class="badge not-visited" id="cnt-not-visited">0</div> Visit</div>
+                    <div class="legend-item"><div class="badge marked" id="cnt-marked">0</div> Mark</div>
+                </div>
+                <div class="palette-header" id="current-subject-name">Physics</div>
+                <div class="q-palette" id="question-palette"></div>
+            </div>
+        </div>
+    </div>
+    <div id="analysis-screen" class="hidden main-container transition-element screen-layer flex-center-top">
+        <div style="margin-top: 80px; width: 100%;">
+            <h1 class="gold-text" style="font-family: 'Orbitron'; font-size: 36px;">PERFORMANCE ANALYSIS</h1>
+            <div id="safe-zone-banner" class="hidden safe-banner">🎯 YOU ARE IN THE SAFE ZONE!</div>
+            <div class="analysis-grid">
+                <div class="stat-box"><h3>Final Score</h3><div class="score-big" id="final-score">0</div></div>
+                <div class="stat-box"><h3>Time Taken</h3><div class="score-big" id="time-taken" style="color:#64ffda;">00:00</div></div>
+            </div>
+            <div style="margin-top: 30px;"><button class="glow-gold-btn" onclick="switchScreen('analysis-screen', 'dashboard-screen')">🏠 Back to Dashboard</button></div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
