@@ -46,7 +46,7 @@
             <button class="btn" style="background: transparent; border: 1px solid #ef4444; color: #ef4444;" onclick="location.reload()">Lock System</button>
         </div>
 
-        <!-- NEW: MANUAL USER APPROVAL BYPASS -->
+        <!-- MANUAL USER APPROVAL BYPASS -->
         <div class="glass-panel" style="border-color: #10b981;">
             <h2 class="gold-text" style="margin-top: 0; color:#10b981;">🗝️ Manual Access (Bypass KYC)</h2>
             <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Agar bacche ne direct QR pe paisa bheja hai, toh uska username yahan daal kar unlock kar de.</p>
@@ -66,6 +66,10 @@
 
         <div class="glass-panel">
             <h2 class="gold-text" style="margin-top: 0;">⚙️ Global Test Locks (Live ON/OFF)</h2>
+
+            <!-- RESTORED: 75 DAYS CONTROLS -->
+            <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Mains - Daily 75 PYQs</h3>
+            <div class="control-grid" id="daily-controls"></div>
             
             <h3 style="color: #fff; font-size: 16px; margin-top: 20px; margin-bottom: 10px;">JEE Mains - 10 Full Length Tests</h3>
             <div class="control-grid" id="full-test-controls"></div>
@@ -145,6 +149,10 @@
         function loadTestControls() {
             db.ref('test_controls').on('value', (snapshot) => {
                 liveControls = snapshot.val() || {};
+                
+                // RESTORED 75 DAYS FUNCTION CALL HERE
+                renderControlGrid('daily-controls', 'day_', 75, 'Day'); 
+                
                 renderControlGrid('full-test-controls', 'full_test_', 10, 'Test');
                 renderControlGrid('adv-test-controls', 'advanced_test_', 10, 'Adv Test');
                 renderControlGrid('neet-test-controls', 'neet_test_', 10, 'NEET Test');
