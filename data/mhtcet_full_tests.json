@@ -1,0 +1,13 @@
+{
+    "mhtcet_test_1": {
+        "Physics": [
+            {"id": "c1", "type": "mcq", "q": "CET Demo Q: Velocity of light in vacuum?", "options": ["3x10^8", "3x10^5", "1x10^8", "2x10^8"], "ans": 0, "hint": "c value"}
+        ],
+        "Chemistry": [
+            {"id": "c2", "type": "mcq", "q": "CET Demo Q: Which is a noble gas?", "options": ["Oxygen", "Nitrogen", "Argon", "Chlorine"], "ans": 2, "hint": "Group 18"}
+        ],
+        "Mathematics": [
+            {"id": "c3", "type": "mcq", "q": "CET Demo Q: Derivative of sin(x)?", "options": ["cos(x)", "-sin(x)", "-cos(x)", "tan(x)"], "ans": 0, "hint": "Standard formula"}
+        ]
+    }
+}
