@@ -9,6 +9,7 @@
     <style>
         .premium-box { border: 1px solid #d4af37; padding: 20px; border-radius: 10px; width: 45%; min-width: 200px; text-align: center; }
         .pro-box { border: 1px solid #10b981; background: rgba(16,185,129,0.1); padding: 20px; border-radius: 10px; width: 45%; min-width: 200px; text-align: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="theme-premium">
@@ -139,6 +140,7 @@
         </div>
     </div>
 
+    <!-- DYNAMIC DASHBOARD -->
     <div id="dashboard-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav">
             <div class="logo" style="display: flex; align-items: center;">
@@ -155,21 +157,60 @@
             
             <hr style="width: 100%; border: 1px solid rgba(212,175,55,0.2); margin-bottom: 30px;">
 
+            <!-- COMBAT ZONE: TESTS -->
             <h2 class="gold-text" style="margin-bottom: 20px; font-size: 26px; text-align: left; width: 100%; max-width: 950px;">Combat Zone (Tests)</h2>
             <div class="cards-container" style="margin-bottom: 40px;">
-                <div class="dash-card premium-card" style="max-width: 600px;">
+                
+                <!-- 75 DAILY PYQS (Only visible for JEE Main) -->
+                <div class="dash-card" id="daily-challenge-card">
+                    <h3 style="color: #fff;">75 Days Challenge</h3>
+                    <p style="color: #a0aec0; margin: 10px 0;">Daily 10 Handpicked PYQs for pure concept building.</p>
+                    <button class="action-btn full-width" onclick="openDaySelection()">View All Days</button>
+                </div>
+
+                <div class="dash-card premium-card" style="flex-grow: 1;">
                     <h3 class="gold-text glow-text">Pro Test Series</h3>
                     <p style="color: #a0aec0; margin: 10px 0;">10 Full Length Tests | Free Demo Available</p>
                     <button class="glow-gold-btn full-width" onclick="openTestSelection()">Enter Combat Zone 🚀</button>
                 </div>
             </div>
+
+            <!-- ARSENAL: DYNAMIC NOTES (PCM / PCB) -->
+            <h2 class="gold-text" style="margin-bottom: 20px; font-size: 26px; text-align: left; width: 100%; max-width: 950px;">Arsenal (Premium Notes)</h2>
+            <div class="cards-container">
+                <div class="dash-card" style="padding: 20px; cursor: pointer;" onclick="alert('Vault Opening Soon!')">
+                    <h3 style="color: #64ffda;" id="notes-phy-title">Physics Notes</h3>
+                    <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Mechanics, Electromagnetism & Modern Physics.</p>
+                </div>
+                <div class="dash-card" style="padding: 20px; cursor: pointer;" onclick="alert('Vault Opening Soon!')">
+                    <h3 style="color: #64ffda;" id="notes-chem-title">Chemistry Notes</h3>
+                    <p style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Physical, Organic & Inorganic Modules.</p>
+                </div>
+                <div class="dash-card" style="padding: 20px; cursor: pointer;" onclick="alert('Vault Opening Soon!')">
+                    <h3 style="color: #64ffda;" id="notes-mathbio-title">Mathematics Notes</h3>
+                    <p id="notes-mathbio-desc" style="color: #a0aec0; font-size: 13px; margin: 10px 0;">Calculus, Algebra & Coordinate Geometry.</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
+    <!-- DAILY 75 SELECTION SCREEN -->
+    <section id="day-selection-screen" class="hidden transition-element screen-layer">
+        <nav class="navbar glass-nav">
+            <div class="logo">DAILY PRACTICE</div>
+        </nav>
+        <div class="main-container flex-center-top" style="margin-top: 40px;">
+            <h2 class="gold-text" style="margin-bottom: 20px;">75 Days Challenge (JEE Main)</h2>
+            <div id="days-grid" class="days-grid"></div>
+        </div>
+    </section>
+
+    <!-- FULL TESTS SELECTION SCREEN -->
     <section id="test-selection-screen" class="hidden transition-element screen-layer">
         <nav class="navbar glass-nav"><div class="logo">PRO TEST SERIES</div></nav>
         <div class="main-container flex-center-top" style="margin-top: 40px;">
-            <h2 class="gold-text" style="margin-bottom: 20px;">10 Full Length Tests</h2>
+            <h2 class="gold-text" style="margin-bottom: 20px;" id="grid-exam-title">10 Full Length Tests</h2>
             <div id="tests-grid" class="days-grid"></div>
         </div>
     </section>
@@ -201,7 +242,7 @@
                 <div class="nta-tabs">
                     <button class="tab-btn active" onclick="switchSubject('Physics')">Physics</button>
                     <button class="tab-btn" onclick="switchSubject('Chemistry')">Chemistry</button>
-                    <button class="tab-btn" onclick="switchSubject('Mathematics')">Mathematics</button>
+                    <button class="tab-btn" id="nta-tab-mathbio" onclick="switchSubject('Mathematics')">Mathematics</button>
                 </div>
                 <div class="question-area">
                     <div class="q-header"><span>Question No. <span id="current-q-no">1</span></span><span>Marks: +4 | -1</span></div>
@@ -251,7 +292,7 @@
                 <h3 style="margin-bottom: 15px; color: #fff;">Subject-wise Accuracy</h3>
                 <div class="bar-container"><div class="bar-label">Physics</div><div class="bar-bg"><div class="bar-fill" id="bar-phy"></div></div><div class="bar-pct" id="pct-phy">0%</div></div>
                 <div class="bar-container"><div class="bar-label">Chemistry</div><div class="bar-bg"><div class="bar-fill" id="bar-chem"></div></div><div class="bar-pct" id="pct-chem">0%</div></div>
-                <div class="bar-container"><div class="bar-label">Maths</div><div class="bar-bg"><div class="bar-fill" id="bar-math"></div></div><div class="bar-pct" id="pct-math">0%</div></div>
+                <div class="bar-container"><div class="bar-label" id="analysis-mathbio-label">Maths</div><div class="bar-bg"><div class="bar-fill" id="bar-math"></div></div><div class="bar-pct" id="pct-math">0%</div></div>
             </div>
             <div style="display:flex; justify-content:center; gap:20px; flex-wrap: wrap; margin-top: 30px;">
                 <button class="action-btn" style="width: 200px; font-size: 16px;" onclick="openReviewScreen()">🔍 View Solutions</button>
