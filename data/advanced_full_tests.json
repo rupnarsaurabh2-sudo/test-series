@@ -1,0 +1,13 @@
+{
+    "advanced_test_1": {
+        "Physics": [
+            {"id": "a1", "type": "numerical", "q": "ADV Demo Q: A block of mass 2kg accelerates at 3m/s2. Find Force.", "ans": 6, "hint": "F=ma"}
+        ],
+        "Chemistry": [
+            {"id": "a2", "type": "numerical", "q": "ADV Demo Q: What is the pH of 0.1M HCl?", "ans": 1, "hint": "pH = -log[H+]"}
+        ],
+        "Mathematics": [
+            {"id": "a3", "type": "numerical", "q": "ADV Demo Q: Value of integral of 2x dx from 0 to 1?", "ans": 1, "hint": "x^2"}
+        ]
+    }
+}
